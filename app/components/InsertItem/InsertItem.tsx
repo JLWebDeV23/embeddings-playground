@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import styles  from './InsertItem.module.css';
+import styles from "./InsertItem.module.css";
 
 const InsertItem = () => {
   const [selectedItem, setSelectedItem] = useState("");
@@ -17,12 +17,12 @@ const InsertItem = () => {
 
   return (
     <div className={styles.row}>
-      <label className="flex-rowform-control max-w-xs">
+      <label className="flex-rowform-control max-w-s">
         <div className="label">
           <span className="label-text">Select your input source</span>
         </div>
         <select
-          className="select select-bordered w-32 pr-7"
+          className="select select-bordered w-full pr-7"
           value={value}
           onChange={(e) => setValue(e.target.value)}
         >
@@ -31,20 +31,24 @@ const InsertItem = () => {
           <option>File Upload</option>
         </select>
       </label>
-      <div className="relative right-11 mt-9 w-80">
+      <div className="">
         {value === "URL" ? (
           <input
             type="text"
             placeholder="Enter URL"
-            className="input w-full max-w-xs ml-5"
+            className="input w-full max-w-xs ml-3"
           />
         ) : (
           <input
             type="file"
-            className="file-input file-input-bordered w-full max-w-xs ml-5"
+            className="file-input file-input-bordered w-full max-w-xs ml-3"
           />
         )}
       </div>
+
+      {/* <div className="relative right-11 mt-9 w-80">
+        
+      </div> */}
     </div>
   );
 };
