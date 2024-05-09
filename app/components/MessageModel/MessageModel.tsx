@@ -82,7 +82,7 @@ const MessageModel: React.FC<MessageModelProps> = ({
     console.log(modelResponse);
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInputValue(e.target.value);
   };
 
@@ -97,9 +97,9 @@ const MessageModel: React.FC<MessageModelProps> = ({
     <section className="w-full">
       <form action="" onSubmit={handleFormSubmit}>
         <div className={styles.inputContainer}>
-          <input
-            type="text"
-            className={styles.messageModel}
+          <textarea
+            className={styles.messageModelTextarea}
+            rows={7}
             placeholder="Message ChatGPT"
             value={inputValue}
             onChange={handleInputChange}

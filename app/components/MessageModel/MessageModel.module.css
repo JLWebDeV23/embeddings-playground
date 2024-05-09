@@ -3,7 +3,7 @@
   position: relative;
 }
 
-.messageModel {
+/* .messageModelTextarea {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   color: rgba(196, 192, 192, 0.888);
   background: #282b37d3;
@@ -13,9 +13,39 @@
   padding-right: 30%;
   padding-left: 5%;
   border-radius: 10px;
-  resize: vertical; /* Allow vertical resizing */
-  word-wrap: break-word; /* Wrap long words to the next line */
+  resize: vertical;
+  word-wrap: break-word; 
+} */
+
+.messageModelTextarea {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  padding-top: 3%;
+  font-weight: 500;
+  font-size: 1em;
+  color: rgba(196, 192, 192, 0.888);
+  background: #282b37d3;
+  width: 100%;
+  height: 10%;
+  max-height: 30%;
+  padding-right: 30%;
+  padding-left: 5%;
+  border-radius: 10px;
+  /* word-wrap: break-word; Wrap long words to the next line */
+  outline: none;
+  overflow: auto;
+  resize: none;
 }
+
+.messageModelTextarea::-webkit-scrollbar {
+  width: 10px;
+  background-color: #282b37d3;
+}
+
+.messageModelTextarea::-webkit-scrollbar-thumb {
+  background-color: rgba(196, 192, 192, 0.888);
+  border-radius: 5px;
+}
+
 
 .invisibleLine {
   border: 1px transparent;
