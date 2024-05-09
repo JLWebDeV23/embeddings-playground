@@ -1,0 +1,24 @@
+.inputContainer {
+  width: 100%;
+  position: relative;
+}
+
+.messageModel {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: rgba(196, 192, 192, 0.888);
+  background: #282b37d3;
+  width: 100%;
+  height: 8vh;
+  max-height: 50vh;
+  padding-right: 30%;
+  padding-left: 5%;
+  border-radius: 10px;
+  resize: vertical; /* Allow vertical resizing */
+  word-wrap: break-word; /* Wrap long words to the next line */
+}
+
+.invisibleLine {
+  border: 1px transparent;
+  height: 80%;
+  margin: 0 20px;
+}

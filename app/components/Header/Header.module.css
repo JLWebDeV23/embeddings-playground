@@ -1,0 +1,40 @@
+.logoContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  text-decoration: none;
+  overflow: hidden;
+  margin-bottom: 20px;
+  padding: 2rem;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  border-bottom: 1px dashed;
+}
+
+.logoContainer:hover {
+    border-color: var(--primary);
+}
+.logoContainer:hover .logo {
+    color: var(--primary);
+}
+
+.logo {
+  font-family: "Racing Sans One", cursive;
+  font-size: 35px;
+  text-align: center;
+  color: #ffffff;
+  letter-spacing: 2px;
+  font-weight: 800;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: color 0.3s;
+}
+
+.logoImage {
+  width: 100px;
+  height: auto;
+  margin-right: 10px;
+}
+
+

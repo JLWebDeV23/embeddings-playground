@@ -1,0 +1,11 @@
+.row {
+    flex-grow: 1;
+    justify-content: center;
+    width: 50%;
+}
+
+.verticalLine {
+    border: 1px dashed white;
+    height: 80%;
+    margin: 0 20px;
+}
