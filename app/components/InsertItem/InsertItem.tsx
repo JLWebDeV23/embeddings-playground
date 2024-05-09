@@ -37,6 +37,7 @@ const InsertItem = () => {
             type="text"
             placeholder="Enter URL"
             className="input w-full max-w-xs ml-3"
+            // onChange={(e) => fetchUrl(e.target.value)}
           />
         ) : (
           <input
