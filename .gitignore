@@ -13,8 +13,10 @@
 /.next/
 /out/
 
+page.tsx
+
 # production
-/build
+build
 
 # misc
 .DS_Store
@@ -27,7 +29,7 @@ yarn-error.log*
 
 # local env files
 .env*.local
-
+app/page.tsx
 # vercel
 .vercel
 
