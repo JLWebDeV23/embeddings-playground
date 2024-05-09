@@ -2,7 +2,7 @@
 import React, { cloneElement, useState } from "react";
 import styles from "./AddCollection.module.css";
 import { QdrantClient } from "@qdrant/js-client-rest";
-import {v4 as uuidv4} from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
 type AddCollectionProps = {
   client: QdrantClient;
@@ -20,6 +20,7 @@ const AddCollection: React.FC<AddCollectionProps> = ({
   createEmbedding,
 }) => {
   const [inputValue, setInputValue] = useState("");
+  const [embeddings, setEmbeddings] = useState<number[][]>([]);
 
   const createCollection = async (collectionName: string) => {
     try {
@@ -37,6 +38,30 @@ const AddCollection: React.FC<AddCollectionProps> = ({
     } catch (error) {
       console.error("Error creating points:", error);
     }
+  };
+
+  const newAddPoints = async (collectionName: string) => {
+    let embeddings = await Promise.all(
+      chunkPrompt(inputValue).map(async (chunk) => {
+        return {
+          vector: await createEmbedding(chunk),
+          input: chunk,
+        };
+      })
+    );
+    console.log("Embeddings:", embeddings);
+    // create point for each embedding and add to points in Qdrant
+    const points: Point[] = [];
+    embeddings.forEach((embedding, index) => {
+      const point: Point = {
+        id: uuidv4(),
+        vector: embedding.vector,
+        payload: { input: embedding.input },
+      };
+      points.push(point);
+    });
+    console.log("Points:", points);
+    await addPoints(collectionName!, points);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -66,7 +91,7 @@ const AddCollection: React.FC<AddCollectionProps> = ({
 
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const collectionName = prompt("Enter a collection name:");
+    let collectionName = prompt("Enter a collection name:");
     const collectionExists: boolean = (
       await client.collectionExists(collectionName!)
     ).exists;
@@ -76,72 +101,27 @@ const AddCollection: React.FC<AddCollectionProps> = ({
       // check if the collection exists,
       // if exist, add points to the existing collection
     } else if (collectionExists) {
-      let txt;
       if (
         confirm(
           `"${collectionName}" already exists! Do you want to add more points existing "${collectionName}"?`
         )
       ) {
         // create points and add to the existing collection
-        let embeddings = await Promise.all(
-          chunkPrompt(inputValue).map(async (chunk) => {
-            return {
-              vector: await createEmbedding(chunk),
-              input: chunk,
-            };
-          })
-        );
-        console.log("Embeddings:", embeddings);
-        // create point for each embedding and add to points in Qdrant
-        const points: Point[] = [];
-        embeddings.forEach((embedding) => {
-          const point: Point = {
-            id: uuidv4(),
-            vector: embedding.vector,
-            payload: { input: embedding.input },
-          };
-          points.push(point);
-        });
-        console.log("Points:", points);
-        await addPoints(collectionName, points);
-        txt = `Points added to the !${collectionName}`;
+        newAddPoints(collectionName!);
+        alert(`Points added to the ${collectionName}`);
       } else {
-        return;
+        // create a new collection and add points
+        collectionName = prompt("Enter a 'new' collection name:");
+        createCollection(collectionName!);
+        newAddPoints(collectionName!);
+        alert(`Points added to the new collection: ${collectionName}`);
       }
     } else {
-      // create a new collection and add points
+      createCollection(collectionName!);
+      newAddPoints(collectionName!);
+      alert(`Points added to the collection: ${collectionName}`);
     }
-    // if (collectionName ) {
-    //   createCollection(collectionName);
-    //   // chuck the input with . ? ! or 10 characters
-    //   console.log("Chunks:", chunkPrompt(inputValue));
-    //   // create embedding on each chuck push to embedding list
-    //   let embeddings = await Promise.all(
-    //     chunkPrompt(inputValue).map(async (chunk) => {
-    //       return {
-    //         vector: await createEmbedding(chunk),
-    //         input: chunk,
-    //       };
-    //     })
-    //   );
-    //   console.log("Embeddings:", embeddings);
-    //   // create point for each embedding and add to points in Qdrant
-    //   const points: Point[] = [];
-    //   embeddings.forEach((embedding, index) => {
-    //     const point: Point = {
-    //       id: index + 1,
-    //       vector: embedding.vector,
-    //       payload: { input: embedding.input },
-    //     };
-    //     points.push(point);
-    //   });
-    //   console.log("Points:", points);
-    //   await addPoints(collectionName, points);
-    // }
-    // } catch (error) {
-    //   alert("Collection name already exists!");
-    // }
-    // setInputValue("");
+    setInputValue("");
   };
 
   return (
