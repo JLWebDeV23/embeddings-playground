@@ -75,7 +75,6 @@ const AddCollection: React.FC<AddCollectionProps> = ({
     console.log(collectionName);
     //ask tom
     if (collectionExists) {
-      confirm("Collection already exists! Do you want to add more points?")
       let txt;
       if (
         confirm("Collection already exists! Do you want to add more points?")
