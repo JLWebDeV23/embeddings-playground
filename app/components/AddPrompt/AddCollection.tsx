@@ -10,7 +10,7 @@ type AddCollectionProps = {
 };
 
 type Point = {
-  id: number;
+  id: string;
   vector: number[];
   payload: { input: string };
 };
@@ -94,9 +94,9 @@ const AddCollection: React.FC<AddCollectionProps> = ({
         console.log("Embeddings:", embeddings);
         // create point for each embedding and add to points in Qdrant
         const points: Point[] = [];
-        embeddings.forEach((embedding, index) => {
+        embeddings.forEach((embedding) => {
           const point: Point = {
-            id: Number(uuidv4()),
+            id: uuidv4(),
             vector: embedding.vector,
             payload: { input: embedding.input },
           };
