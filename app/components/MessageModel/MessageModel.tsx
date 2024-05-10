@@ -84,8 +84,8 @@ const MessageModel: React.FC<MessageModelProps> = ({
     // Stringify the retrieved chunk
     const retrievedChunk = result
       .map(
-        (result) =>
-          `-> ${JSON.stringify(result.payload?.input).replace(/"/g, "")}`
+      (result) =>
+        `-> ${JSON.stringify((result.payload?.input as string).replace(/"/g, "").replace(/\n/g, " "))}`
       )
       .join("\n");
 
@@ -145,7 +145,7 @@ Answer:
         <pre className="text-wrap">
           {selectedModel === "openai" ? "ChatGPT:" : "Mistral:"}
           <br className={styles.invisibleLine} />
-          {chatResponse}
+          <div className={styles.responseBox}>{chatResponse}</div>
         </pre>
       </div>
     </section>
