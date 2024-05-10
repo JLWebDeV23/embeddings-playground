@@ -77,7 +77,7 @@ const AddCollection: React.FC<AddCollectionProps> = ({
       const char = input[i];
       currentChunk += char;
       if (char === " ") word++;
-      if (word >= 2000) {
+      if (word >= 500) {
         chunks.push(currentChunk.trim());
         currentChunk = "";
         word = 0;
@@ -89,9 +89,18 @@ const AddCollection: React.FC<AddCollectionProps> = ({
     return chunks;
   };
 
+  const getCollectionsList  = async () => {
+    const collections = await client.getCollections();
+    return collections.collections;
+  }
+
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    let collectionName = prompt("Enter a collection name:");
+    let collectionName = prompt(`Enter a collection name:
+- - -
+${((await getCollectionsList()).map((collection) => collection.name)).join("\n")}
+- - -
+    `);
     const collectionExists: boolean = (
       await client.collectionExists(collectionName!)
     ).exists;
