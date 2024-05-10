@@ -94,10 +94,13 @@ const MessageModel: React.FC<MessageModelProps> = ({
 -----------------------
 ${retrievedChunk}
 -----------------------
-Given the context information and not prior knowledge, answer the query
+Use your prior knowledge to best describe the context of the query.
 Query: ${userPrompt}
 Answer: 
     `;
+// Message
+//Given the context information and not prior knowledge, answer the query
+
     // const query: string = `${retrievedChunk} \n\n---\n\nYour Message: ${userPrompt}`;
 
     // Get the response from the model
