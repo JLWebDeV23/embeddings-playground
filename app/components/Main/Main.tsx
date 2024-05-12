@@ -5,18 +5,17 @@ import MessageModel from "../MessageModel/MessageModel";
 import styles from "./Main.module.css";
 import { QdrantClient } from "@qdrant/js-client-rest";
 import OpenAI from "openai";
-import MistralClient from '@mistralai/mistralai';
+import MistralClient from "@mistralai/mistralai";
 import Delete from "../DeleteCollection/Delete";
 import InsertItem from "../InsertItem/InsertItem";
+import LogProb from "../LogProb/LogProb";
 
 const Main = () => {
   const client = new QdrantClient({
     url: "http://localhost:6333",
   });
 
-  const mistral = new MistralClient(
-    "my_api_key",
-  );
+  const mistral = new MistralClient("my_api_key");
 
   const openai = new OpenAI({
     apiKey: "sk-proj-tXhN6GB3ajD2iSQ1ivdxT3BlbkFJSiWSp1nXwuUXhG0p1XGD",
@@ -35,16 +34,24 @@ const Main = () => {
   };
 
   return (
-    <main className="w-full h-full p-10 flex justify-between ">
+    //w-full h-full p-10 flex justify-between
+    <main className="">
       <div className={styles.row}>
-        <AddCollection client={client} createEmbedding={createEmbedding} />
-        <InsertItem />
-        <Delete client={client} />
+        <div className={styles.col}>
+          <AddCollection client={client} createEmbedding={createEmbedding} />
+          <InsertItem />
+          <Delete client={client} />
+        </div>
+        <hr className={styles.verticalLine} />
+        <MessageModel
+          client={client}
+          createEmbedding={createEmbedding}
+          openai={openai}
+          mistral={mistral}
+        />
       </div>
       <hr className={styles.verticalLine} />
-      <div className={styles.row}>
-        <MessageModel client={client} createEmbedding={createEmbedding} openai={openai} mistral={mistral}/>
-      </div>
+      <LogProb />
     </main>
   );
 };
