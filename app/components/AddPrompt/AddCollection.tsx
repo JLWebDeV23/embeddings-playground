@@ -3,6 +3,7 @@ import React, { cloneElement, useState } from "react";
 import styles from "./AddCollection.module.css";
 import { QdrantClient } from "@qdrant/js-client-rest";
 import { v4 as uuidv4 } from "uuid";
+import TextBox from "../TextBox/TextBox";
 
 type AddCollectionProps = {
   client: QdrantClient;
@@ -89,16 +90,16 @@ const AddCollection: React.FC<AddCollectionProps> = ({
     return chunks;
   };
 
-  const getCollectionsList  = async () => {
+  const getCollectionsList = async () => {
     const collections = await client.getCollections();
     return collections.collections;
-  }
+  };
 
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     let collectionName = prompt(`Enter a collection name:
 - - -
-${((await getCollectionsList()).map((collection) => collection.name)).join("\n")}
+${(await getCollectionsList()).map((collection) => collection.name).join("\n")}
 - - -
     `);
     const collectionExists: boolean = (
@@ -135,23 +136,13 @@ ${((await getCollectionsList()).map((collection) => collection.name)).join("\n")
 
   return (
     <section className="w-full">
-      <form action="" onSubmit={handleFormSubmit}>
-        <div className={styles.inputContainer}>
-          <textarea
-            className={styles.addCollectionTextarea}
-            rows={7}
-            placeholder="Prompt to store to collection"
-            value={inputValue}
-            onChange={handleInputChange}
-          />
-          <button
-            className="btn absolute right-0 top-2 h-2 translate-x-[-15%] p-4"
-            type="submit"
-          >
-            Store
-          </button>
-        </div>
-      </form>
+      <TextBox
+        placeholder="Prompt to store to collsection"
+        nameBtn="Add"
+        inputValue={inputValue}
+        handleInputChange={handleInputChange}
+        handleFormSubmit={handleFormSubmit}
+      />
     </section>
   );
 };

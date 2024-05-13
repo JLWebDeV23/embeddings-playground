@@ -3,6 +3,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import styles from "./MessageModel.module.css";
 import { QdrantClient } from "@qdrant/js-client-rest";
 import SelectModel from "../SelectModel/SelectModel";
+import TextBox from "../TextBox/TextBox";
 
 type MessageModelProps = {
   client: QdrantClient;
@@ -84,8 +85,12 @@ const MessageModel: React.FC<MessageModelProps> = ({
     // Stringify the retrieved chunk
     const retrievedChunk = result
       .map(
-      (result) =>
-        `-> ${JSON.stringify((result.payload?.input as string).replace(/"/g, "").replace(/\n/g, " "))}`
+        (result) =>
+          `-> ${JSON.stringify(
+            (result.payload?.input as string)
+              .replace(/"/g, "")
+              .replace(/\n/g, " ")
+          )}`
       )
       .join("\n");
 
@@ -98,8 +103,8 @@ Use your prior knowledge to best describe the context of the query.
 Query: ${userPrompt}
 Answer: 
     `;
-// Message
-//Given the context information and not prior knowledge, answer the query
+    // Message
+    //Given the context information and not prior knowledge, answer the query
 
     // const query: string = `${retrievedChunk} \n\n---\n\nYour Message: ${userPrompt}`;
 
@@ -126,23 +131,13 @@ Answer:
 
   return (
     <section className="w-full">
-      <form action="" onSubmit={handleFormSubmit}>
-        <div className={styles.inputContainer}>
-          <textarea
-            className={styles.messageModelTextarea}
-            rows={7}
-            placeholder="Message ChatGPT"
-            value={inputValue}
-            onChange={handleInputChange}
-          />
-          <button
-            className="btn absolute right-0 top-2 h-2 translate-x-[-8%] "
-            type="submit"
-          >
-            Submit
-          </button>
-        </div>
-      </form>
+      <TextBox
+        placeholder="Message ChatGPT"
+        nameBtn="Submit"
+        inputValue={inputValue}
+        handleInputChange={handleInputChange}
+        handleFormSubmit={handleFormSubmit}
+      />
       <SelectModel onModelChange={handleModelChange} />
       <div className="modelResponse mt-5 ">
         <pre className="text-wrap">

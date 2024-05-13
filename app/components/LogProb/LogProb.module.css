@@ -1,0 +1,5 @@
+.logprob {
+    margin: 10px 20px;
+    display: flex;
+    flex-direction: column;
+}

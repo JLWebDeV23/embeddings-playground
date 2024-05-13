@@ -36,6 +36,8 @@ const Main = () => {
   return (
     //w-full h-full p-10 flex justify-between
     <main className="">
+      <h1 id={styles.h1}>Retrieval Augmented Generation</h1>
+
       <div className={styles.row}>
         <div className={styles.col}>
           <AddCollection client={client} createEmbedding={createEmbedding} />
@@ -51,6 +53,7 @@ const Main = () => {
         />
       </div>
       <hr className={styles.verticalLine} />
+      <h1 id={styles.h1}>LogProb</h1>
       <LogProb />
     </main>
   );
