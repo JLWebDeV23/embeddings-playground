@@ -3,3 +3,12 @@
     display: flex;
     flex-direction: column;
 }
+
+.tokenizer {
+    margin-top: 50px;
+}
+
+.token {
+    border: none;
+    cursor: pointer;
+}
