@@ -22,3 +22,27 @@ export const createEmbedding = async (input: string | []) => {
 
   return embedding;
 };
+
+export const createChatCompletion = async (input: string) => {
+  const newInput: string = `System Message: Just complete the sentence: ${input}`;
+  const completion = await openai.completions.create({
+    model: "gpt-3.5-turbo-instruct",
+    prompt: newInput,
+    max_tokens: 7,
+    logprobs: 2,
+    temperature: 0,
+    // stream: true,
+  });
+  return completion.choices[0].text;
+};
+
+export const createChatCompletionLogProb = async (input: string) => {
+  const completion = await openai.chat.completions.create({
+    messages: [{ role: "user", content: input }],
+    model: "gpt-3.5-turbo",
+    logprobs: true,
+    top_logprobs: 2,
+    temperature: 0.0,
+  });
+  return completion.choices[0];
+};
