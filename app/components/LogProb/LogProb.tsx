@@ -1,20 +1,16 @@
 import React, { use, useState } from "react";
 import styles from "./LogProb.module.css";
 import TextBox from "../TextBox/TextBox";
-import { openai } from "../../utils/functions";
-import { returnDownForwardOutline } from "ionicons/icons";
-import { IonIcon } from "@ionic/react";
 import { WordItem } from "@/app/utils/treeNode";
-import { createChatCompletion, createChatCompletionLogProb } from "../../utils/functions";
-import { split } from "postcss/lib/list";
+import { createChatCompletionLogProb } from "../../utils/functions";
+import OpenAI from "openai";
+import NewLogProbCompletion from "../NewLogProbCompletion/NewLogProbCompletion";
 
 const LogProb = () => {
   const [inputValue, setInputValue] = useState<string>("");
-  const [completionMessage, setCompletionMessage] = useState<string>("");
   const [logProbs, setLogProbs] = useState<any>([]);
-  const [selectedWord, setSelectedWord] = useState<string>("");
-  // const [wordItems, setWordItems] = useState<any>([]);
-  const items: any[] = [];
+  const [myParent, setMyParent] = useState<OpenAI.ChatCompletion.Choice | null>(null);
+  let wordItems = new WordItem([], null, '', null);
 
   /**
    * Color the tokens based on their log probabilities.
@@ -38,33 +34,15 @@ const LogProb = () => {
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log(inputValue);
-    const completionLogProb = (await createChatCompletionLogProb(inputValue)).logprobs?.content;
-    setLogProbs(completionLogProb);
+    const completionLogProb: OpenAI.ChatCompletion.Choice = await createChatCompletionLogProb(inputValue);
+    // array of logprobs objects
+    const logProbs = completionLogProb.logprobs?.content;
+
+    // add to wordItems
+    wordItems.completionContent = completionLogProb;
+    setMyParent(completionLogProb);
+    setLogProbs(logProbs);
     setInputValue("");
-  };
-
-  const handleWordClick = async (word: string, logProbs: any) => {
-    // console.log("WordClick: " + word);
-    // setSelectedWord(word);
-    // console.log(selectedWord);
-    // console.log(items.map((wordItem: any) => wordItem.token).join(""));
-    const newStrings: string[] = [];
-    for (const logProb of logProbs) {
-      if (logProb.token === word) {
-        break;
-      } else {
-        newStrings.push(logProb.token);
-      }
-    }
-    const splitWord: string = newStrings.join("");
-    console.log(splitWord + ": "+ "Generated: " + await createChatCompletion(splitWord));
-    // const newStrings = logProbs.map((logProb: any) => logProb.token);
-    // console.log(logProbs.map((logProb: any) => logProb.token !== word));
-  };
-  const addWordItems = (logProb: any) => {
-    items.push(logProb);
-
-    // console.log("WordItems: " + wordItems);
   };
 
   return (
@@ -78,29 +56,9 @@ const LogProb = () => {
       />
       <div className={styles.tokenizer}>
         <div className={styles.generatedResponse}>
-          {logProbs.map((logProb: any, key: number, logProbs: any) => {
-            addWordItems(logProb);
-            // console.log("My logProb: " + logProb);
+          {logProbs.map((logProb: any, key: string, logProbs: any) => {
             return (
-              <span
-                className={styles.token}
-                key={key}
-                style={{
-                  color: colorScaler(logProb.logprob),
-                  cursor: "pointer",
-                }}
-                onClick={() => handleWordClick(logProb.token, logProbs)}
-              >
-                {logProb.token}
-                {logProb.token === selectedWord && (
-                  <>
-                    <IonIcon
-                      icon={returnDownForwardOutline}
-                      size="large"
-                    ></IonIcon>
-                  </>
-                )}
-              </span>
+              <NewLogProbCompletion key={key} wordItems={wordItems} logProb={logProb} logProbs={logProbs} />
             );
           })}
         </div>

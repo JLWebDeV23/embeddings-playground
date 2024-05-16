@@ -2,57 +2,89 @@ import React, { useState } from "react";
 import { returnDownForwardOutline } from "ionicons/icons";
 import { IonIcon } from "@ionic/react";
 import styles from "./NewLogProbCompletion.module.css";
+import {
+  createChatCompletion,
+  createChatCompletionLogProb,
+} from "../../utils/functions";
 import { openai } from "../../utils/functions";
+import OpenAI from "openai";
+import { WordItem } from "@/app/utils/treeNode";
 
 type NewLogProbCompletionProps = {
-    newLogProb: any;
-}
+  key: string;
+  wordItems: WordItem;
+  // handleWordClick: (word: string, logProbs: any) => void,
+  logProb: any;
+  logProbs: any;
+};
 
-const NewLogProbCompletion: React.FC<NewLogProbCompletionProps> = ({newLogProb}) => {
-    const [logProb, setLogProb] = useState<any>([]);
+const NewLogProbCompletion: React.FC<NewLogProbCompletionProps> = ({
+  key,
+  wordItems,
+  // handleWordClick,
+  logProb,
+  logProbs,
+}) => {
+  const [selectedWord, setSelectedWord] = useState<string>("");
 
-    const createLogProb = async (input: string) => {
-        const completion = await openai.chat.completions.create({
-            messages: [{ role: "user", content: input }],
-            model: "gpt-3.5-turbo",
-            logprobs: true,
-            top_logprobs: 2,
-            temperature: 0.0,
-        });
-        setLogProb(completion.choices[0].logprobs?.content);
-    };
+  /**
+   * Color the tokens based on their log probabilities.
+   * high -> low
+   * green -> blue -> purple -> orange -> red
+   *
+   */
+  const colorScaler = (logProb: number) => {
+    const newLogProb = Math.exp(logProb);
+    if (newLogProb < 1 && newLogProb > 0.998) {
+      return "#D0E37F";
+    } else {
+      return "#d1603d";
+    }
+  };
 
-    const colorScaler = (logProb: number) => {
-        const newLogProb = Math.exp(logProb);
-        if (newLogProb < 1 && newLogProb > 0.998) {
-          return "#D0E37F";
-        } else {
-          return "#d1603d";
-        }
-      };
+  const handleWordClick = async (word: string, logProbs: any) => {
+    setSelectedWord(word);
+    const newStrings: string[] = [];
+    for (const logProb of logProbs) {
+      if (logProb.token === word) {
+        break;
+      } else {
+        newStrings.push(logProb.token);
+      }
+    }
+    const splitWord: string = newStrings.join("");
+    const completionContent: OpenAI.ChatCompletion.Choice =
+      await createChatCompletion(splitWord);
+    console.log(completionContent);
+    const parent = wordItems.completionContent;
+    console.log("My Parent: " + logProbs);
+
+    wordItems.addChild(
+      new WordItem([], logProbs, splitWord, completionContent)
+    );
+    console.log(
+      splitWord + ": " + "Generated: " + completionContent.message.content
+    );
+    console.log(wordItems);
+  };
 
   return (
-    <div className={styles.newLogProbCompletion}>
-      <IonIcon icon={returnDownForwardOutline} size="large"></IonIcon>
-        <div>
-            {/* {console.log(newLogProb)} */}
-            {newLogProb.map((logProb: any, key: number) => {
-            return (
-              <span
-                className={styles.token}
-                key={key}
-                style={{
-                  color: colorScaler(logProb.logprob),
-                  cursor: "pointer",
-                }}
-                // onClick={() => handleWordClick(logProb.token, key)}
-              >
-                {logProb.token}
-              </span>
-            );
-          })}
-        </div>
-    </div>
+    <span
+      className={styles.token}
+      // key={key}
+      style={{
+        color: colorScaler(logProb.logprob),
+        cursor: "pointer",
+      }}
+      onClick={() => handleWordClick(logProb.token, logProbs)}
+    >
+      {logProb.token}
+      {logProb.token === selectedWord && (
+        <>
+          <IonIcon icon={returnDownForwardOutline} size="large"></IonIcon>
+        </>
+      )}
+    </span>
   );
 };
 

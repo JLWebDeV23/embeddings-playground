@@ -45,7 +45,7 @@ const MessageModel: React.FC<MessageModelProps> = ({
       model: "mistral-tiny",
       messages: [{ role: "user", content: prompt }],
     });
-    return completion.choices[0].message.content;
+    return completion.OpenAI.ChatCompletion.Choices[0].message.content;
   };
 
   const openaiChatCompletetion = async (prompt: string) => {
@@ -53,7 +53,7 @@ const MessageModel: React.FC<MessageModelProps> = ({
       messages: [{ role: "user", content: prompt }],
       model: "gpt-3.5-turbo",
     });
-    return completion.choices[0].message.content;
+    return completion.OpenAI.ChatCompletion.Choices[0].message.content;
   };
 
   const getCollectionsList = async () => {
