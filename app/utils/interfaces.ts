@@ -1,4 +1,6 @@
+import OpenAI from "openai";
+
 export interface TreeNodeInterface {
-  parent: TreeNodeInterface | null;
+  parent: OpenAI.ChatCompletion.Choice | null;
   children: TreeNodeInterface[];
 }

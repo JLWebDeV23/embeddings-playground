@@ -1,10 +1,11 @@
 import { TreeNodeInterface } from "./interfaces";
+import OpenAI from "openai";
 
 export class TreeNode implements TreeNodeInterface {
-  parent: TreeNodeInterface | null;
+  parent: OpenAI.ChatCompletion.Choice | null;
   children: TreeNodeInterface[];
 
-  constructor(parent: TreeNodeInterface | null) {
+  constructor(parent: OpenAI.ChatCompletion.Choice | null) {
     this.parent = parent;
     this.children = [];
   }
@@ -19,22 +20,21 @@ export class TreeNode implements TreeNodeInterface {
 }
 
 export class WordItem extends TreeNode {
-  parent: WordItem | null;
+  parent: OpenAI.ChatCompletion.Choice | null;
   children: [];
-  split: [];
-  completionContent: [];
+  split: string;
+  completionContent: OpenAI.ChatCompletion.Choice | null;
 
   constructor(
     children: [],
-    parent: WordItem["parent"] | null,
-    split: [],
-    completion: [],
-    completionContent: []
+    parent: OpenAI.ChatCompletion.Choice | null,
+    split: string,
+    completionContent: OpenAI.ChatCompletion.Choice | null
   ) {
     super(parent);
     this.children = children;
     this.split = split;
     this.completionContent = completionContent;
-    this.parent = null;
+    this.parent = parent;
   }
 }

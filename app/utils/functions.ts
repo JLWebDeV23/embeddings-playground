@@ -1,7 +1,6 @@
 import { QdrantClient } from "@qdrant/js-client-rest";
 import OpenAI from "openai";
 import MistralClient from "@mistralai/mistralai";
-
 // utils/functions.ts
 export const client = new QdrantClient({
   url: "http://localhost:6333",
@@ -23,20 +22,24 @@ export const createEmbedding = async (input: string | []) => {
   return embedding;
 };
 
-export const createChatCompletion = async (input: string) => {
+export const createChatCompletion = async (
+  input: string
+): Promise<OpenAI.ChatCompletion.Choice> => {
   const newInput: string = `System Message: Just complete the sentence: ${input}`;
-  const completion = await openai.completions.create({
-    model: "gpt-3.5-turbo-instruct",
-    prompt: newInput,
-    max_tokens: 7,
-    logprobs: 2,
-    temperature: 0,
+  const completion = await openai.chat.completions.create({
+    messages: [{ role: "user", content: newInput }],
+    model: "gpt-3.5-turbo",
+    logprobs: true,
+    top_logprobs: 2,
+    temperature: 0.0,
     // stream: true,
   });
-  return completion.choices[0].text;
+  return completion.choices[0];
 };
 
-export const createChatCompletionLogProb = async (input: string) => {
+export const createChatCompletionLogProb = async (
+  input: string
+): Promise<OpenAI.ChatCompletion.Choice> => {
   const completion = await openai.chat.completions.create({
     messages: [{ role: "user", content: input }],
     model: "gpt-3.5-turbo",
