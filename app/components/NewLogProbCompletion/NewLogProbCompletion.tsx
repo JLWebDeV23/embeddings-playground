@@ -90,23 +90,24 @@ const NewLogProbCompletion: React.FC<NewLogProbCompletionProps> = ({
 
 export default NewLogProbCompletion;
 
-// A dog is a domesticated mammal that belongs to the Canidae family. They are known for their loyalty, companionship, and ability to be trained for various tasks. Dogs come in a wide variety of breeds, each with their own unique characteristics and traits. They are often kept as pets and are known for their close bond with humans.
 
-// return (
-//     <span
-//     // className={styles.token}
-//     key={key}
-//     style={{
-//       color: colorScaler(logProb.logprob),
-//       cursor: "pointer",
-//     }}
-//     onClick={() => handleWordClick(logProb.token, key)}
-//   >
-//     {logProb.token}
-//     {logProb.token === selectedWord && (
-//       <>
-//         <p>Ka-chow</p>
-//       </>
-//     )}
-//   </span>
-// )
+// save points 
+// <span
+              //   className={styles.token}
+              //   key={key}
+              //   style={{
+              //     color: colorScaler(logProb.logprob),
+              //     cursor: "pointer",
+              //   }}
+              //   onClick={() => handleWordClick(logProb.token, logProbs)}
+              // >
+              //   {logProb.token}
+              //   {logProb.token === selectedWord && (
+              //     <>
+              //       <IonIcon
+              //         icon={returnDownForwardOutline}
+              //         size="large"
+              //       ></IonIcon>
+              //     </>
+              //   )}
+              // </span>
