@@ -9,6 +9,7 @@ import MistralClient from "@mistralai/mistralai";
 import Delete from "../DeleteCollection/Delete";
 import InsertItem from "../InsertItem/InsertItem";
 import LogProb from "../LogProb/LogProb";
+import ModelCompare from "@/app/page/ModelCompare/ModelCompare";
 
 
 const Main = () => {
@@ -60,8 +61,7 @@ const Main = () => {
       <hr className={styles.verticalLine} />
       <h1 id={styles.h1}>Model Compare</h1>
       <hr className={styles.verticalLine} />
-
-
+      <ModelCompare />
     </main>
   );
 };
