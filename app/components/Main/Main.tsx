@@ -10,7 +10,9 @@ import Delete from "../DeleteCollection/Delete";
 import InsertItem from "../InsertItem/InsertItem";
 import LogProb from "../LogProb/LogProb";
 
+
 const Main = () => {
+
   const client = new QdrantClient({
     url: "http://localhost:6333",
   });
@@ -55,6 +57,11 @@ const Main = () => {
       <hr className={styles.verticalLine} />
       <h1 id={styles.h1}>LogProb</h1>
       <LogProb />
+      <hr className={styles.verticalLine} />
+      <h1 id={styles.h1}>Model Compare</h1>
+      <hr className={styles.verticalLine} />
+
+
     </main>
   );
 };

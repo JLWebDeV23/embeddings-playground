@@ -6,26 +6,29 @@ import {
   createChatCompletion,
   createChatCompletionLogProb,
 } from "../../utils/functions";
-import { openai } from "../../utils/functions";
 import OpenAI from "openai";
 import { WordItem } from "@/app/utils/treeNode";
 
 type NewLogProbCompletionProps = {
-  key: string;
+  uniqueKey: number;
+  id: string;
   wordItems: WordItem;
   // handleWordClick: (word: string, logProbs: any) => void,
   logProb: any;
   logProbs: any;
+  searchWord: (node: WordItem, target: string) => WordItem | null | undefined;
 };
 
 const NewLogProbCompletion: React.FC<NewLogProbCompletionProps> = ({
-  key,
+  uniqueKey,
   wordItems,
   // handleWordClick,
   logProb,
   logProbs,
+  searchWord,
 }) => {
   const [selectedWord, setSelectedWord] = useState<string>("");
+  const [splitString, setSplitString] = useState<string>("");
 
   /**
    * Color the tokens based on their log probabilities.
@@ -52,26 +55,35 @@ const NewLogProbCompletion: React.FC<NewLogProbCompletionProps> = ({
         newStrings.push(logProb.token);
       }
     }
+    // Split string
     const splitWord: string = newStrings.join("");
+    setSplitString(splitWord);
     const completionContent: OpenAI.ChatCompletion.Choice =
-      await createChatCompletion(splitWord);
+      await createChatCompletion(splitString);
     console.log(completionContent);
     const parent = wordItems.completionContent;
-    console.log("My Parent: " + logProbs);
 
-    wordItems.addChild(
-      new WordItem([], logProbs, splitWord, completionContent)
-    );
-    console.log(
-      splitWord + ": " + "Generated: " + completionContent.message.content
-    );
-    console.log(wordItems);
+    // wordItems.addChild(
+    //   new WordItem([], logProbs, splitWord, completionContent)
+    // );
+
+    searchWord(wordItems, splitString)?.completionContent?.message.content;
+    // console.log(wordItems);
+    // const wordNode: WordItem | null | undefined = searchWord(
+    //   wordItems,
+    //   splitWord
+    // );
+    // console.log(wordNode);
+    // console.log(
+    //   `where is my node ${wordNode?.completionContent?.message.content}`
+    // );
+    // console.log("node disaapeared");
   };
 
   return (
     <span
       className={styles.token}
-      // key={key}
+      key={uniqueKey}
       style={{
         color: colorScaler(logProb.logprob),
         cursor: "pointer",
@@ -81,7 +93,15 @@ const NewLogProbCompletion: React.FC<NewLogProbCompletionProps> = ({
       {logProb.token}
       {logProb.token === selectedWord && (
         <>
-          <IonIcon icon={returnDownForwardOutline} size="large"></IonIcon>
+          <div className={styles.icon}>
+            <IonIcon icon={returnDownForwardOutline} size="small"></IonIcon>
+            {
+              searchWord(wordItems, splitString)?.completionContent?.message
+                .content
+            }
+            hello
+          </div>
+  
         </>
       )}
     </span>
@@ -90,24 +110,23 @@ const NewLogProbCompletion: React.FC<NewLogProbCompletionProps> = ({
 
 export default NewLogProbCompletion;
 
-
-// save points 
+// save points
 // <span
-              //   className={styles.token}
-              //   key={key}
-              //   style={{
-              //     color: colorScaler(logProb.logprob),
-              //     cursor: "pointer",
-              //   }}
-              //   onClick={() => handleWordClick(logProb.token, logProbs)}
-              // >
-              //   {logProb.token}
-              //   {logProb.token === selectedWord && (
-              //     <>
-              //       <IonIcon
-              //         icon={returnDownForwardOutline}
-              //         size="large"
-              //       ></IonIcon>
-              //     </>
-              //   )}
-              // </span>
+//   className={styles.token}
+//   key={key}
+//   style={{
+//     color: colorScaler(logProb.logprob),
+//     cursor: "pointer",
+//   }}
+//   onClick={() => handleWordClick(logProb.token, logProbs)}
+// >
+//   {logProb.token}
+//   {logProb.token === selectedWord && (
+//     <>
+//       <IonIcon
+//         icon={returnDownForwardOutline}
+//         size="large"
+//       ></IonIcon>
+//     </>
+//   )}
+// </span>

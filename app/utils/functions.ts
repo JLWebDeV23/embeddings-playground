@@ -25,7 +25,7 @@ export const createEmbedding = async (input: string | []) => {
 export const createChatCompletion = async (
   input: string
 ): Promise<OpenAI.ChatCompletion.Choice> => {
-  const newInput: string = `System Message: Just complete the sentence: ${input}`;
+  const newInput: string = `System Message: Just complete the sentence and the output must only be the chat completion from given input but not showing the input: ${input}`;
   const completion = await openai.chat.completions.create({
     messages: [{ role: "user", content: newInput }],
     model: "gpt-3.5-turbo",

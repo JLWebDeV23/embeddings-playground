@@ -2,36 +2,36 @@ import { TreeNodeInterface } from "./interfaces";
 import OpenAI from "openai";
 
 export class TreeNode implements TreeNodeInterface {
-  parent: OpenAI.ChatCompletion.Choice | null;
-  children: TreeNodeInterface[];
+  id: number;
+  name: string;
+  children?: TreeNodeInterface[] | undefined;
 
-  constructor(parent: OpenAI.ChatCompletion.Choice | null) {
-    this.parent = parent; // parent nodee is the value
+  constructor(id: number, name: string) {
+    this.id = id;
+    this.name = name;
     this.children = [];
   }
 
-  addChild(child: TreeNodeInterface) {
-    this.children.push(child);
-  }
-
-  removeChild(child: TreeNodeInterface) {
-    this.children = this.children.filter((c) => c !== child);
+  addChild(node: TreeNodeInterface) {
+    this.children!.push(node);
   }
 }
 
-export class WordItem extends TreeNode {
+export class Sentence extends TreeNode {
+  id: number = 0;
+  split: string;
   parent: OpenAI.ChatCompletion.Choice | null;
   children: [];
-  split: string;
   completionContent: OpenAI.ChatCompletion.Choice | null;
 
   constructor(
+    id: number,
+    split: string,
     children: [],
     parent: OpenAI.ChatCompletion.Choice | null,
-    split: string,
     completionContent: OpenAI.ChatCompletion.Choice | null
   ) {
-    super(parent);
+    super(id, split);
     this.children = children;
     this.split = split;
     this.completionContent = completionContent;

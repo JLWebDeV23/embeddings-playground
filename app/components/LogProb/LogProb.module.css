@@ -8,9 +8,7 @@
     margin-top: 50px;
 }
 
-.token {
-    border: none;
-    /* display: flex;
-    flex-direction: column; */
-    cursor: pointer;
+.generatedResponse {
+    /* display: flex; */
+    /* flex-wrap: wrap; */
 }
