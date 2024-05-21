@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Racing+Sans+One&family=Roboto:wght@100;300;400;500;700;900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Racing+Sans+One&family=Roboto:wght@100;300;400;500;700;900&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -15,10 +15,9 @@
   --foreground-rgb: 0, 0, 0;
   --background: var(--dark);
   --primary: #fa9f9fc8;
-  --dark-grey: #0C0F19;
-  --red: #DC244C;
+  --dark-grey: #0c0f19;
+  --red: #dc244c;
   --dark: #131a29b5;
-  background: linear-gradient( #2f1f48c1, #96818fb1, #4f6daeb5);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -27,13 +26,24 @@
   }
 }
 
+html {
+  height: 100vh;
+  width: 100vw;
+  /* background: linear-gradient(#2f1f48c1, #96818fb1, #4f6daeb5); */
+
+}
+
 body {
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
     "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  width: 100%;
+  height: 100%;
+  padding: 0 7em;
+  /* background: linear-gradient(#2f1f48c1, #96818fb1, #4f6daeb5); */
+  /* -webkit-font-smoothing: antialiased; */
+  /* -moz-osx-font-smoothing: grayscale; */
 }
 
 code {

@@ -6,7 +6,7 @@ export class TreeNode implements TreeNodeInterface {
   children: TreeNodeInterface[];
 
   constructor(parent: OpenAI.ChatCompletion.Choice | null) {
-    this.parent = parent; // parent nodee is the value
+    this.parent = parent; // parent node is the value
     this.children = [];
   }
 
