@@ -1,7 +1,5 @@
 import React from "react";
 import styles from "./TextArea.module.css";
-import { IonIcon } from "@ionic/react";
-import { add } from "ionicons/icons";
 
 type TextAreaProps = {
   // nameBtn: string;

@@ -14,7 +14,7 @@
     ]
   },
   {
-    "model": "Llama 2",
+    "model": "Llama 3",
     "submodel": [
       {
         "model": "LLaMA3 8b"

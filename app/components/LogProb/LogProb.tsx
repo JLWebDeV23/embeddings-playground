@@ -10,6 +10,7 @@ import { Sentence } from "@/app/utils/newTreeNode";
 import { LogProbTreeNode } from "@/app/utils/interfaces";
 import NewLogProb from "../NewLogProb/NewLogProb";
 
+
 export interface TreeNode {
   id: number;
   splitString: string | null;
