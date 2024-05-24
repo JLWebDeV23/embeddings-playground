@@ -4,6 +4,7 @@ dotenv.config();
 import OpenAI from "openai";
 import { QdrantClient } from "@qdrant/js-client-rest";
 import MistralClient, { ChatCompletionResponse } from "@mistralai/mistralai";
+import { Groq } from "groq-sdk";
 import Anthropic from "@anthropic-ai/sdk";
 import { ChatCompletion } from "openai/resources/index.mjs";
 import similarity from "compute-cosine-similarity";
@@ -23,6 +24,8 @@ type Response =
   | OpenAI.Chat.Completions.ChatCompletion
   // | Anthropic.Message
   | null;
+
+// const Groq: NodeRequire = require("groq-sdk");
 
 // select model and return response from the model
 export const modelResponse = async (model: Model) => {
@@ -53,17 +56,31 @@ export const modelResponse = async (model: Model) => {
       break;
 
     case "llama":
-      const newClient = new OpenAI({
-        apiKey: model.apiKey,
-        dangerouslyAllowBrowser: true,
-        baseURL: "https://api.llamaai.com",
+      const groq = new Groq({
+        apiKey: process.env.NEXT_PUBLIC_GROPQ_API_KEY,
       });
-      response = await newClient.chat.completions.create({
-        messages: model.messages,
-        model: model.subModel,
+
+      groq.chat.completions.create({
+        messages: [
+          {
+            role: "user",
+            content: "Explain the importance of fast language models",
+          },
+        ],
+        model: "llama3-8b-8192",
       });
-      // Extract the content from the response
-      content = response.choices[0].message.content;
+
+      // const newClient = new OpenAI({
+      //   apiKey: process.env.NEXT_PUBLIC_LLAMA_API_KEY,
+      //   dangerouslyAllowBrowser: true,
+      //   baseURL: "https://api.llamaai.com",
+      // });
+      // response = await newClient.chat.completions.create({
+      //   messages: model.messages,
+      //   model: model.subModel,
+      // });
+      // // Extract the content from the response
+      // content = response.choices[0].message.content;
       break;
 
     // case "Claude":
@@ -82,9 +99,9 @@ export const modelResponse = async (model: Model) => {
 };
 
 export const createEmbedding = async (input: string | []) => {
-  const embedding = (
+  const embedding: number[] = (
     await new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
+      apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
       dangerouslyAllowBrowser: true,
     }).embeddings.create({
       model: "text-embedding-3-small",
@@ -96,12 +113,20 @@ export const createEmbedding = async (input: string | []) => {
 };
 
 // compare cosine similarity between two model response
-const createCosineSimilarity: (
-  response1: any[],
-  response2: any[]
-) => number | null = (response1: any[], response2: any[]) => {
+// TODO: function takes input for now, will need to look into taking as []
+export const createCosineSimilarity: (
+  response1: string | null,
+  response2: string | null
+) => Promise<number | null> = async (
+  response1: string | null,
+  response2: string | null
+) => {
+  // Embeddings
+  const embedding1: number[] = await createEmbedding(response1!);
+  const embedding2: number[] = await createEmbedding(response2!);
+
   const cosineSimilarity: NodeRequire = require("compute-cosine-similarity");
 
-  createEmbedding(response1.message.content);
-  return similarity(embedding1, embedding2);
+  const similarityScore = similarity(embedding1, embedding2);
+  return similarityScore;
 };

@@ -6,7 +6,7 @@ import styles from "./ModelCompare.module.css";
 import TextBox from "@/app/components/TextBox/TextBox";
 import TextArea from "@/app/components/TextArea/TextArea";
 import { createChatCompletion, createTest, createTest1 } from "@/app/utils/functions";
-import { createEmbedding, modelResponse } from "@/app/utils/modelProcessing"
+import { createEmbedding, modelResponse, createCosineSimilarity } from "@/app/utils/modelProcessing"
 
 
 const ModelCompare = () => {
@@ -20,12 +20,16 @@ const ModelCompare = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const completion = (await createTest(inputValue)).message;
-    // const completion1 = (await createTest1(inputValue)).message;
-    // const completion = createChatCompletion(inputValue);
-  
-    console.log(completion);
-    // console.log(completion1);
+    // TESTING FOR SIMILARITY
+      // GPT
+    const completion: string | null = (await createTest(inputValue)).message.content;
+      // Llama
+    const completion1: string | null = (await createTest1(inputValue)).message.content;
+    // similarity between the two completions      
+    console.log(await createCosineSimilarity(completion, completion1));
+    
+    console.log("GPT: " + completion);
+    console.log("Llama: " + completion1);
 
   };
   return (

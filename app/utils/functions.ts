@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 dotenv.config();
-
+import { Groq } from "groq-sdk";
 import { QdrantClient } from "@qdrant/js-client-rest";
 import OpenAI from "openai";
 import MistralClient from "@mistralai/mistralai";
@@ -85,20 +85,19 @@ export const createTest1 = async (
   ---
   ${input}
   `;
-
-  const newClient = new OpenAI({
-    apiKey:
-      "LL-lfo3fTPWZUehV5n2IoRByb2eciQn5h4z8JQwHN2ZZw8XXt6WRew8KxrgEIDvJbBZ",
+  const groq = new Groq({
+    apiKey: process.env.NEXT_PUBLIC_GROPQ_API_KEY,
     dangerouslyAllowBrowser: true,
-    baseURL: "https://api.llama-api.com",
   });
-  const completion = await newClient.chat.completions.create({
-    model: "llama-13b-chat",
+
+  const completion = await groq.chat.completions.create({
     messages: [
       { role: "system", content: systemMessage },
       { role: "user", content: newInput },
     ],
+    model: "llama3-8b-8192",
   });
+
   return completion.choices[0];
 };
 
