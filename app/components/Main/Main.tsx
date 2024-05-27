@@ -59,7 +59,6 @@ const Main = () => {
       <hr className={styles.verticalLine} />
       <div className={styles.modelCompareLogo}>
         <h1 id={styles.h1}>Model Compare</h1>
-        <button className={`btn ${styles.modelBtn}`}>Model</button>
       </div>
       <hr className={styles.verticalLine} />
       <ModelCompare />

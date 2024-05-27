@@ -1,0 +1,51 @@
+.container {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.entryArea {
+    position: relative;
+    height: 62px;
+    line-height: 60px;
+}
+
+.input {
+    position: absolute;
+    width: 100%;
+    outline: none;
+    font-size: 1.5em;
+    line-height: 60px;
+    border-radius: 10px;
+    padding-left: 10px;
+    border: 1px solid #a09b9c49;
+    background: transparent;
+    transition: 0.1s ease;
+    z-index: 1111;
+}
+
+.labelLine {
+    position: absolute;
+    left: 5px;
+    font-size: 1em;
+    color: #f0ffff;
+    padding: 0 5px;
+    /* margin: 0 px; */
+    background-color: #1D232A;
+    transition: 0.2 ease;
+}
+
+.input:focus,
+.input:valid {
+    color: #66ff00;
+    border: 1px solid #66ff00;
+}
+
+.input:focus + .labelLine,
+.input:valid + .labelLine{
+    color: #66ff00;
+    height: 27px;
+    line-height: 50px;
+    font-size: 1.1em;
+    transform: translate(0, -23px) scale(0.80);
+    z-index: 1111;
+}
