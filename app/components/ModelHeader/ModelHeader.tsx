@@ -73,23 +73,27 @@
 
 // export default ModelHeader;
 
-import React, { useEffect, useState } from "react";
+import React, { act, useEffect, useState } from "react";
 import ModelData from "../../../public/assets/data/ModelData.json";
 
 type ModelHeaderProps = {
-    dropdownContentDirection: "left" | "right";
-    onSubModelChange: (model: string) => void;
-}
+  dropdownContentDirection: "left" | "right";
+  onSubModelChange: (model: string, subModel: string) => void;
+};
 
-const ModelHeader: React.FC<ModelHeaderProps> = ({dropdownContentDirection, onSubModelChange}) => {
+const ModelHeader: React.FC<ModelHeaderProps> = ({
+  dropdownContentDirection,
+  onSubModelChange,
+}) => {
   const [activeModel, setActiveModel] = useState<null | number>(null);
   const [activeSubModel, setActiveSubModel] = useState<null | string>("");
+  const [model, setModel] = useState<string>("");
 
   useEffect(() => {
     if (activeSubModel) {
-        onSubModelChange(activeSubModel);
+      onSubModelChange(model, activeSubModel);
     }
-  }, [activeSubModel])
+  }, [activeSubModel]);
 
   return (
     <section className="flex justify-between w-full items-end">
@@ -120,7 +124,11 @@ const ModelHeader: React.FC<ModelHeaderProps> = ({dropdownContentDirection, onSu
                 {activeModel === index && (
                   <ul
                     tabIndex={0}
-                    className={`dropdown-content z-[1111] menu bg-base-100 rounded-box w-52 ${dropdownContentDirection === 'left' ? "translate-x-[13px]" : "translate-x-[-15px]"}`}
+                    className={`dropdown-content z-[1111] menu bg-base-100 rounded-box w-52 ${
+                      dropdownContentDirection === "left"
+                        ? "translate-x-[13px]"
+                        : "translate-x-[-15px]"
+                    }`}
                     onMouseEnter={() => setActiveModel(index)}
                     onMouseLeave={() => setActiveModel(null)}
                   >
@@ -128,7 +136,10 @@ const ModelHeader: React.FC<ModelHeaderProps> = ({dropdownContentDirection, onSu
                       // how to console log submodel here and set to submodel
                       <li
                         key={subIndex}
-                        onClick={() => setActiveSubModel(submodel.model)}
+                        onClick={() => {
+                          setActiveSubModel(submodel.model);
+                          setModel(model.model);
+                        }}
                       >
                         <a>{submodel.model}</a>
                       </li>

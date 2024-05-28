@@ -1,5 +1,5 @@
 require("dotenv").config();
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IonIcon } from "@ionic/react";
 import { repeatOutline } from "ionicons/icons";
 import styles from "./ModelCompare.module.css";
@@ -29,17 +29,18 @@ type ModelInteraction = {
 export type ModelsData = {
   firstModel: {
     model: string | "";
+    subModel: string | "";
     modelInteraction: ModelInteraction[] | null;
   } | null;
   secondModel: {
     model: string | "";
+    subModel: string | "";
     modelInteraction: ModelInteraction[] | null;
   } | null;
   score: number | null;
 } | null;
 
 const ModelCompare = () => {
-  const [isClicked, setIsClicked] = useState(false);
   const [modelsData, setModelsData] = useState<ModelsData | null>(null);
   // const [show, setShow] = useState(false);
   // const [numbers, setNumbers] = useState([2,3,4]);
@@ -49,10 +50,9 @@ const ModelCompare = () => {
   };
   useEffect(() => {
     // Testing for model selection
-    console.log(modelsData?.firstModel?.model);
-    console.log(modelsData?.secondModel?.model);
-  }, [modelsData?.firstModel?.model, modelsData?.secondModel?.model]);
-
+    console.log(`Model: ${modelsData?.firstModel?.model} SubModel: ${modelsData?.firstModel?.subModel}`);
+    console.log(`Model: ${modelsData?.secondModel?.model} SubModel: ${modelsData?.secondModel?.subModel}`);
+  }, [modelsData]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -75,7 +75,7 @@ const ModelCompare = () => {
       <div className="flex  flex-row gap-10 mt-2 mb-1">
         <ModelHeader
           dropdownContentDirection="right"
-          onSubModelChange={(model) => {
+          onSubModelChange={(model, subModel) => {
             setModelsData((prevModelsData: ModelsData) => {
               if (prevModelsData) {
                 return {
@@ -83,13 +83,18 @@ const ModelCompare = () => {
                   firstModel: {
                     ...prevModelsData.firstModel,
                     model: model,
+                    subModel: subModel,
                     modelInteraction:
                       prevModelsData.firstModel?.modelInteraction || null,
                   },
                 };
               } else {
                 return {
-                  firstModel: { model: model, modelInteraction: null },
+                  firstModel: {
+                    model: model,
+                    subModel: subModel,
+                    modelInteraction: null,
+                  },
                   secondModel: null,
                   score: null,
                 };
@@ -99,7 +104,7 @@ const ModelCompare = () => {
         />
         <ModelHeader
           dropdownContentDirection="left"
-          onSubModelChange={(model) => {
+          onSubModelChange={(model, subModel) => {
             setModelsData((prevModelsData: ModelsData) => {
               if (prevModelsData) {
                 return {
@@ -107,6 +112,7 @@ const ModelCompare = () => {
                   secondModel: {
                     ...prevModelsData.secondModel,
                     model: model,
+                    subModel: subModel,
                     modelInteraction:
                       prevModelsData.secondModel?.modelInteraction || null,
                   },
@@ -114,7 +120,11 @@ const ModelCompare = () => {
               } else {
                 return {
                   firstModel: null,
-                  secondModel: { model: model, modelInteraction: null },
+                  secondModel: {
+                    model: model,
+                    subModel: subModel,
+                    modelInteraction: null,
+                  },
                   score: null,
                 };
               }
@@ -154,8 +164,8 @@ const ModelCompare = () => {
             console.log(value);
             // chatcompletion and display to model one => add to modelsData
 
-            // push to the ModelsData
-
+            // chatcompletion of value using selected models and push both value to user and the derived completion to the ModelsData
+            
           }}
         />
       </div>

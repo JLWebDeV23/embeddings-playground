@@ -14,27 +14,29 @@
     ]
   },
   {
-    "model": "Llama 3",
+    "model": "LlaMA 3",
     "submodel": [
       {
-        "model": "LLaMA3 8b"
+        "model": "llama3-8b-8192"
       },
       {
-        "model": "LLaMA3 70b"
+        "model": "llama3-70b-8192"
       }
     ]
   },
   {
-    "model": "Mixtral",
+    "model": "Mistral",
     "submodel": [
       {
-        "model": "Mistral 7B"
-      },
+        "model": "mixtral-8x7b-32768"
+      }
+    ]
+  },
+  {
+    "model": "Gemma",
+    "submodel": [
       {
-        "model": "Mixtral 8x7b"
-      },
-      {
-        "model": "Mixtral 8x22B"
+        "model": "gemma-7b-it"
       }
     ]
   },
