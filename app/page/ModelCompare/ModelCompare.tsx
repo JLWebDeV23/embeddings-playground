@@ -33,7 +33,7 @@ export type ModelsData = {
     subModel: string | "";
     messages: any[] | null;
   } | null;
-  score: number | null;
+  score: (number | null )[];
 } | null;
 
 const ModelCompare = () => {
@@ -81,7 +81,7 @@ const ModelCompare = () => {
         value
       );
       // similarity score
-      const score: number | null = await createCosineSimilarity(
+      const newScore: number | null = await createCosineSimilarity(
         firstModelContent,
         secondModelContent
       );
@@ -109,7 +109,7 @@ const ModelCompare = () => {
               { role: "assistant", content: secondModelContent },
             ],
           },
-          score: score,
+          score: [...modelsData?.score || [], newScore]
         };
       });
 
@@ -117,6 +117,7 @@ const ModelCompare = () => {
       console.error("Error Message:", error);
     }
   };
+
   return (
     <div className={styles.modelCompare}>
       <div className="flex  flex-row gap-10 mt-2 mb-1">
@@ -142,7 +143,7 @@ const ModelCompare = () => {
                     messages: null,
                   },
                   secondModel: null,
-                  score: null,
+                  score: [],
                 };
               }
             });
@@ -170,7 +171,7 @@ const ModelCompare = () => {
                     subModel: subModel,
                     messages: null,
                   },
-                  score: null,
+                  score: [],
                 };
               }
             });
@@ -198,7 +199,7 @@ const ModelCompare = () => {
         <input type="text" className={styles.input} />
         <button></button>
       </div>
-      <UserAssistantResult />
+      <UserAssistantResult modelsData={modelsData} />
 
       <div className="mt-2">
         <InputBox

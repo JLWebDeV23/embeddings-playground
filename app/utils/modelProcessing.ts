@@ -129,5 +129,6 @@ export const createCosineSimilarity: (
   const cosineSimilarity: NodeRequire = require("compute-cosine-similarity");
 
   const similarityScore = similarity(embedding1, embedding2);
-  return similarityScore;
+  const roundedSimilarity = Number(similarityScore?.toFixed(8));
+  return roundedSimilarity;
 };
