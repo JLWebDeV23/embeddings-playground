@@ -19,8 +19,9 @@ import {
 import InputBox from "@/app/components/InputBox/InputBox";
 import UserAssistantResult from "@/app/components/UserAssistantResult/UserAssistantResult";
 
-//test
-
+// future implementation
+// lock boolean
+// arr of models
 export type ModelsData = {
   firstModel: {
     model: string | "";
@@ -45,8 +46,9 @@ const ModelCompare = () => {
   };
   useEffect(() => {
     // Testing for model selection
-    console.log(`Model: ${modelsData?.firstModel?.model} SubModel: ${modelsData?.firstModel?.subModel}`);
-    console.log(`Model: ${modelsData?.secondModel?.model} SubModel: ${modelsData?.secondModel?.subModel}`);
+    console.log(modelsData);
+
+    ;
   }, [modelsData]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -66,9 +68,55 @@ const ModelCompare = () => {
     console.log("Llama: " + completion1);
   };
 
-  const generateModelsData = async () => {
-    
-  }
+  const generateModelsData = async (value: string) => {
+
+    // completion of both selected models
+    try {
+      const firstModelContent: string | null = await modelResponse(
+        modelsData?.firstModel,
+        value
+      );
+      const secondModelContent: string | null = await modelResponse(
+        modelsData?.secondModel,
+        value
+      );
+      // similarity score
+      const score: number | null = await createCosineSimilarity(
+        firstModelContent,
+        secondModelContent
+      );
+
+      // construct object to be set to modelsData
+
+      setModelsData((modelsData: ModelsData) => {
+        return {
+          ...modelsData,
+          firstModel: {
+            model: modelsData?.firstModel?.model || "",
+            subModel: modelsData?.firstModel?.subModel || "",
+            messages: [
+              ...(modelsData?.firstModel?.messages || []),
+              { role: "user", content: value },
+              { role: "assistant", content: firstModelContent },
+            ],
+          },
+          secondModel: {
+            model: modelsData?.secondModel?.model || "",
+            subModel: modelsData?.secondModel?.subModel || "",
+            messages: [
+              ...(modelsData?.secondModel?.messages || []),
+              { role: "user", content: value },
+              { role: "assistant", content: secondModelContent },
+            ],
+          },
+          score: score,
+        };
+      });
+
+    } catch (error) {
+      console.error("Error Message:", error);
+    }
+  };
   return (
     <div className={styles.modelCompare}>
       <div className="flex  flex-row gap-10 mt-2 mb-1">
@@ -83,8 +131,7 @@ const ModelCompare = () => {
                     ...prevModelsData.firstModel,
                     model: model,
                     subModel: subModel,
-                    messages:
-                      prevModelsData.firstModel?.messages || null,
+                    messages: prevModelsData.firstModel?.messages || null,
                   },
                 };
               } else {
@@ -112,8 +159,7 @@ const ModelCompare = () => {
                     ...prevModelsData.secondModel,
                     model: model,
                     subModel: subModel,
-                    messages:
-                      prevModelsData.secondModel?.messages || null,
+                    messages: prevModelsData.secondModel?.messages || null,
                   },
                 };
               } else {
@@ -164,8 +210,7 @@ const ModelCompare = () => {
             // chatcompletion and display to model one => add to modelsData
 
             // chatcompletion of value using selected models and push both value to user and the derived completion to the ModelsData
-            const content = await modelResponse(modelsData, value);
-            console.log(content);
+            generateModelsData(value);
           }}
         />
       </div>

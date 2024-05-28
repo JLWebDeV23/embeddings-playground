@@ -95,7 +95,7 @@ const NewLogProbCompletion: React.FC<NewLogProbCompletionProps> = ({
         <>
           <div className={styles.icon}>
             <IonIcon
-              name="returnDownForwardOutline"
+              // name="returnDownForwardOutline"
               icon={returnDownForwardOutline}
               size="small"
             ></IonIcon>

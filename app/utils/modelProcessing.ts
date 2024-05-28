@@ -29,10 +29,11 @@ type Response =
 // const Groq: NodeRequire = require("groq-sdk");
 
 // select model and return response from the model
-export const modelResponse = async (model: ModelsData, value: string) => {
+export const modelResponse = async (model: any, value: string) => {
   let content: string | null | Anthropic.TextBlock[] = null;
   let response: Response = null;
-  switch (model?.firstModel?.model) {
+
+  switch (model.model) {
     case "OpenAI":
       const client = new OpenAI({
         apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
@@ -40,7 +41,7 @@ export const modelResponse = async (model: ModelsData, value: string) => {
       });
       response = await client.chat.completions.create({
         messages: [{ role: "user", content: value }],
-        model: model.firstModel.subModel,
+        model: model.subModel,
       });
       // Extract the content from the response
       content = response.choices[0].message.content;
@@ -64,7 +65,7 @@ export const modelResponse = async (model: ModelsData, value: string) => {
       try {
         response = await groq.chat.completions.create({
           messages: [{ role: "user", content: value }],
-          model: model.firstModel.subModel,
+          model: model.subModel,
         });
       } catch (error) {
         console.error("Error in Groq:", error);
