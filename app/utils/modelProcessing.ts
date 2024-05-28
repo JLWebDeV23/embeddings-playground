@@ -8,8 +8,6 @@ import { Groq } from "groq-sdk";
 import Anthropic from "@anthropic-ai/sdk";
 import { ChatCompletion } from "openai/resources/index.mjs";
 import similarity from "compute-cosine-similarity";
-import { Chat } from "openai/resources/beta/index.mjs";
-import { ModelsData } from "../page/ModelCompare/ModelCompare";
 // import LlamaAI from "llamaai";
 
 type Model = {

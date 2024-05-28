@@ -3,16 +3,8 @@ import React, { useEffect, useState } from "react";
 import { IonIcon } from "@ionic/react";
 import { repeatOutline } from "ionicons/icons";
 import styles from "./ModelCompare.module.css";
-import TextBox from "@/app/components/TextBox/TextBox";
-import TextArea from "@/app/components/TextArea/TextArea";
-import {
-  createChatCompletion,
-  createTest,
-  createTest1,
-} from "@/app/utils/functions";
 import ModelHeader from "@/app/components/ModelHeader/ModelHeader";
 import {
-  createEmbedding,
   modelResponse,
   createCosineSimilarity,
 } from "@/app/utils/modelProcessing";
@@ -38,8 +30,6 @@ export type ModelsData = {
 
 const ModelCompare = () => {
   const [modelsData, setModelsData] = useState<ModelsData | null>(null);
-  // const [show, setShow] = useState(false);
-  // const [numbers, setNumbers] = useState([2,3,4]);
   const [inputValue, setInputValue] = useState("");
   const handleTestChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInputValue(e.target.value);
@@ -47,26 +37,8 @@ const ModelCompare = () => {
   useEffect(() => {
     // Testing for model selection
     console.log(modelsData);
-
     ;
   }, [modelsData]);
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    // TESTING FOR SIMILARITY
-    // GPT
-    const completion: string | null = (await createTest(inputValue)).message
-      .content;
-    // Llama
-    const completion1: string | null = (await createTest1(inputValue)).message
-      .content;
-    // similarity between the two completions
-    console.log(await createCosineSimilarity(completion, completion1));
-
-    console.log("GPT: " + completion);
-    console.log("Llama: " + completion1);
-  };
 
   const generateModelsData = async (value: string) => {
 
@@ -87,7 +59,6 @@ const ModelCompare = () => {
       );
 
       // construct object to be set to modelsData
-
       setModelsData((modelsData: ModelsData) => {
         return {
           ...modelsData,
