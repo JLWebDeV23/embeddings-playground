@@ -21,21 +21,16 @@ import UserAssistantResult from "@/app/components/UserAssistantResult/UserAssist
 
 //test
 
-type ModelInteraction = {
-  user: string;
-  assistant: string;
-};
-
 export type ModelsData = {
   firstModel: {
     model: string | "";
     subModel: string | "";
-    modelInteraction: ModelInteraction[] | null;
+    messages: any[] | null;
   } | null;
   secondModel: {
     model: string | "";
     subModel: string | "";
-    modelInteraction: ModelInteraction[] | null;
+    messages: any[] | null;
   } | null;
   score: number | null;
 } | null;
@@ -70,6 +65,10 @@ const ModelCompare = () => {
     console.log("GPT: " + completion);
     console.log("Llama: " + completion1);
   };
+
+  const generateModelsData = async () => {
+    
+  }
   return (
     <div className={styles.modelCompare}>
       <div className="flex  flex-row gap-10 mt-2 mb-1">
@@ -84,8 +83,8 @@ const ModelCompare = () => {
                     ...prevModelsData.firstModel,
                     model: model,
                     subModel: subModel,
-                    modelInteraction:
-                      prevModelsData.firstModel?.modelInteraction || null,
+                    messages:
+                      prevModelsData.firstModel?.messages || null,
                   },
                 };
               } else {
@@ -93,7 +92,7 @@ const ModelCompare = () => {
                   firstModel: {
                     model: model,
                     subModel: subModel,
-                    modelInteraction: null,
+                    messages: null,
                   },
                   secondModel: null,
                   score: null,
@@ -113,8 +112,8 @@ const ModelCompare = () => {
                     ...prevModelsData.secondModel,
                     model: model,
                     subModel: subModel,
-                    modelInteraction:
-                      prevModelsData.secondModel?.modelInteraction || null,
+                    messages:
+                      prevModelsData.secondModel?.messages || null,
                   },
                 };
               } else {
@@ -123,7 +122,7 @@ const ModelCompare = () => {
                   secondModel: {
                     model: model,
                     subModel: subModel,
-                    modelInteraction: null,
+                    messages: null,
                   },
                   score: null,
                 };
@@ -160,12 +159,13 @@ const ModelCompare = () => {
           btnName="Add"
           InputText="User Message"
           btnStyle="rounded-none rounded-r-lg h-full translate-x-[15%]"
-          onClick={(value: string) => {
+          onClick={async (value: string) => {
             console.log(value);
             // chatcompletion and display to model one => add to modelsData
 
             // chatcompletion of value using selected models and push both value to user and the derived completion to the ModelsData
-            
+            const content = await modelResponse(modelsData, value);
+            console.log(content);
           }}
         />
       </div>

@@ -9,6 +9,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { ChatCompletion } from "openai/resources/index.mjs";
 import similarity from "compute-cosine-similarity";
 import { Chat } from "openai/resources/beta/index.mjs";
+import { ModelsData } from "../page/ModelCompare/ModelCompare";
 // import LlamaAI from "llamaai";
 
 type Model = {
@@ -28,60 +29,60 @@ type Response =
 // const Groq: NodeRequire = require("groq-sdk");
 
 // select model and return response from the model
-export const modelResponse = async (model: Model) => {
+export const modelResponse = async (model: ModelsData, value: string) => {
   let content: string | null | Anthropic.TextBlock[] = null;
   let response: Response = null;
-  switch (model.model) {
-    case "openai":
+  switch (model?.firstModel?.model) {
+    case "OpenAI":
       const client = new OpenAI({
-        apiKey: model.apiKey,
+        apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
         dangerouslyAllowBrowser: true,
       });
       response = await client.chat.completions.create({
-        messages: model.messages,
-        model: model.subModel,
+        messages: [{ role: "user", content: value }],
+        model: model.firstModel.subModel,
       });
       // Extract the content from the response
       content = response.choices[0].message.content;
       break;
 
-    case "mistral":
-      const mistral = new MistralClient(model.apiKey);
-      response = await mistral.chat({
-        model: model.subModel,
-        messages: model.messages,
-      });
-      // Extract the content from the response
-      content = response.choices[0].message.content;
-      break;
+    // case "Mistral":
+    //   const mistral = new MistralClient(model.apiKey);
+    //   response = await mistral.chat({
+    //     model: model.subModel,
+    //     messages: model.messages,
+    //   });
+    //   // Extract the content from the response
+    //   content = response.choices[0].message.content;
+    //   break;
 
-    case "llama":
+    case "LlaMA 3" || "Gemma" || "Mistral":
       const groq = new Groq({
         apiKey: process.env.NEXT_PUBLIC_GROPQ_API_KEY,
+        dangerouslyAllowBrowser: true,
       });
+      try {
+        response = await groq.chat.completions.create({
+          messages: [{ role: "user", content: value }],
+          model: model.firstModel.subModel,
+        });
+      } catch (error) {
+        console.error("Error in Groq:", error);
+      }
 
-      groq.chat.completions.create({
-        messages: [
-          {
-            role: "user",
-            content: "Explain the importance of fast language models",
-          },
-        ],
-        model: "llama3-8b-8192",
-      });
-
-      // const newClient = new OpenAI({
-      //   apiKey: process.env.NEXT_PUBLIC_LLAMA_API_KEY,
-      //   dangerouslyAllowBrowser: true,
-      //   baseURL: "https://api.llamaai.com",
-      // });
-      // response = await newClient.chat.completions.create({
-      //   messages: model.messages,
-      //   model: model.subModel,
-      // });
-      // // Extract the content from the response
-      // content = response.choices[0].message.content;
+      content = response?.choices[0]?.message?.content || "";
       break;
+    // const newClient = new OpenAI({
+    //   apiKey: process.env.NEXT_PUBLIC_LLAMA_API_KEY,
+    //   dangerouslyAllowBrowser: true,
+    //   baseURL: "https://api.llamaai.com",
+    // });
+    // response = await newClient.chat.completions.create({
+    //   messages: model.messages,
+    //   model: model.subModel,
+    // });
+    // // Extract the content from the response
+    // content = response.choices[0].message.content;
 
     // case "Claude":
     //   const anthropic = new Anthropic({ apiKey: model.apiKey });
@@ -94,7 +95,6 @@ export const modelResponse = async (model: Model) => {
     //   content = response.content;
     //   break;
   }
-
   return content;
 };
 
