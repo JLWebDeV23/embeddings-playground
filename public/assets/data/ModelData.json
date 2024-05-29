@@ -1,0 +1,57 @@
+[
+  {
+    "model": "OpenAI",
+    "submodel": [
+      {
+        "model": "gpt-3.5-turbo"
+      },
+      {
+        "model": "gpt-4-turbo"
+      },
+      {
+        "model": "gpt-4o"
+      }
+    ]
+  },
+  {
+    "model": "LlaMA 3",
+    "submodel": [
+      {
+        "model": "llama3-8b-8192"
+      },
+      {
+        "model": "llama3-70b-8192"
+      }
+    ]
+  },
+  {
+    "model": "Mistral",
+    "submodel": [
+      {
+        "model": "mixtral-8x7b-32768"
+      }
+    ]
+  },
+  {
+    "model": "Gemma",
+    "submodel": [
+      {
+        "model": "gemma-7b-it"
+      }
+    ]
+  },
+  {
+    "model": "Claude",
+    "submodel": [
+      {
+        "model": "Haiku"
+      },
+      {
+        "model": "Sonnet"
+      },
+      {
+        "model": "Opus"
+      }
+    ]
+  }
+]

@@ -9,10 +9,9 @@ import MistralClient from "@mistralai/mistralai";
 import Delete from "../DeleteCollection/Delete";
 import InsertItem from "../InsertItem/InsertItem";
 import LogProb from "../LogProb/LogProb";
-
+import ModelCompare from "@/app/page/ModelCompare/ModelCompare";
 
 const Main = () => {
-
   const client = new QdrantClient({
     url: "http://localhost:6333",
   });
@@ -37,7 +36,7 @@ const Main = () => {
 
   return (
     //w-full h-full p-10 flex justify-between
-    <main className="">
+    <main className={styles.main}>
       <h1 id={styles.h1}>Retrieval Augmented Generation</h1>
 
       <div className={styles.row}>
@@ -58,10 +57,11 @@ const Main = () => {
       <h1 id={styles.h1}>LogProb</h1>
       <LogProb />
       <hr className={styles.verticalLine} />
-      <h1 id={styles.h1}>Model Compare</h1>
+      <div className={styles.modelCompareLogo}>
+        <h1 id={styles.h1}>Model Compare</h1>
+      </div>
       <hr className={styles.verticalLine} />
-
-
+      <ModelCompare />
     </main>
   );
 };

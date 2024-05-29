@@ -94,14 +94,17 @@ const NewLogProbCompletion: React.FC<NewLogProbCompletionProps> = ({
       {logProb.token === selectedWord && (
         <>
           <div className={styles.icon}>
-            <IonIcon icon={returnDownForwardOutline} size="small"></IonIcon>
+            <IonIcon
+              // name="returnDownForwardOutline"
+              icon={returnDownForwardOutline}
+              size="small"
+            ></IonIcon>
             {
               searchWord(wordItems, splitString)?.completionContent?.message
                 .content
             }
             hello
           </div>
-  
         </>
       )}
     </span>

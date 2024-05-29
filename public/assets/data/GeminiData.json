@@ -1,0 +1,30 @@
+[
+  {
+    "model": "Gemini",
+    "submodel": [
+      {
+        "model": "Gemini-1.ƒ0 Pro"
+      },
+      {
+        "model": "Gemini-1.5 Flash"
+      },
+      {
+        "model": "Gemini-1.5 Pro"
+      }
+    ]
+  },
+  {
+    "model": "Gemma",
+    "submodel": [
+      {
+        "model": "Gemma 2b"
+      },
+      {
+        "model": "Gemma 7b"
+      },
+      {
+        "model": "gemma_1.1_instruct_7b_en"
+      }
+    ]
+  }
+]

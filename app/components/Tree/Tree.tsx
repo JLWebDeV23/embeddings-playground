@@ -59,6 +59,7 @@ const Tree: React.FC<TreeProps> = ({ nodes, addChildNode }) => {
         style={{ cursor: "pointer" }}
       >
         {node.tokens.map((token: { tokenId: number; token: string }) => {
+
           return (
             <span
               key={token.tokenId}
