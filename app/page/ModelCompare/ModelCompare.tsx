@@ -39,7 +39,7 @@ const ModelCompare = () => {
       if (modelsData !== null && messageUpdated) {
         const response = await modelResponse(modelsData);
         // handle the response
-        console.log(response);
+        setModelsData(response)
         setMessageUpdated(false); // Reset the messageUpdated flag
       }
     };

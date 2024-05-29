@@ -100,16 +100,19 @@ const chatCompletion = async (model: any) => {
 
 // select model and return response from the model
 export const modelResponse = async (modelsData: ModelsData) => {
-  const fristModelResponse = await chatCompletion(modelsData?.firstModel);
+  const firstModelResponse = await chatCompletion(modelsData?.firstModel);
   const secondModelResponse = await chatCompletion(modelsData?.secondModel);
-  // add to modelsData
-  modelsData?.firstModel?.messages?.push(fristModelResponse);
-  modelsData?.secondModel?.messages?.push(secondModelResponse);
-  console.log(modelsData);
-
   // similairty score
+  const similarityScore = await createCosineSimilarity(
+    firstModelResponse?.content ?? null,
+    secondModelResponse?.content ?? null
+  );
+  // add to modelsData
+  modelsData?.firstModel?.messages?.push(firstModelResponse);
+  modelsData?.secondModel?.messages?.push(secondModelResponse);
+  modelsData?.score.push(similarityScore);
 
-  return;
+  return modelsData;
 };
 
 export const createEmbedding = async (input: string | []) => {
