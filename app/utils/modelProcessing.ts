@@ -94,6 +94,8 @@ export const modelResponse = async (model: any, value: string) => {
     //   content = response.content;
     //   break;
   }
+
+  // output completion.choice[0]
   return content;
 };
 

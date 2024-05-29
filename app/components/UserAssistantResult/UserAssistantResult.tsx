@@ -55,7 +55,7 @@ const UserAssistantResult: React.FC<UserAssistantResultProps> = ({
                       {secondModelMessage.content}
                     </span>
                   </>
-                ) : (
+                ) : message.role === 'assistant' ? (
                   <>
                     <span
                       className="mr-1"
@@ -94,7 +94,7 @@ const UserAssistantResult: React.FC<UserAssistantResultProps> = ({
                       {secondModelMessage.content}
                     </span>
                   </>
-                )}
+                ) : null}
               </div>
             );
           })}

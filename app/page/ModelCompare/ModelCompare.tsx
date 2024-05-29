@@ -30,15 +30,21 @@ export type ModelsData = {
 
 const ModelCompare = () => {
   const [modelsData, setModelsData] = useState<ModelsData | null>(null);
+  const [sysMessage, setSysMessage] = useState<string>("");
 
   useEffect(() => {
     // Testing for model selection
     console.log(modelsData);
+    // console.log(sysMessage);
   }, [modelsData]);
 
   const generateModelsData = async (value: string) => {
     // completion of both selected models
     try {
+      
+
+
+
       const firstModelContent: string | null = await modelResponse(
         modelsData?.firstModel,
         value
@@ -81,6 +87,34 @@ const ModelCompare = () => {
     } catch (error) {
       console.error("Error Message:", error);
     }
+  };
+
+  
+
+  const upsertSystemMessage = (value: string) => {
+    // add sys message to both models message {role: "system", content: value}
+    // add to the index 0 of the messages array
+    const sysMessage: { role: string; content: string } = {
+      role: "system",
+      content: value,
+    };
+
+    setModelsData((modelsData: ModelsData) => {
+      return {
+        ...modelsData,
+        firstModel: {
+          model: modelsData?.firstModel?.model || "",
+          subModel: modelsData?.firstModel?.subModel || "",
+          messages: [sysMessage].concat(modelsData?.firstModel?.messages || []),
+        },
+        secondModel: {
+          model: modelsData?.secondModel?.model || "",
+          subModel: modelsData?.secondModel?.subModel || "",
+          messages: [sysMessage].concat(modelsData?.firstModel?.messages || []),
+        },
+        score: modelsData?.score || [],
+      };
+    });
   };
 
   return (
@@ -145,10 +179,14 @@ const ModelCompare = () => {
       </div>
       <InputBox
         InputText={"System Messsage"}
-        btnName={"GO"}
+        isButtonDisabled
         btnStyle="top-2"
-        onClick={(value: string) => {
-          console.log(value);
+        // onClick={(value: string) => {
+        //   console.log(value);
+        //   upsertSystemMessage(value);
+        // }}
+        onValueChange={(value) => {
+          setSysMessage(value);
         }}
       />
       {/* toggle lock field */}
@@ -174,7 +212,8 @@ const ModelCompare = () => {
           onClick={async (value: string) => {
             // chatcompletion and display to model one => add to modelsData
             // chatcompletion of value using selected models and push both value to user and the derived completion to the ModelsData
-            generateModelsData(value);
+            // generateModelsData(value);
+            
           }}
         />
       </div>
