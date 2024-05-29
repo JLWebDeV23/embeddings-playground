@@ -72,12 +72,15 @@ const ModelCompare = () => {
           score: prevModelsData?.score || [],
         };
 
-        // If sysMessage exists, add it to both models
-        // Todo: Add sysMessage to the modelsData
         if (sysMessage) {
           const sysMsg = { role: "system", content: sysMessage };
-          updatedData.firstModel.messages.unshift(sysMsg);
+          if (updatedData.firstModel.messages[0]?.role === "system") {
+            updatedData.firstModel.messages[0] = sysMsg;
+            updatedData.secondModel.messages[0] = sysMsg;
+          } else {
+            updatedData.firstModel.messages.unshift(sysMsg);
           updatedData.secondModel.messages.unshift(sysMsg);
+          }
         }
 
         return updatedData;
@@ -136,10 +139,6 @@ const ModelCompare = () => {
     } catch (error) {
       console.error("Error Message:", error);
     }
-  };
-
-  const upsertSystemMessage = (value: string) => {
-    
   };
 
   return (

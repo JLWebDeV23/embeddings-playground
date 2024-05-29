@@ -106,6 +106,9 @@ export const modelResponse = async (modelsData: ModelsData) => {
   modelsData?.firstModel?.messages?.push(fristModelResponse);
   modelsData?.secondModel?.messages?.push(secondModelResponse);
   console.log(modelsData);
+
+  // similairty score
+
   return;
 };
 
