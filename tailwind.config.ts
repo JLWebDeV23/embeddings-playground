@@ -11,6 +11,8 @@ const config: Config = {
       zIndex: {
         "1111": "1111",
         "1112": "1112",
+        "1114": "1114",
+        white: "#ffffff",
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",

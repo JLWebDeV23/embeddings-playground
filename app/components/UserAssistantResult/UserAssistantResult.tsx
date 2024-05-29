@@ -7,6 +7,7 @@ type UserAssistantResultProps = { modelsData: ModelsData };
 const UserAssistantResult: React.FC<UserAssistantResultProps> = ({
   modelsData,
 }) => {
+  let scoreIndex: number = 0;
   return (
     <div className="m-1 flex bg-transparent flex-col">
       <div className="flex w-full mb-1">
@@ -25,7 +26,7 @@ const UserAssistantResult: React.FC<UserAssistantResultProps> = ({
               modelsData?.secondModel?.messages?.[index];
 
             return (
-              <div key={index} className="flex justify-between mb-1">
+              <div key={index} className="flex justify-between mb-4">
                 {message.role === "user" ? (
                   <>
                     <span
@@ -36,9 +37,10 @@ const UserAssistantResult: React.FC<UserAssistantResultProps> = ({
                         overflow: "auto",
                       }}
                     >
-                      <ScrollShadow>
-                        {message.role}: {message.content}
-                      </ScrollShadow>
+                      <div className="font-bold">
+                        {message.role.toUpperCase()}:
+                      </div>
+                      {message.content}
                     </span>
                     <span
                       style={{
@@ -47,9 +49,10 @@ const UserAssistantResult: React.FC<UserAssistantResultProps> = ({
                         overflow: "auto",
                       }}
                     >
-                      <ScrollShadow>
-                        {secondModelMessage.role}: {secondModelMessage.content}
-                      </ScrollShadow>
+                      <div className="font-bold">
+                        {secondModelMessage.role.toUpperCase()}:
+                      </div>
+                      {secondModelMessage.content}
                     </span>
                   </>
                 ) : (
@@ -62,19 +65,33 @@ const UserAssistantResult: React.FC<UserAssistantResultProps> = ({
                         overflow: "auto",
                       }}
                     >
-                      {message.role}: {message.content}
+                      <div className="font-bold">
+                        {message.role.toUpperCase()}:
+                      </div>
+                      {message.content}
                     </span>
-                    <span style={{ flex: "0 0 10%", maxWidth: "10%" }}>
-                      Score: {modelsData.score[index]}
-                    </span>
+                    <div className="relative group overflow-hidden hover:overflow-visible overflow-ellipsis w-1/12 max-w-1/12 cursor-pointer">
+                      <div className="flex-none overflow-hidden overflow-ellipsis">
+                        <div className="font-bold">Score:</div>
+                        {modelsData.score[scoreIndex]}
+                      </div>
+                      <div className="absolute group-hover:overflow-visible left-0 text-sm bg-indigo-500 text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition duration-100 ease-in-out">
+                        {modelsData.score[scoreIndex++]}
+                      </div>
+                    </div>
+
                     <span
+                      className=""
                       style={{
                         flex: "0 0 45%",
                         maxHeight: "200px",
                         overflow: "auto",
                       }}
                     >
-                      {secondModelMessage.role}: {secondModelMessage.content}
+                      <div className="font-bold">
+                        {secondModelMessage.role.toUpperCase()}:
+                      </div>
+                      {secondModelMessage.content}
                     </span>
                   </>
                 )}

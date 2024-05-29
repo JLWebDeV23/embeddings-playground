@@ -25,23 +25,18 @@ export type ModelsData = {
     subModel: string | "";
     messages: any[] | null;
   } | null;
-  score: (number | null )[];
+  score: (number | null)[];
 } | null;
 
 const ModelCompare = () => {
   const [modelsData, setModelsData] = useState<ModelsData | null>(null);
-  const [inputValue, setInputValue] = useState("");
-  const handleTestChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setInputValue(e.target.value);
-  };
+
   useEffect(() => {
     // Testing for model selection
     console.log(modelsData);
-    ;
   }, [modelsData]);
 
   const generateModelsData = async (value: string) => {
-
     // completion of both selected models
     try {
       const firstModelContent: string | null = await modelResponse(
@@ -80,10 +75,9 @@ const ModelCompare = () => {
               { role: "assistant", content: secondModelContent },
             ],
           },
-          score: [...modelsData?.score || [], newScore]
+          score: [...(modelsData?.score || []), newScore],
         };
       });
-
     } catch (error) {
       console.error("Error Message:", error);
     }
@@ -178,9 +172,7 @@ const ModelCompare = () => {
           InputText="User Message"
           btnStyle="rounded-none rounded-r-lg h-full translate-x-[15%]"
           onClick={async (value: string) => {
-            console.log(value);
             // chatcompletion and display to model one => add to modelsData
-
             // chatcompletion of value using selected models and push both value to user and the derived completion to the ModelsData
             generateModelsData(value);
           }}
