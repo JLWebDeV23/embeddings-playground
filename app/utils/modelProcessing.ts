@@ -8,6 +8,7 @@ import { Groq } from "groq-sdk";
 import Anthropic from "@anthropic-ai/sdk";
 import { ChatCompletion } from "openai/resources/index.mjs";
 import similarity from "compute-cosine-similarity";
+import { ModelsData } from "../page/ModelCompare/ModelCompare";
 // import LlamaAI from "llamaai";
 
 type Model = {
@@ -24,10 +25,7 @@ type Response =
   // | Anthropic.Message
   | null;
 
-// const Groq: NodeRequire = require("groq-sdk");
-
-// select model and return response from the model
-export const modelResponse = async (model: any, value: string) => {
+const chatCompletion = async (model: any) => {
   let content: string | null | Anthropic.TextBlock[] = null;
   let response: Response = null;
 
@@ -37,8 +35,9 @@ export const modelResponse = async (model: any, value: string) => {
         apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
         dangerouslyAllowBrowser: true,
       });
+      console.log(model.messages);
       response = await client.chat.completions.create({
-        messages: [{ role: "user", content: value }],
+        messages: model.messages,
         model: model.subModel,
       });
       // Extract the content from the response
@@ -62,7 +61,7 @@ export const modelResponse = async (model: any, value: string) => {
       });
       try {
         response = await groq.chat.completions.create({
-          messages: [{ role: "user", content: value }],
+          messages: model.messages,
           model: model.subModel,
         });
       } catch (error) {
@@ -96,7 +95,18 @@ export const modelResponse = async (model: any, value: string) => {
   }
 
   // output completion.choice[0]
-  return content;
+  return response?.choices[0].message;
+};
+
+// select model and return response from the model
+export const modelResponse = async (modelsData: ModelsData) => {
+  const fristModelResponse = await chatCompletion(modelsData?.firstModel);
+  const secondModelResponse = await chatCompletion(modelsData?.secondModel);
+  // add to modelsData
+  modelsData?.firstModel?.messages?.push(fristModelResponse);
+  modelsData?.secondModel?.messages?.push(secondModelResponse);
+  console.log(modelsData);
+  return;
 };
 
 export const createEmbedding = async (input: string | []) => {

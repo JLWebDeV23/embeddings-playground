@@ -32,89 +32,114 @@ const ModelCompare = () => {
   const [modelsData, setModelsData] = useState<ModelsData | null>(null);
   const [sysMessage, setSysMessage] = useState<string>("");
 
+  const [messageUpdated, setMessageUpdated] = useState<boolean>(false);
+
   useEffect(() => {
-    // Testing for model selection
-    console.log(modelsData);
-    // console.log(sysMessage);
-  }, [modelsData]);
+    const fetchData = async () => {
+      if (modelsData !== null && messageUpdated) {
+        const response = await modelResponse(modelsData);
+        // handle the response
+        console.log(response);
+        setMessageUpdated(false); // Reset the messageUpdated flag
+      }
+    };
+
+    fetchData();
+  }, [messageUpdated]); // Depend only on messageUpdated
 
   const generateModelsData = async (value: string) => {
-    // completion of both selected models
+    const message = { role: "user", content: value };
     try {
-      
-
-
-
-      const firstModelContent: string | null = await modelResponse(
-        modelsData?.firstModel,
-        value
-      );
-      const secondModelContent: string | null = await modelResponse(
-        modelsData?.secondModel,
-        value
-      );
-      // similarity score
-      const newScore: number | null = await createCosineSimilarity(
-        firstModelContent,
-        secondModelContent
-      );
-
-      // construct object to be set to modelsData
-      setModelsData((modelsData: ModelsData) => {
-        return {
-          ...modelsData,
+      setModelsData((prevModelsData: ModelsData) => {
+        const updatedData = {
+          ...prevModelsData,
           firstModel: {
-            model: modelsData?.firstModel?.model || "",
-            subModel: modelsData?.firstModel?.subModel || "",
+            model: prevModelsData?.firstModel?.model || "",
+            subModel: prevModelsData?.firstModel?.subModel || "",
             messages: [
-              ...(modelsData?.firstModel?.messages || []),
-              { role: "user", content: value },
-              { role: "assistant", content: firstModelContent },
+              ...(prevModelsData?.firstModel?.messages || []),
+              message,
             ],
           },
           secondModel: {
-            model: modelsData?.secondModel?.model || "",
-            subModel: modelsData?.secondModel?.subModel || "",
+            model: prevModelsData?.secondModel?.model || "",
+            subModel: prevModelsData?.secondModel?.subModel || "",
             messages: [
-              ...(modelsData?.secondModel?.messages || []),
-              { role: "user", content: value },
-              { role: "assistant", content: secondModelContent },
+              ...(prevModelsData?.secondModel?.messages || []),
+              message,
             ],
           },
-          score: [...(modelsData?.score || []), newScore],
+          score: prevModelsData?.score || [],
         };
+
+        // If sysMessage exists, add it to both models
+        // Todo: Add sysMessage to the modelsData
+        if (sysMessage) {
+          const sysMsg = { role: "system", content: sysMessage };
+          updatedData.firstModel.messages.unshift(sysMsg);
+          updatedData.secondModel.messages.unshift(sysMsg);
+        }
+
+        return updatedData;
       });
+
+      // Set messageUpdated to true after updating modelsData
+      setMessageUpdated(true);
+
+      // chat complet with no sysMessage
+
+      // check existing modelsData
+
+      // construct object to be set to modelsData
+
+      // => refractor modelResponse() => send to modelResponse
+
+      // const firstModelContent: string | null = await modelResponse(
+      //   modelsData?.firstModel,
+      //   value
+      // );
+      // const secondModelContent: string | null = await modelResponse(
+      //   modelsData?.secondModel,
+      //   value
+      // );
+      // // similarity score
+      // const newScore: number | null = await createCosineSimilarity(
+      //   firstModelContent,
+      //   secondModelContent
+      // );
+
+      // // construct object to be set to modelsData
+      // setModelsData((modelsData: ModelsData) => {
+      //   return {
+      //     ...modelsData,
+      //     firstModel: {
+      //       model: modelsData?.firstModel?.model || "",
+      //       subModel: modelsData?.firstModel?.subModel || "",
+      //       messages: [
+      //         ...(modelsData?.firstModel?.messages || []),
+      //         { role: "user", content: value },
+      //         { role: "assistant", content: firstModelContent },
+      //       ],
+      //     },
+      //     secondModel: {
+      //       model: modelsData?.secondModel?.model || "",
+      //       subModel: modelsData?.secondModel?.subModel || "",
+      //       messages: [
+      //         ...(modelsData?.secondModel?.messages || []),
+      //         { role: "user", content: value },
+      //         { role: "assistant", content: secondModelContent },
+      //       ],
+      //     },
+      //     score: [...(modelsData?.score || []), newScore],
+      //   };
+      // });
     } catch (error) {
       console.error("Error Message:", error);
     }
   };
 
-  
-
   const upsertSystemMessage = (value: string) => {
-    // add sys message to both models message {role: "system", content: value}
-    // add to the index 0 of the messages array
-    const sysMessage: { role: string; content: string } = {
-      role: "system",
-      content: value,
-    };
-
-    setModelsData((modelsData: ModelsData) => {
-      return {
-        ...modelsData,
-        firstModel: {
-          model: modelsData?.firstModel?.model || "",
-          subModel: modelsData?.firstModel?.subModel || "",
-          messages: [sysMessage].concat(modelsData?.firstModel?.messages || []),
-        },
-        secondModel: {
-          model: modelsData?.secondModel?.model || "",
-          subModel: modelsData?.secondModel?.subModel || "",
-          messages: [sysMessage].concat(modelsData?.firstModel?.messages || []),
-        },
-        score: modelsData?.score || [],
-      };
-    });
+    
   };
 
   return (
@@ -181,10 +206,6 @@ const ModelCompare = () => {
         InputText={"System Messsage"}
         isButtonDisabled
         btnStyle="top-2"
-        // onClick={(value: string) => {
-        //   console.log(value);
-        //   upsertSystemMessage(value);
-        // }}
         onValueChange={(value) => {
           setSysMessage(value);
         }}
@@ -209,11 +230,10 @@ const ModelCompare = () => {
           btnName="Add"
           InputText="User Message"
           btnStyle="rounded-none rounded-r-lg h-full translate-x-[15%]"
-          onClick={async (value: string) => {
+          onClick={(value: string) => {
             // chatcompletion and display to model one => add to modelsData
             // chatcompletion of value using selected models and push both value to user and the derived completion to the ModelsData
-            // generateModelsData(value);
-            
+            generateModelsData(value);
           }}
         />
       </div>
