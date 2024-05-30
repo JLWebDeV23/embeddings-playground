@@ -109,36 +109,42 @@ const ModelCompare = () => {
     setCards(newCards);
   };
 
+  const collectCardData = () => {
+    // Here you can do whatever you need with the card data
+    console.log(cards);
+  };
+
+  const handleOnSubModelChange = (model: string, subModel: string) => {
+    setModelsData((prevModelsData: ModelsData) => {
+      if (prevModelsData) {
+        return {
+          ...prevModelsData,
+          firstModel: {
+            ...prevModelsData.firstModel,
+            model: model,
+            subModel: subModel,
+            messages: prevModelsData.firstModel?.messages || null,
+          },
+        };
+      } else {
+        return {
+          firstModel: {
+            model: model,
+            subModel: subModel,
+            messages: null,
+          },
+          secondModel: null,
+          score: [],
+        };
+      }
+    });
+  }
   return (
     <div className={styles.modelCompare}>
       <div className="flex  flex-row gap-10 mt-2 mb-1">
         <ModelHeader
           dropdownContentDirection="right"
-          onSubModelChange={(model, subModel) => {
-            setModelsData((prevModelsData: ModelsData) => {
-              if (prevModelsData) {
-                return {
-                  ...prevModelsData,
-                  firstModel: {
-                    ...prevModelsData.firstModel,
-                    model: model,
-                    subModel: subModel,
-                    messages: prevModelsData.firstModel?.messages || null,
-                  },
-                };
-              } else {
-                return {
-                  firstModel: {
-                    model: model,
-                    subModel: subModel,
-                    messages: null,
-                  },
-                  secondModel: null,
-                  score: [],
-                };
-              }
-            });
-          }}
+          onSubModelChange={handleOnSubModelChange}
         />
         <ModelHeader
           dropdownContentDirection="left"
@@ -201,6 +207,9 @@ const ModelCompare = () => {
           </button>
         </div>
       </div>
+      <button className="mt-4 p-2 bg-blue-500 text-white rounded" onClick={collectCardData}>
+        Collect Card Data
+      </button>
       <UserAssistantResult modelsData={modelsData} />
 
       <div className="mt-2">

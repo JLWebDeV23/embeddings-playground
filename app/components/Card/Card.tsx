@@ -14,8 +14,8 @@ const Card: React.FC<CardProps> = ({index, x, y, onInputChange, }) => {
   return (
     <div className="card shadow-md w-full border-r-0 border border-indigo-600 opacity-70 ">
       <div className="card-body">
-        <InputBox inputText="Searh Word" isButtonDisabled />
-        <InputBox inputText="Replace With" isButtonDisabled />
+        <InputBox onValueChange={(value) => onInputChange(index, "x", value)} inputText="Searh Word" isButtonDisabled />
+        <InputBox onValueChange={(value) => onInputChange(index, "y", value)} inputText="Replace With" isButtonDisabled />
       </div>
     </div>
   );
