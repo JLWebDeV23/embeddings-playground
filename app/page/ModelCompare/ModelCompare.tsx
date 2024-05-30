@@ -10,6 +10,7 @@ import {
 } from "@/app/utils/modelProcessing";
 import InputBox from "@/app/components/InputBox/InputBox";
 import UserAssistantResult from "@/app/components/UserAssistantResult/UserAssistantResult";
+import Card from "@/app/components/Card/Card";
 
 // future implementation
 // lock boolean
@@ -39,7 +40,7 @@ const ModelCompare = () => {
       if (modelsData !== null && messageUpdated) {
         const response = await modelResponse(modelsData);
         // handle the response
-        setModelsData(response)
+        setModelsData(response);
         setMessageUpdated(false); // Reset the messageUpdated flag
       }
     };
@@ -79,7 +80,7 @@ const ModelCompare = () => {
             updatedData.secondModel.messages[0] = sysMsg;
           } else {
             updatedData.firstModel.messages.unshift(sysMsg);
-          updatedData.secondModel.messages.unshift(sysMsg);
+            updatedData.secondModel.messages.unshift(sysMsg);
           }
         }
 
@@ -88,54 +89,6 @@ const ModelCompare = () => {
 
       // Set messageUpdated to true after updating modelsData
       setMessageUpdated(true);
-
-      // chat complet with no sysMessage
-
-      // check existing modelsData
-
-      // construct object to be set to modelsData
-
-      // => refractor modelResponse() => send to modelResponse
-
-      // const firstModelContent: string | null = await modelResponse(
-      //   modelsData?.firstModel,
-      //   value
-      // );
-      // const secondModelContent: string | null = await modelResponse(
-      //   modelsData?.secondModel,
-      //   value
-      // );
-      // // similarity score
-      // const newScore: number | null = await createCosineSimilarity(
-      //   firstModelContent,
-      //   secondModelContent
-      // );
-
-      // // construct object to be set to modelsData
-      // setModelsData((modelsData: ModelsData) => {
-      //   return {
-      //     ...modelsData,
-      //     firstModel: {
-      //       model: modelsData?.firstModel?.model || "",
-      //       subModel: modelsData?.firstModel?.subModel || "",
-      //       messages: [
-      //         ...(modelsData?.firstModel?.messages || []),
-      //         { role: "user", content: value },
-      //         { role: "assistant", content: firstModelContent },
-      //       ],
-      //     },
-      //     secondModel: {
-      //       model: modelsData?.secondModel?.model || "",
-      //       subModel: modelsData?.secondModel?.subModel || "",
-      //       messages: [
-      //         ...(modelsData?.secondModel?.messages || []),
-      //         { role: "user", content: value },
-      //         { role: "assistant", content: secondModelContent },
-      //       ],
-      //     },
-      //     score: [...(modelsData?.score || []), newScore],
-      //   };
-      // });
     } catch (error) {
       console.error("Error Message:", error);
     }
@@ -214,6 +167,7 @@ const ModelCompare = () => {
         Your text here
       </textarea> */}
       {/* <button onClick={() => setIsClicked(!isClicked)}>Change Color</button> */}
+      <Card />
       <div className={styles.replace}>
         <input type="text" className={styles.input} />
         <div className="ml-1 mr-1">

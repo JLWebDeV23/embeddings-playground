@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import styles from "./InputBox.module.css";
-
 import { ModelsData } from "@/app/page/ModelCompare/ModelCompare";
 
 type InputBoxProps = {
@@ -11,6 +10,8 @@ type InputBoxProps = {
   onValueChange?: (value: string) => void;
   isButtonDisabled?: boolean;
 };
+
+
 
 const InputBox: React.FC<InputBoxProps> = ({
   btnName,

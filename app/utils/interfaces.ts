@@ -25,3 +25,9 @@ export interface modelSDK {
   anthropic: Anthropic;
   // llamaai: LlamaAI;
 }
+
+// Define the shape of the card data
+export interface CardData {
+  x: string;
+  y: string;
+}
