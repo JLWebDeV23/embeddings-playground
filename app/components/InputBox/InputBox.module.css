@@ -36,13 +36,13 @@
 
 .input:focus,
 .input:valid {
-    color: #66ff00;
-    border: 1px solid #66ff00;
+    color: #4f46e5;
+    border: 1px solid #4f46e5;
 }
 
 .input:focus + .labelLine,
 .input:valid + .labelLine{
-    color: #66ff00;
+    color: #4f46e5;
     height: 27px;
     line-height: 50px;
     font-size: 1.1em;

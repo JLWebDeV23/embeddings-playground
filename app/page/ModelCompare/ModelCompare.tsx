@@ -11,6 +11,7 @@ import {
 import InputBox from "@/app/components/InputBox/InputBox";
 import UserAssistantResult from "@/app/components/UserAssistantResult/UserAssistantResult";
 import Card from "@/app/components/Card/Card";
+import { CardData } from "@/app/utils/interfaces";
 
 // future implementation
 // lock boolean
@@ -32,8 +33,12 @@ export type ModelsData = {
 const ModelCompare = () => {
   const [modelsData, setModelsData] = useState<ModelsData | null>(null);
   const [sysMessage, setSysMessage] = useState<string>("");
-
   const [messageUpdated, setMessageUpdated] = useState<boolean>(false);
+  const [cards, setCards] = useState<CardData[]>([{ x: "", y: "" }]);
+
+  const addCard = () => {
+    setCards([...cards, { x: "", y: "" }]);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -92,6 +97,16 @@ const ModelCompare = () => {
     } catch (error) {
       console.error("Error Message:", error);
     }
+  };
+
+  const handleCardInputChange = (
+    index: number,
+    field: keyof CardData,
+    value: string
+  ) => {
+    const newCards = [...cards];
+    newCards[index][field] = value;
+    setCards(newCards);
   };
 
   return (
@@ -155,7 +170,7 @@ const ModelCompare = () => {
         />
       </div>
       <InputBox
-        InputText={"System Messsage"}
+        inputText={"System Messsage"}
         isButtonDisabled
         btnStyle="top-2"
         onValueChange={(value) => {
@@ -167,21 +182,31 @@ const ModelCompare = () => {
         Your text here
       </textarea> */}
       {/* <button onClick={() => setIsClicked(!isClicked)}>Change Color</button> */}
-      <Card />
-      <div className={styles.replace}>
-        <input type="text" className={styles.input} />
-        <div className="ml-1 mr-1">
-          <IonIcon icon={repeatOutline} size="large" />
+      <div className="flex flex-col mt-2 mb-2 ">
+        <div className="flex flex-row gap-4">
+          {cards.map((card, index) => (
+            <Card
+              key={index}
+              index={index}
+              x={card.x}
+              y={card.y}
+              onInputChange={handleCardInputChange}
+            />
+          ))}
+          <button
+            className="btn w-30 bg-transparent border-indigo-600 opacity-70 text-white text-lg h-full border-l-0"
+            onClick={addCard}
+          >
+            +
+          </button>
         </div>
-        <input type="text" className={styles.input} />
-        <button></button>
       </div>
       <UserAssistantResult modelsData={modelsData} />
 
       <div className="mt-2">
         <InputBox
           btnName="Add"
-          InputText="User Message"
+          inputText="User Message"
           btnStyle="rounded-none rounded-r-lg h-full translate-x-[15%]"
           onClick={(value: string) => {
             // chatcompletion and display to model one => add to modelsData

@@ -1,13 +1,21 @@
 import React from "react";
 import InputBox from "@/app/components/InputBox/InputBox";
+import { CardData } from "@/app/utils/interfaces";
 
-const Card = () => {
+type CardProps = {
+  index: number;
+  x: string;
+  y: string;
+  onInputChange: (index: number, field: keyof CardData, value: string) => void;
+  onSwap?: (index: number) => void;
+}
+
+const Card: React.FC<CardProps> = ({index, x, y, onInputChange, }) => {
   return (
-    <div className="card bg-indigo-600 w-auto glass mt-2 mb-2">
-      
+    <div className="card shadow-md w-full border-r-0 border border-indigo-600 opacity-70 ">
       <div className="card-body">
-        <InputBox />
-        <InputBox />
+        <InputBox inputText="Searh Word" isButtonDisabled />
+        <InputBox inputText="Replace With" isButtonDisabled />
       </div>
     </div>
   );

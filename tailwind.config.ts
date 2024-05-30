@@ -1,3 +1,4 @@
+import { grid } from "ionicons/icons";
 import type { Config } from "tailwindcss";
 
 const config: Config = {
@@ -13,6 +14,7 @@ const config: Config = {
         "1112": "1112",
         "1114": "1114",
         white: "#ffffff",
+        gray: "#1D232A",
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
