@@ -1,5 +1,5 @@
 import React from "react";
-import { ModelsData } from "@/app/page/ModelCompare/ModelCompare";
+import { ModelsData } from "@/app/pages/ModelCompare/ModelCompare";
 import { ScrollShadow } from "@nextui-org/scroll-shadow";
 
 type UserAssistantResultProps = { modelsData: ModelsData };
@@ -11,11 +11,11 @@ const UserAssistantResult: React.FC<UserAssistantResultProps> = ({
   return (
     <div className="m-1 flex bg-transparent flex-col">
       <div className="flex w-full mb-1">
-        <button className="btn flex-grow text-white bg-indigo-500 shadow-lg rounded-none rounded-tl-lg hover:bg-indigo-300">
+        <button className="btn flex-grow text-white bg-emerald-300 shadow-lg rounded-none rounded-tl-lg hover:bg-emerald-100">
           Lock
         </button>
         <div className="w-20 bg-transparent bg-slate-100"></div>
-        <button className="btn flex-grow rounded-tr-lg rounded-none text-white bg-indigo-500 hover:bg-indigo-300 ">
+        <button className="btn flex-grow rounded-tr-lg rounded-none text-white bg-emerald-300 hover:bg-emerald-100 ">
           Lock
         </button>
       </div>
@@ -75,7 +75,7 @@ const UserAssistantResult: React.FC<UserAssistantResultProps> = ({
                         <div className="font-bold">Score:</div>
                         {modelsData.score[scoreIndex]}
                       </div>
-                      <div className="absolute group-hover:overflow-visible left-0 text-sm bg-indigo-500 text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition duration-100 ease-in-out">
+                      <div className="absolute group-hover:overflow-visible left-0 text-sm bg-emerald-300 text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition duration-100 ease-in-out">
                         {modelsData.score[scoreIndex++]}
                       </div>
                     </div>

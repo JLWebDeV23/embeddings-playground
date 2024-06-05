@@ -1,6 +1,16 @@
 import React, { useState } from "react";
 import styles from "./InputBox.module.css";
-import { ModelsData } from "@/app/page/ModelCompare/ModelCompare";
+import { ModelsData } from "@/app/pages/ModelCompare/ModelCompare";
+import AlertModal from "../AlertModal/AlertModal";
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
+} from "@nextui-org/modal";
+import { Button } from "@nextui-org/button";
 
 type InputBoxProps = {
   btnName?: string;
@@ -8,7 +18,9 @@ type InputBoxProps = {
   btnStyle?: string;
   onClick?: (value: string) => void;
   onValueChange?: (value: string) => void;
+  isButtonVisabled?: boolean;
   isButtonDisabled?: boolean;
+  showAlert?: boolean;
 };
 
 const InputBox: React.FC<InputBoxProps> = ({
@@ -17,9 +29,12 @@ const InputBox: React.FC<InputBoxProps> = ({
   btnStyle,
   onClick,
   onValueChange,
+  isButtonVisabled,
   isButtonDisabled,
+  showAlert,
 }) => {
   const [value, setValue] = useState<string>("");
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value);
@@ -36,6 +51,7 @@ const InputBox: React.FC<InputBoxProps> = ({
     } catch (error) {
       console.error("Error in onClick:", error);
     }
+
     setValue("");
   };
   return (
@@ -49,13 +65,15 @@ const InputBox: React.FC<InputBoxProps> = ({
           required
         />
         <div className={styles.labelLine}>{inputText}</div>
-        {!isButtonDisabled && (
-          <button
-            className={`btn absolute right-2 border-1 border-slate-600 z-[1111] bg-indigo-500 opacity-75 text-white ${btnStyle}`}
+        {!isButtonVisabled&& (
+          <Button
+            disabled={isButtonDisabled}
+            className={`btn absolute right-2 border-1 border-white z-[1111] bg-emerald-300 opacity-75 text-white hover:bg-emerald-200 ${btnStyle}`}
             onClick={handleClick}
+            onPress={onOpen}
           >
             {btnName}
-          </button>
+          </Button>
         )}
       </div>
     </div>

@@ -98,24 +98,24 @@ const ModelHeader: React.FC<ModelHeaderProps> = ({
   return (
     <section className="flex justify-between w-full items-end">
       <h2 className="font-normal text-lg">{activeSubModel}</h2>
-      <div className="dropdown dropdown-hover z-[1112]">
+      <div className="dropdown dropdown-hover drop-shadow-2xl z-30">
         <div tabIndex={0} className="btn m-1">
           Models
         </div>
         <ul
           tabIndex={0}
-          className="dropdown-content z-[1113] shadow menu bg-base-100 rounded-box w-52"
+          className="dropdown-content z-10 shadow menu bg-base-100 rounded-box w-52"
         >
           {ModelData.map((model, index) => {
             // is there a different to map directly rather than returning  here
             return (
               <div
                 key={index}
-                className={`dropdown menu dropdown-${dropdownContentDirection} hover z-[1111]`}
+                className={`dropdown menu dropdown-${dropdownContentDirection} hover z-10 drop-shadow-2xl`}
               >
                 <div
                   tabIndex={0}
-                  className="m-1 cursor-pointer z-[1111]"
+                  className="m-1 cursor-pointer z-10 drop-shadow-2xl"
                   onMouseEnter={() => setActiveModel(index)}
                   onMouseLeave={() => setActiveModel(null)}
                 >
@@ -124,7 +124,7 @@ const ModelHeader: React.FC<ModelHeaderProps> = ({
                 {activeModel === index && (
                   <ul
                     tabIndex={0}
-                    className={`dropdown-content z-[1111] menu bg-base-100 rounded-box w-52 ${
+                    className={`dropdown-content z-10 drop-shadow-2xl menu bg-base-100 rounded-box w-52 ${
                       dropdownContentDirection === "left"
                         ? "translate-x-[13px]"
                         : "translate-x-[-15px]"

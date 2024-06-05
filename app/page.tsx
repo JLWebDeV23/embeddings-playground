@@ -1,10 +1,7 @@
-import Image from "next/image";
-import styles from "./page.module.css";
-import Main from "./components/Main/Main";
-
+import Version_2_0 from "./version_2_0/page";
 
 export default function Home() {
   return (
-    <Main />
+    <Version_2_0 />
   );
 }

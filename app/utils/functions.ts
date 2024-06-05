@@ -33,15 +33,20 @@ export const createChatCompletion = async (
   input: string
 ): Promise<OpenAI.ChatCompletion.Choice> => {
   const newInput: string = `System Message: Just complete the sentence and the output must only be the chat completion from given input but not showing the input: ${input}`;
-  const completion = await openai.chat.completions.create({
-    messages: [{ role: "user", content: newInput }],
-    model: "gpt-3.5-turbo",
-    logprobs: true,
-    top_logprobs: 2,
-    temperature: 0.0,
-    // stream: true,
-  });
-  return completion.choices[0];
+  let completion;
+  try {
+    completion = await openai.chat.completions.create({
+      messages: [{ role: "user", content: newInput }],
+      model: "gpt-3.5-turbo",
+      logprobs: true,
+      top_logprobs: 2,
+      temperature: 0.0,
+      // stream: true,
+    });
+  } catch (error) {
+    console.error("Error Message:", error);
+  }
+  return completion!.choices[0];
 };
 
 export const createTest = async (

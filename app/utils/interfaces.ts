@@ -31,3 +31,32 @@ export interface CardData {
   x: string;
   y: string;
 }
+
+export interface Message {
+  role: string;
+  content: string;
+  score?: number;
+}
+
+export interface ModelData {
+  model: string;
+  subModel: string;
+  messages: Message[];
+  locked: boolean;
+}
+
+export interface ModelDatas extends Array<ModelData> {}
+
+export interface ApiKey {
+  key: string;
+  name: string;
+  apiKey: string;
+}
+[];
+
+export interface StringIntepolation {
+  key: number;
+  field: string;
+  value: string;
+}
+[];

@@ -8,7 +8,7 @@ import { Groq } from "groq-sdk";
 import Anthropic from "@anthropic-ai/sdk";
 import { ChatCompletion } from "openai/resources/index.mjs";
 import similarity from "compute-cosine-similarity";
-import { ModelsData } from "../page/ModelCompare/ModelCompare";
+import { ModelsData } from "../pages/ModelCompare/ModelCompare";
 // import LlamaAI from "llamaai";
 
 type Model = {
@@ -25,7 +25,7 @@ type Response =
   // | Anthropic.Message
   | null;
 
-const chatCompletion = async (model: any) => {
+export const chatCompletion = async (model: any) => {
   let content: string | null | Anthropic.TextBlock[] = null;
   let response: Response = null;
 
@@ -36,12 +36,16 @@ const chatCompletion = async (model: any) => {
         dangerouslyAllowBrowser: true,
       });
       console.log(model.messages);
-      response = await client.chat.completions.create({
-        messages: model.messages,
-        model: model.subModel,
-      });
+      try {
+        response = await client.chat.completions.create({
+          messages: model.messages,
+          model: model.subModel,
+        });
+      } catch (error) {
+        console.error("Error in OpenAI ChatCompletion:", error);
+      }
       // Extract the content from the response
-      content = response.choices[0].message.content;
+      content = response?.choices[0]?.message?.content || "";
       break;
 
     // case "Mistral":
@@ -65,7 +69,7 @@ const chatCompletion = async (model: any) => {
           model: model.subModel,
         });
       } catch (error) {
-        console.error("Error in Groq:", error);
+        console.error("Error in Groq ChatCompletion:", error);
       }
 
       content = response?.choices[0]?.message?.content || "";
@@ -116,16 +120,20 @@ export const modelResponse = async (modelsData: ModelsData) => {
 };
 
 export const createEmbedding = async (input: string | []) => {
-  const embedding: number[] = (
-    await new OpenAI({
-      apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
-      dangerouslyAllowBrowser: true,
-    }).embeddings.create({
-      model: "text-embedding-3-small",
-      input: input,
-    })
-  ).data[0].embedding;
-
+  let embedding: number[] = [];
+  try {
+    embedding = (
+      await new OpenAI({
+        apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
+        dangerouslyAllowBrowser: true,
+      }).embeddings.create({
+        model: "text-embedding-3-small",
+        input: input,
+      })
+    ).data[0].embedding;
+  } catch (error) {
+    console.error("Error in Create OpenAI Embeddings:", error);
+  }
   return embedding;
 };
 

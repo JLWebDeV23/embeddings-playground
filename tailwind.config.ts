@@ -13,6 +13,9 @@ const config: Config = {
         "1111": "1111",
         "1112": "1112",
         "1114": "1114",
+      },
+      colors: {
+        green: "var(--green)",
         white: "#ffffff",
         gray: "#1D232A",
       },

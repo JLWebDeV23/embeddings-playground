@@ -16,7 +16,7 @@ import { CardData } from "@/app/utils/interfaces";
 // future implementation
 // lock boolean
 // arr of models
-export type ModelsData = {
+export type  ModelsData = {
   firstModel: {
     model: string | "";
     subModel: string | "";
@@ -200,7 +200,7 @@ const ModelCompare = () => {
             />
           ))}
           <button
-            className="btn w-30 bg-transparent border-indigo-600 opacity-70 text-white text-lg h-full border-l-0"
+            className="btn w-30 bg-transparent border-emerald-600 opacity-70 text-white text-lg h-full border-l-0"
             onClick={addCard}
           >
             +

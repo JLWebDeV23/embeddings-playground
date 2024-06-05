@@ -11,6 +11,7 @@
 
 .input {
     position: absolute;
+    color: #000;
     width: 100%;
     outline: none;
     font-size: 1.5em;
@@ -20,14 +21,14 @@
     border: 1px solid #a09b9c49;
     background: transparent;
     transition: 0.1s ease;
-    z-index: 1111;
+    z-index: 10;
 }
 
 .labelLine {
     position: absolute;
     left: 5px;
     font-size: 1em;
-    color: #f0ffff;
+    color: #f1f5f9;
     padding: 0 5px;
     /* margin: 0 px; */
     background-color: #1D232A;
@@ -36,16 +37,16 @@
 
 .input:focus,
 .input:valid {
-    color: #4f46e5;
-    border: 1px solid #4f46e5;
+    color: #f1f5f9;
+    border: 1px solid #6ee7b7;
 }
 
 .input:focus + .labelLine,
 .input:valid + .labelLine{
-    color: #4f46e5;
+    color: #6ee7b7;
     height: 27px;
     line-height: 50px;
     font-size: 1.1em;
     transform: translate(0, -23px) scale(0.80);
-    z-index: 1111;
+    z-index: 30;
 }
