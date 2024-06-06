@@ -15,9 +15,13 @@ const config: Config = {
         "1114": "1114",
       },
       colors: {
-        green: "var(--green)",
+        green: "#6ee7b7",
         white: "#ffffff",
         gray: "#1D232A",
+        lightGray: "#343740",
+      },
+      fontFamily: {
+        segoe: ['"Segoe UI Symbol"', "sans-serif"],
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",

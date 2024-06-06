@@ -1,4 +1,4 @@
-import { modelSDK } from "./interfaces";
+import { ModelData, modelSDK } from "./interfaces";
 import dotenv from "dotenv";
 dotenv.config();
 import OpenAI from "openai";
@@ -9,6 +9,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { ChatCompletion } from "openai/resources/index.mjs";
 import similarity from "compute-cosine-similarity";
 import { ModelsData } from "../pages/ModelCompare/ModelCompare";
+import { Mode } from "fs";
 // import LlamaAI from "llamaai";
 
 type Model = {
@@ -28,6 +29,7 @@ type Response =
 export const chatCompletion = async (model: any) => {
   let content: string | null | Anthropic.TextBlock[] = null;
   let response: Response = null;
+  let groq: Groq;
 
   switch (model.model) {
     case "OpenAI":
@@ -35,7 +37,6 @@ export const chatCompletion = async (model: any) => {
         apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
         dangerouslyAllowBrowser: true,
       });
-      console.log(model.messages);
       try {
         response = await client.chat.completions.create({
           messages: model.messages,
@@ -48,18 +49,8 @@ export const chatCompletion = async (model: any) => {
       content = response?.choices[0]?.message?.content || "";
       break;
 
-    // case "Mistral":
-    //   const mistral = new MistralClient(model.apiKey);
-    //   response = await mistral.chat({
-    //     model: model.subModel,
-    //     messages: model.messages,
-    //   });
-    //   // Extract the content from the response
-    //   content = response.choices[0].message.content;
-    //   break;
-
-    case "LlaMA 3" || "Gemma" || "Mistral":
-      const groq = new Groq({
+    case "LlaMA 3":
+      groq = new Groq({
         apiKey: process.env.NEXT_PUBLIC_GROPQ_API_KEY,
         dangerouslyAllowBrowser: true,
       });
@@ -74,17 +65,40 @@ export const chatCompletion = async (model: any) => {
 
       content = response?.choices[0]?.message?.content || "";
       break;
-    // const newClient = new OpenAI({
-    //   apiKey: process.env.NEXT_PUBLIC_LLAMA_API_KEY,
-    //   dangerouslyAllowBrowser: true,
-    //   baseURL: "https://api.llamaai.com",
-    // });
-    // response = await newClient.chat.completions.create({
-    //   messages: model.messages,
-    //   model: model.subModel,
-    // });
-    // // Extract the content from the response
-    // content = response.choices[0].message.content;
+
+    case "Gemma":
+      groq = new Groq({
+        apiKey: process.env.NEXT_PUBLIC_GROPQ_API_KEY,
+        dangerouslyAllowBrowser: true,
+      });
+      try {
+        response = await groq.chat.completions.create({
+          messages: model.messages,
+          model: model.subModel,
+        });
+      } catch (error) {
+        console.error("Error in Groq ChatCompletion:", error);
+      }
+
+      content = response?.choices[0]?.message?.content || "";
+      break;
+
+    case "Mistral":
+      groq = new Groq({
+        apiKey: process.env.NEXT_PUBLIC_GROPQ_API_KEY,
+        dangerouslyAllowBrowser: true,
+      });
+      try {
+        response = await groq.chat.completions.create({
+          messages: model.messages,
+          model: model.subModel,
+        });
+      } catch (error) {
+        console.error("Error in Groq ChatCompletion:", error);
+      }
+
+      content = response?.choices[0]?.message?.content || "";
+      break;
 
     // case "Claude":
     //   const anthropic = new Anthropic({ apiKey: model.apiKey });
@@ -97,8 +111,6 @@ export const chatCompletion = async (model: any) => {
     //   content = response.content;
     //   break;
   }
-
-  // output completion.choice[0]
   return response?.choices[0].message;
 };
 
@@ -155,4 +167,42 @@ export const createCosineSimilarity: (
   const similarityScore = similarity(embedding1, embedding2);
   // const roundedSimilarity = Number(similarityScore?.toFixed(7));
   return similarityScore;
+};
+
+// create new model data
+export const createNewModelData = async (
+  originalModelData: ModelData,
+  newModelData: ModelData
+): Promise<ModelData> => {
+  let newModelDataCopy: ModelData = JSON.parse(JSON.stringify(newModelData)); // create a copy of the newModelData
+  let tempModelDataCopy: ModelData = JSON.parse(JSON.stringify(newModelData)); // only to use for chatcompletion
+
+  const systemMessage = originalModelData.messages.find(
+    (message) => message.role === "system"
+  );
+  if (systemMessage) {
+    newModelDataCopy.messages.push(systemMessage);
+    tempModelDataCopy.messages.push(systemMessage);
+  }
+
+  for (let index = 0; index < originalModelData.messages.length; index++) {
+    const message = originalModelData.messages[index];
+    if (message.role === "user") {
+      newModelDataCopy.messages.push(message);
+      tempModelDataCopy.messages.push(message);
+    } else if (message.role === "assistant") {
+      const newMessage = JSON.parse(
+        JSON.stringify(await chatCompletion(tempModelDataCopy))
+      );
+
+      newMessage.score = await createCosineSimilarity(
+        newMessage?.content,
+        message.content
+      );
+
+      newModelDataCopy.messages.push(newMessage);
+      tempModelDataCopy.messages.push(message);
+    }
+  }
+  return newModelDataCopy;
 };
