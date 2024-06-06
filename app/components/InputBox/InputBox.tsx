@@ -21,6 +21,7 @@ type InputBoxProps = {
   isButtonVisabled?: boolean;
   isButtonDisabled?: boolean;
   showAlert?: boolean;
+  isUserInputDisabled?: boolean;
 };
 
 const InputBox: React.FC<InputBoxProps> = ({
@@ -31,6 +32,7 @@ const InputBox: React.FC<InputBoxProps> = ({
   onValueChange,
   isButtonVisabled,
   isButtonDisabled,
+  isUserInputDisabled,
   showAlert,
 }) => {
   const [value, setValue] = useState<string>("");
@@ -54,18 +56,20 @@ const InputBox: React.FC<InputBoxProps> = ({
 
     setValue("");
   };
+  // Todo: fix on disable set the text color slate-600
   return (
     <div className={styles.container}>
       <div className={` ${styles.entryArea}`}>
         <input
-          className={`overflow-hidden ${styles.input}`}
+          className={`overflow-hidden ${styles.input} ${isUserInputDisabled ? 'text-slate-600' : ''}`}
           type="text"
           value={value}
           onChange={handleOnChange}
           required
+          disabled={isUserInputDisabled}
         />
         <div className={styles.labelLine}>{inputText}</div>
-        {!isButtonVisabled&& (
+        {!isButtonVisabled && (
           <Button
             disabled={isButtonDisabled}
             className={`btn absolute right-2 border-1 border-white z-[1111] bg-emerald-300 opacity-75 text-white hover:bg-emerald-200 ${btnStyle}`}

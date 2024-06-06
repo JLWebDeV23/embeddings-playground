@@ -2,7 +2,7 @@ import React, { act, useEffect, useState } from "react";
 import ModelData from "../../../public/assets/data/ModelData.json";
 
 type ModelHeaderProps = {
-  btnName?: string;
+  btnName?: any;
   btnStyle?: string;
   dropdownContentDirection: "left" | "right";
   onSubModelChange: (model: string, subModel: string) => void;
