@@ -20,7 +20,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <Header />
-        <main className="mr-8 ml-8 borde rounded-lg bg-gray">{children}</main>
+        <main className="mr-8 ml-8 borde rounded-lg bg-gray mb-1">{children}</main>
         <Footer />
         <script
           type="module"
