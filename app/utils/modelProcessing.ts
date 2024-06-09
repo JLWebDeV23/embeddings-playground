@@ -31,6 +31,13 @@ export const chatCompletion = async (model: any) => {
   let response: Response = null;
   let groq: Groq;
 
+  // model.messages = model.messages.map((data: any) => ({
+  //   message: {
+  //     role: data.message.role,
+  //     content: data.message.content,
+  //   },
+  // }));
+  console.log("model", model);
   switch (model.model) {
     case "OpenAI":
       const client = new OpenAI({
@@ -55,6 +62,7 @@ export const chatCompletion = async (model: any) => {
         dangerouslyAllowBrowser: true,
       });
       try {
+        console.log("model", model.messages);
         response = await groq.chat.completions.create({
           messages: model.messages,
           model: model.subModel,

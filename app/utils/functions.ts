@@ -5,6 +5,7 @@ import { QdrantClient } from "@qdrant/js-client-rest";
 import OpenAI from "openai";
 import MistralClient from "@mistralai/mistralai";
 import Anthropic from "@anthropic-ai/sdk";
+import { StringIntepolation } from "./interfaces";
 
 // utils/functions.ts
 export const client = new QdrantClient({
@@ -117,4 +118,20 @@ export const createChatCompletionLogProb = async (
     temperature: 0.0,
   });
   return completion.choices[0];
+};
+
+export const createStringInpterpolation = (str: string, data: any): string => {
+  const dataMap = data.reduce(
+    (acc: any, { value, field }: StringIntepolation) => {
+      acc[value] = field;
+      return acc;
+    },
+    {}
+  );
+
+  // Use a regular expression to find placeholders and replace them with values from the map
+  return str.replace(
+    /\{\{(\w+)\}\}/g,
+    (_, key) => dataMap[key] || `{{${key}}}`
+  );
 };
