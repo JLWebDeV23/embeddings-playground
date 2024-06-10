@@ -54,9 +54,12 @@ export interface ApiKey {
 }
 [];
 
-export interface StringIntepolation {
+export interface StringInterpolation {
   key: number;
   field: string;
   value: string;
 }
-[];
+
+export interface StringInterpolations {
+  list: StringInterpolation[];
+}
