@@ -25,7 +25,7 @@ const ModelHeader: React.FC<ModelHeaderProps> = ({
   }, [activeSubModel]);
 
   return (
-    <section className="flex justify-between w-full items-end z-50">
+    <section className="flex justify-between w-full items-end z-20">
       {/* <h2 className="font-normal text-lg">{activeSubModel}</h2> */}
       <div className="dropdown dropdown-hover drop-shadow-2xl ">
         <div tabIndex={0} className={`btn ${btnStyle}`}>
