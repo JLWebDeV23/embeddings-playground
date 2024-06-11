@@ -28,7 +28,8 @@ const AddStringInterpolation: React.FC<AddStringInterpolationProps>  = ({ variab
           onChange={(e) => setField(e.target.value)}
         />
         <button
-          className="btn bg-transparent hover:bg-green border-none hover:text-white"
+          className="btn bg-transparent
+          hover:bg-green hover:text-white"
           onClick={onAdd}
         >
           +
