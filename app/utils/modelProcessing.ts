@@ -214,3 +214,28 @@ export const createNewModelData = async (
   }
   return newModelDataCopy;
 };
+
+// const createMultipleModelData = async (stringInterpolations: StringInterpolations[], modelData: ModelsData) => {
+//   let result: any[][] = [];
+
+//   for (let i = 0; i < modelData.messages.length; i++) {
+//     const message = modelData.messages[i];
+//     if (message.role === "assistant") {
+//       let sysMessages: any[] = [];
+//       for (let j = 0; j < stringInterpolations.length; j++) {
+//         const newSysMsg = await createStringInterpolation(message, stringInterpolations[j]);
+//         sysMessages.push(newSysMsg);
+//       }
+//       result.push(sysMessages);
+//     }
+//   }
+
+//   stringInterpolations.forEach(element => {
+
+//     return result.push();
+//   }
+
+//   )
+
+// return result;
+// };

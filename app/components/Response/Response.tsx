@@ -8,6 +8,7 @@ type ResponseProps = {
   handleOnAddModel: (model: string, subModel: string) => void;
   isLastElement: boolean;
   handleLockBtn: () => void;
+  handleDeleteModelBtn: () => void;
   // handleAddResponseClick: (value:string) => void;
 };
 
@@ -16,6 +17,7 @@ const Response: React.FC<ResponseProps> = ({
   handleOnAddModel,
   isLastElement,
   handleLockBtn,
+  handleDeleteModelBtn,
 }) => {
   return (
     <div className="flex flex-col h-full w-full transition-all duration-300 ease-in-out">
@@ -24,6 +26,9 @@ const Response: React.FC<ResponseProps> = ({
           {data.model}: {data.subModel}
         </h2>
         <div className="flex items-center justify-end">
+          <div className="p-4 pt-6 cursor-pointer" onClick={handleDeleteModelBtn}>
+            <ion-icon name="trash-outline" size="small"></ion-icon>
+          </div>
           <div className="p-4 pt-6 cursor-pointer">
             <ion-icon
               style={{ color: data.locked ? "#f46c89" : "" }}
@@ -33,7 +38,7 @@ const Response: React.FC<ResponseProps> = ({
             ></ion-icon>
           </div>
           {isLastElement && (
-            <div className="p-4">
+            <div className="">
               <ModelHeader
                 btnName={<ion-icon name="add-outline"></ion-icon>}
                 btnStyle="dropdown dropdown-left pt-4 bg-transparent border-none z-0 hover:bg-transparent hover:border-none "
