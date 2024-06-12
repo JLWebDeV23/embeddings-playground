@@ -67,6 +67,11 @@ const InputBox: React.FC<InputBoxProps> = ({
           onChange={handleOnChange}
           required
           disabled={isUserInputDisabled}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handleClick(e);
+            }
+          }}
         />
         <div className={styles.labelLine}>{inputText}</div>
         {!isButtonVisabled && (
