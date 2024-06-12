@@ -1,4 +1,4 @@
-import { ModelData, modelSDK } from "./interfaces";
+import { ModelData, StringInterpolations, modelSDK } from "./interfaces";
 import dotenv from "dotenv";
 dotenv.config();
 import OpenAI from "openai";
@@ -215,8 +215,13 @@ export const createNewModelData = async (
   return newModelDataCopy;
 };
 
-// const createMultipleModelData = async (stringInterpolations: StringInterpolations[], modelData: ModelsData) => {
-//   let result: any[][] = [];
+// modelData [][]
+// stringInterpolations []
+// UserMessage
+// SystemMessage
+
+// const createMultipleModelData = async (stringInterpolations: StringInterpolations[], modelData: ModelsData, systemMessage: string, userMessage: string) => {
+//   let result: ModelData[][] = [];
 
 //   for (let i = 0; i < modelData.messages.length; i++) {
 //     const message = modelData.messages[i];
