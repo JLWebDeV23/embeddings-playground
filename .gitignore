@@ -13,8 +13,6 @@
 /.next/
 /out/
 
-page.tsx
-
 # production
 build
 
@@ -29,7 +27,6 @@ yarn-error.log*
 
 # local env files
 .env*.local
-app/page.tsx
 # vercel
 .vercel
 
