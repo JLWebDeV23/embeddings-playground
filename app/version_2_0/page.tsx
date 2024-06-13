@@ -18,6 +18,112 @@ import StringInterpolationDisplay from "../components/Modal/StringInterpolationD
 import AddStringInterpolation from "../components/Modal/AddStringInterpolation/AddStringInterpolation";
 
 const Version_2_0 = () => {
+
+  const handleAddResponseClick = (value: string) => {
+    console.log(value);
+  }
+
+  return (
+    <>
+      <ModelCompare />
+      <UserInput handleAddResponseClick={handleAddResponseClick} className="mt-auto" />
+    </>
+  );
+};
+
+const ModelCompare = () => {
+  const [sysMessage, setSysMessage] = useState<string>("");
+
+  const submitSysMessage = () => {
+    console.log(sysMessage);
+  }
+
+  return (
+    <div className="flex flex-col bg-card p-3 rounded-md">
+      <h1 className="font-bold text-xl">Model Compare</h1>
+      <div className="flex gap-3 pt-3 items-end">
+        <InputBox
+          inputText={"System Message"}
+          isButtonVisabled
+          value={sysMessage}
+          handleInput={(e) => setSysMessage(e.target.value)}
+          onSubmit={submitSysMessage}
+        />
+        <button
+          className="btn btn-lg"
+          onClick={() => alert("not implemented")}
+        >
+          GO
+        </button>
+      </div>
+      <div className="divider"></div>
+      <div className="flex gap-3 flex-wrap">
+        <button
+          className="btn btn-sm btn-disabled"
+          onClick={() => alert("not implemented")}
+        >
+          LlaMA 3: llama3-8b-8192
+        </button>
+        <button
+          className="btn btn-sm btn-disabled"
+          onClick={() => alert("not implemented")}
+        >
+          LlaMA 3: llama3-8b-8192
+        </button>
+        <button
+          className="btn btn-sm"
+          onClick={() => alert("not implemented")}
+        >
+          Add a new model
+        </button>
+      </div>
+    </div>
+  )
+}
+
+const UserInput = ({
+  handleAddResponseClick,
+  isUserInputDisabled = false,
+  className,
+  ...rest
+}: {
+  isUserInputDisabled?: boolean,
+  className?: string,
+  handleAddResponseClick: (value: string) => void
+} & React.HTMLAttributes<HTMLDivElement>) => {
+  const [prompt, setPrompt] = useState<string>("");
+  const showAlert = false;
+
+  const isButtonDisabled = prompt.length === 0;
+
+  return (
+    <div className={`flex flex-col bg-card p-3 rounded-xl ${className}`} {...rest}>
+
+      <InputBox
+        onSubmit={(value: string) => {
+          handleAddResponseClick(value);
+          setPrompt("");
+          // chatcompletion and display to model one => add to modelsData
+          // chatcompletion of value using selected models and push both value to user and the derived completion to the ModelsData
+        }}
+        value={prompt}
+        handleInput={(e) => setPrompt(e.target.value)}
+        isButtonDisabled={isButtonDisabled}
+        btnName="Add"
+        inputText="User Message"
+        isUserInputDisabled={isUserInputDisabled}
+        showAlert={showAlert}
+        btnStyle={
+          isButtonDisabled
+            ? "cursor-not-allowed rounded-none rounded-r-lg h-full translate-x-[15%]"
+            : "text-lime-50 cursor-pointer bg-emerald-300 rounded-none rounded-r-lg h-full translate-x-[15%] "
+        }
+      />
+    </div>
+  );
+};
+
+const _Version_2_0 = () => {
   const [modelData, setModelData] = useState<ModelData[]>([]);
   const [sysMessage, setSysMessage] = useState<string>("");
   const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(true);
@@ -227,7 +333,7 @@ const Version_2_0 = () => {
             key: interpolation.list.length,
             field: variable,
             value: field,
-          }
+          },
         ],
       };
     });
@@ -408,11 +514,11 @@ const Version_2_0 = () => {
       </div>
       <div className="flex flex-row p-2 pt-4 gap-4 h-full w-full items-end border-b-2 border-black">
         <div className="flex-grow">
-          <InputBox
+          {/* <InputBox
             inputText={"System Message"}
             isButtonVisabled
             onValueChange={setSysMessage}
-          />
+          /> */}
         </div>
         <div className="ml-auto">
           <button className="btn btn-lg" onClick={() => go(modelData)}>
@@ -446,7 +552,7 @@ const Version_2_0 = () => {
         </div>
       </div>
       <div className="pt-4 pb-4 pl-8 pr-8">
-        <InputBox
+        {/* <InputBox
           isButtonDisabled={isButtonDisabled}
           btnName="Add"
           inputText="User Message"
@@ -467,7 +573,7 @@ const Version_2_0 = () => {
             // chatcompletion and display to model one => add to modelsData
             // chatcompletion of value using selected models and push both value to user and the derived completion to the ModelsData
           }}
-        />
+        /> */}
         {<AlertModal showAlert={showAlert} onClose={onClose} />}
       </div>
     </div>

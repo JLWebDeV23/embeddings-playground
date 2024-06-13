@@ -11,7 +11,6 @@ import {
   NavbarMenuItem,
 } from "@nextui-org/navbar";
 import Link from "next/link";
-import { Main } from "next/document";
 import Logo from "../Logo/Logo";
 
 const Header = () => {

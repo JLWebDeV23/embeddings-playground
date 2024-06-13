@@ -4,73 +4,83 @@
 @tailwind components;
 @tailwind utilities;
 
-
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background: var(--dark-grey);
-  --primary: #fa9f9fc8;
-  --white: #F7F7F8;
-  --button: #343740;
-  --red: #f46c89;
-  --dark: #202123;
-  --dark-grey: #1A1A1C;
-  --green: #78c3aadb;
-  /* --primary: #6ee7b7 */
-  background-color: #000000;
+    --foreground-rgb: 0, 0, 0;
+    --background: var(--dark-grey);
+    --primary: #fa9f9fc8;
+    --white: #f7f7f8;
+    --button: #343740;
+    --red: #f46c89;
+    --dark: #202123;
+    --dark-grey: #1a1a1c;
+    --green: #78c3aadb;
+    /* --primary: #6ee7b7 */
+    background-color: #000000;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-  }
+    :root {
+        --foreground-rgb: 255, 255, 255;
+    }
 }
 
 /* Global styles */
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  scroll-behavior: smooth;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+}
+
+html {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
+    @apply text-foreground;
 }
 
 body {
-  /* padding: 30px; */
-  background: #000000;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', "Roboto", 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji', "Helvetica Neue";
-  background-color: #000000; 
-  /* Light background */
-  font-family: "Roboto", sans-serif;
+    display: flex;
+    flex-direction: column;
+    overflow-y: scroll;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+        "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
+        "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji",
+        "Helvetica Neue";
+    /* Light background */
+    font-family: "Roboto", sans-serif;
+    height: 100%;
 }
 
 /* Header styles */
 header {
-  background-color: #000000;
-  margin: 5px;
-  min-height: 10vh;
-  max-height: 13vh;
+    background-color: #000000;
+    margin: 5px;
+    min-height: 10vh;
+    max-height: 13vh;
 }
-
 
 /* Footer styles */
 footer {
-  background-color: #000000;
-  padding: 1rem 0;
-  text-align: center;
+    background-color: #000000;
+    padding: 1rem 0;
+    text-align: center;
 }
 
 /* Utility classes */
 .hover-green:hover {
-  color: var(--green);
-  border-color: var(--green);
+    color: var(--green);
+    border-color: var(--green);
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
+    font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+        monospace;
 }
 
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+    .text-balance {
+        text-wrap: balance;
+    }
 }
