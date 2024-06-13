@@ -1,7 +1,7 @@
 import ModelAnswer from ".";
-import { Answer } from "@/app/utils/types";
+import { ModelData } from "@/app/utils/interfaces";
 
-export default function ModelAnswerGroup({ answers }: { answers: Answer[] }) {
+export default function ModelAnswerGroup({ answers }: { answers: ModelData[] }) {
 
     return (
         <div className="flex flex-col gap-3">

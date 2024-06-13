@@ -119,15 +119,15 @@ const MockAnswer = [
         },
         {
           "role": "Assistant",
-          "content": "Hello, my name is alice"
+          "content": "Hello, my name is assistant and I like to talk a lot and oversizing the text because I like annoy web developpers! Because it's not enought, I will add a lot of text to make sure that the text is really big to overflow the container and make the web developper life a nightmare! I'm a bad assistant!"
         },
         {
           "role": "User",
-          "content": "Hello, my name is alice"
+          "content": "Dont'worry assistant, it fits"
         },
         {
           "role": "Assistant",
-          "content": "Hello, my name is alice"
+          "content": "😭😭😭"
         }
       ],
       "locked": true

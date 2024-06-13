@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
 import InputBox from '@/app/components/InputBox/InputBox';
+import { Select, SelectItem } from "@nextui-org/react";
+import models from "@/public/assets/data/ModelData.json";
+
 
 export default function ModelCompare() {
     const [sysMessage, setSysMessage] = useState<string>("");
+
+    /*     console.log(models.map((model) => model.submodel)) */
 
     const submitSysMessage = () => {
         console.log(sysMessage);
@@ -28,6 +33,27 @@ export default function ModelCompare() {
             </div>
             <div className="divider"></div>
             <div className="flex gap-3 flex-wrap">
+                {/*                 <Select
+                    label="Favorite Animal"
+                    placeholder="Select an animal"
+                    className="max-w-xs"
+                >
+                    {models.map((model, findex) => (
+                        <SelectItem key={findex} value={model.model}>
+                            {model.model}
+                        </SelectItem>
+                    ))}
+                </Select>
+                {models.map((model, index) => (
+                    <button
+                        key={index}
+                        className="btn btn-sm"
+                        onClick={() => alert("not implemented")}
+                    >
+                        {model.model}
+                    </button>
+                ))
+                } */}
                 <button
                     className="btn btn-sm btn-disabled"
                     onClick={() => alert("not implemented")}

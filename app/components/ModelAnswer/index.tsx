@@ -1,4 +1,7 @@
-import { Answer } from "@/app/utils/types";
+import { ModelData } from "@/app/utils/interfaces";
+import IonIcon from '@reacticons/ionicons';
+import { useState } from "react";
+
 
 function ChatBubble({ text, role }: { text: string, role: string }) {
     return (
@@ -12,13 +15,15 @@ function ChatBubble({ text, role }: { text: string, role: string }) {
 }
 
 
-function ModelAnswerHeader({ name }: { name: string }) {
+function ModelAnswerHeader({ name, isLocked, setIsLocked }: { name: string, isLocked: boolean, setIsLocked: (isLocked: boolean) => void }) {
     return (
         <div className="flex flex-row justify-between w-full p-2 border-b-2 border-b-surface">
             <h2 className="font-semibold">{name}</h2>
-            <div className="flex gap-2">
-                <button className="text-sm text-gray-500">Delete</button>
-                <button className="text-sm text-gray-500">Lock</button>
+            <div className="flex gap-2 h-full justify-center">
+                <button className="text-sm text-gray-500 p-1 rounded-md aspect-square"><IonIcon name="trash-outline" /></button>
+                <button className={`text-sm text-gray-500 p-1 rounded-md aspect-square ${isLocked ? "bg-red-900" : ""}`} onClick={() => setIsLocked(!isLocked)}>{
+                    isLocked ? <IonIcon name="lock-closed-outline" /> : <IonIcon name="lock-open-outline" />
+                }</button>
             </div>
         </div>
     );
@@ -26,10 +31,11 @@ function ModelAnswerHeader({ name }: { name: string }) {
 
 
 
-export default function ModelAnswer({ answer }: { answer: Answer }) {
+export default function ModelAnswer({ answer }: { answer: ModelData }) {
+    const [isLocked, setIsLocked] = useState<boolean>(false);
     return (
         <div className="flex flex-col bg-card rounded-md min-w-80 w-full ">
-            <ModelAnswerHeader name={answer.model} />
+            <ModelAnswerHeader name={answer.model} isLocked={isLocked} setIsLocked={setIsLocked} />
             <div className="flex flex-col p-2">
                 {
                     answer.messages.map((message, index) => (
