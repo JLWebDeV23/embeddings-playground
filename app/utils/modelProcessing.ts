@@ -10,6 +10,10 @@ import { ChatCompletion } from "openai/resources/index.mjs";
 import similarity from "compute-cosine-similarity";
 import { ModelsData } from "../pages/ModelCompare/ModelCompare";
 import { Mode } from "fs";
+import {
+  createStringInpterpolation,
+  upsertStringInpterpolations,
+} from "./functions";
 // import LlamaAI from "llamaai";
 
 type Model = {
@@ -215,11 +219,38 @@ export const createNewModelData = async (
   return newModelDataCopy;
 };
 
-// modelData [][]
-// stringInterpolations []
-// UserMessage
-// SystemMessage
+type CreateNewModelDataProps = {
+  modelData: ModelData[][];
+  newModelData: ModelData;
+  systemMessage: string;
+  stringInterpolations: StringInterpolations[];
+};
 
+export const createTestNewModelData = async (
+  props: CreateNewModelDataProps
+): Promise<ModelData[][]> => {
+  const { modelData, newModelData, systemMessage, stringInterpolations } =
+    props;
+
+  const changedSysMessageData = upsertStringInpterpolations(
+    systemMessage,
+    modelData,
+    stringInterpolations
+  );
+  const updatedData = await Promise.all(
+    changedSysMessageData.map(async (colData) => {
+      const [firstData, ...restData] = colData;
+      const updatedColData = [
+        ...colData,
+        await createNewModelData(firstData, newModelData),
+      ];
+
+      return updatedColData;
+    })
+  );
+
+  return updatedData;
+};
 // const createMultipleModelData = async (stringInterpolations: StringInterpolations[], modelData: ModelsData, systemMessage: string, userMessage: string) => {
 //   let result: ModelData[][] = [];
 
@@ -244,3 +275,23 @@ export const createNewModelData = async (
 
 // return result;
 // };
+
+// GO
+
+// modelData [][]
+// const updateModelData = (stringInterpolations: StringInterpolations[], modelData: ModelsData[][], systemMessage: string, userMessage: string) => {
+
+//     const modelDataCopy = modelData.map((data) => {
+//       // Updating Systmen message
+//       const newSystemMessage = createStringInpterpolation(systemMessage, stringInterpolations);
+//       const [firstMessage, ...restMessage] = data;
+//       const updateSystemMessage = data.slice
+
+//       return data
+//     })
+//   return updatedModelData;
+// }
+
+// stringInterpolations []
+// UserMessage
+// SystemMessage

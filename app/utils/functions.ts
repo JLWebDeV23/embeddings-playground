@@ -5,7 +5,11 @@ import { QdrantClient } from "@qdrant/js-client-rest";
 import OpenAI from "openai";
 import MistralClient from "@mistralai/mistralai";
 import Anthropic from "@anthropic-ai/sdk";
-import { StringIntepolation } from "./interfaces";
+import {
+  ModelData,
+  StringInterpolation,
+  StringInterpolations,
+} from "./interfaces";
 
 // utils/functions.ts
 export const client = new QdrantClient({
@@ -121,17 +125,123 @@ export const createChatCompletionLogProb = async (
 };
 
 export const createStringInpterpolation = (str: string, data: any): string => {
-  const dataMap = data.reduce(
-    (acc: any, { value, field }: StringIntepolation) => {
-      acc[value] = field;
-      return acc;
-    },
-    {}
-  );
+  // console.log("data", data);
+  // console.log("str", str);
+  // const dataMap = data.reduce(
+  //   (acc: any, { variable, field }: StringInterpolation) => {
+  //     acc[variable] = field;
+  //     return acc;
+  //   },
+  //   {}
+  // );
+  // // Use a regular expression to find placeholders and replace them with values from the map
+  // return str.replace(
+  //   /\{\{(\w+)\}\}/g,
+  //   (_, key) => dataMap[key] || `{{${key}}}`
+  // );
+  let newString = str;
+  data.forEach((interpolation: any) => {
+    const regex = new RegExp(`\\{{${interpolation.variable}\\}}`, "g");
+    newString = newString.replace(regex, interpolation.field);
+  });
+  return newString;
+};
 
-  // Use a regular expression to find placeholders and replace them with values from the map
-  return str.replace(
-    /\{\{(\w+)\}\}/g,
-    (_, key) => dataMap[key] || `{{${key}}}`
-  );
+export const upsertStringInpterpolations = (
+  systemMessage: string,
+  modelData: ModelData[][],
+  stringInterpolations: StringInterpolations[]
+): ModelData[][] => {
+  const baseModelData = modelData[0][0];
+  let updatedModelData: ModelData[][] = [];
+
+  if (baseModelData.messages.length === 0) {
+    updatedModelData = stringInterpolations.map(
+      (stringInterpolation, index) => {
+        const newSystemMessage = createStringInpterpolation(
+          systemMessage,
+          stringInterpolation.list
+        );
+        return [
+          {
+            model: baseModelData.model,
+            subModel: baseModelData.subModel,
+            messages: [
+              {
+                role: "system",
+                content: newSystemMessage,
+              },
+            ],
+            locked: baseModelData.locked,
+          },
+        ];
+      }
+    );
+  } else {
+    if (!baseModelData.messages.find((message) => message.role === "system")) {
+      updatedModelData = stringInterpolations.map(
+        (stringInterpolation, index) => {
+          const newSystemMessage = createStringInpterpolation(
+            systemMessage,
+            stringInterpolation.list
+          );
+          let newModelData = [] as ModelData[];
+          modelData.map((colData, colDataIndex) => {
+            if (colDataIndex === index) {
+              const updatedColData = [...colData];
+              updatedColData[0].messages.unshift({
+                role: "system",
+                content: newSystemMessage,
+              });
+              return updatedColData;
+            }
+            newModelData = colData;
+          });
+          return newModelData;
+        }
+      );
+    } else {
+      updatedModelData = stringInterpolations.map(
+        (stringInterpolation, index) => {
+          const newSystemMessage = createStringInpterpolation(
+            systemMessage,
+            stringInterpolation.list
+          );
+          let newModelData = [] as ModelData[];
+          modelData.map((colData, colDataIndex) => {
+            if (colDataIndex === index) {
+              const updatedColData = [...colData];
+              const updatedColDataMessages = [...updatedColData[0].messages];
+
+              if (updatedColDataMessages.length > 0) {
+                const firstMessage = updatedColDataMessages[0];
+                if (firstMessage.role === "system") {
+                  updatedColDataMessages[0] = {
+                    role: "system",
+                    content: newSystemMessage,
+                  };
+                } else {
+                  updatedColDataMessages.unshift({
+                    role: "system",
+                    content: newSystemMessage,
+                  });
+                }
+              } else {
+                updatedColDataMessages.unshift({
+                  role: "system",
+                  content: newSystemMessage,
+                });
+              }
+
+              updatedColData[0].messages = updatedColDataMessages;
+              return updatedColData;
+            }
+            newModelData = colData;
+          });
+          return newModelData;
+        }
+      );
+    }
+  }
+  return updatedModelData;
 };
