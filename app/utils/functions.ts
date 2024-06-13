@@ -124,7 +124,7 @@ export const createChatCompletionLogProb = async (
   return completion.choices[0];
 };
 
-export const createStringInpterpolation = (str: string, data: any): string => {
+export const createStringInterpolation = (str: string, data: any): string => {
   // console.log("data", data);
   // console.log("str", str);
   // const dataMap = data.reduce(
@@ -147,7 +147,7 @@ export const createStringInpterpolation = (str: string, data: any): string => {
   return newString;
 };
 
-export const upsertStringInpterpolations = (
+export const upsertStringInterpolations = (
   systemMessage: string,
   modelData: ModelData[][],
   stringInterpolations: StringInterpolations[]
@@ -156,92 +156,55 @@ export const upsertStringInpterpolations = (
   let updatedModelData: ModelData[][] = [];
 
   if (baseModelData.messages.length === 0) {
-    updatedModelData = stringInterpolations.map(
-      (stringInterpolation, index) => {
-        const newSystemMessage = createStringInpterpolation(
+    updatedModelData = stringInterpolations.map((stringInterpolation) => {
+      const newSystemMessage = createStringInterpolation(
+        systemMessage,
+        stringInterpolation.list
+      );
+      return [
+        {
+          model: baseModelData.model,
+          subModel: baseModelData.subModel,
+          messages: [
+            {
+              role: "system",
+              content: newSystemMessage,
+            },
+          ],
+          locked: baseModelData.locked,
+        },
+      ];
+    });
+  } else {
+    updatedModelData = modelData.map((colData, colDataIndex) => {
+      const updatedColData = [...colData];
+      const stringInterpolation = stringInterpolations[colDataIndex];
+      if (stringInterpolation) {
+        const newSystemMessage = createStringInterpolation(
           systemMessage,
           stringInterpolation.list
         );
-        return [
-          {
-            model: baseModelData.model,
-            subModel: baseModelData.subModel,
-            messages: [
-              {
-                role: "system",
-                content: newSystemMessage,
-              },
-            ],
-            locked: baseModelData.locked,
-          },
-        ];
+
+        if (
+          !updatedColData[0].messages.find(
+            (message) => message.role === "system"
+          )
+        ) {
+          updatedColData[0].messages.unshift({
+            role: "system",
+            content: newSystemMessage,
+          });
+        } else {
+          updatedColData[0].messages = updatedColData[0].messages.map(
+            (message) =>
+              message.role === "system"
+                ? { role: "system", content: newSystemMessage }
+                : message
+          );
+        }
       }
-    );
-  } else {
-    if (!baseModelData.messages.find((message) => message.role === "system")) {
-      updatedModelData = stringInterpolations.map(
-        (stringInterpolation, index) => {
-          const newSystemMessage = createStringInpterpolation(
-            systemMessage,
-            stringInterpolation.list
-          );
-          let newModelData = [] as ModelData[];
-          modelData.map((colData, colDataIndex) => {
-            if (colDataIndex === index) {
-              const updatedColData = [...colData];
-              updatedColData[0].messages.unshift({
-                role: "system",
-                content: newSystemMessage,
-              });
-              return updatedColData;
-            }
-            newModelData = colData;
-          });
-          return newModelData;
-        }
-      );
-    } else {
-      updatedModelData = stringInterpolations.map(
-        (stringInterpolation, index) => {
-          const newSystemMessage = createStringInpterpolation(
-            systemMessage,
-            stringInterpolation.list
-          );
-          let newModelData = [] as ModelData[];
-          modelData.map((colData, colDataIndex) => {
-            if (colDataIndex === index) {
-              const updatedColData = [...colData];
-              const updatedColDataMessages = [...updatedColData[0].messages];
-
-              if (updatedColDataMessages.length > 0) {
-                const firstMessage = updatedColDataMessages[0];
-                if (firstMessage.role === "system") {
-                  updatedColDataMessages[0] = {
-                    role: "system",
-                    content: newSystemMessage,
-                  };
-                } else {
-                  updatedColDataMessages.unshift({
-                    role: "system",
-                    content: newSystemMessage,
-                  });
-                }
-              } else {
-                updatedColDataMessages.unshift({
-                  role: "system",
-                  content: newSystemMessage,
-                });
-              }
-
-              updatedColData[0].messages = updatedColDataMessages;
-              return updatedColData;
-            }
-            newModelData = colData;
-          });
-          return newModelData;
-        }
-      );
-    }
+      return updatedColData;
+    });
   }
   return updatedModelData;
 };

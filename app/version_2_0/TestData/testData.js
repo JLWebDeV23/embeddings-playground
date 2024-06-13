@@ -9,19 +9,19 @@ export const testData = [
           content: "Hello, my name is Joey",
         },
         {
-          role: "User",
+          role: "user",
           content: "Hello, my name is Joey",
         },
         {
-          role: "Assistant",
+          role: "assistant",
           content: "Hello, my name is Joey",
         },
         {
-          role: "User",
+          role: "user",
           content: "Hello, my name is Joey",
         },
         {
-          role: "Assistant",
+          role: "assistant",
           content: "Hello, my name is Joey",
         },
       ],
@@ -36,19 +36,19 @@ export const testData = [
           content: "Hello, my name is Joey",
         },
         {
-          role: "User",
+          role: "user",
           content: "Hello, my name is Joey",
         },
         {
-          role: "Assistant",
+          role: "assistant",
           content: "Hello, my name is Joey",
         },
         {
-          role: "User",
+          role: "user",
           content: "Hello, my name is Joey",
         },
         {
-          role: "Assistant",
+          role: "assistant",
           content: "Hello, my name is Joey",
         },
       ],
@@ -65,19 +65,19 @@ export const testData = [
           content: "Hello, my name is alice",
         },
         {
-          role: "User",
+          role: "user",
           content: "Hello, my name is alice",
         },
         {
-          role: "Assistant",
+          role: "assistant",
           content: "Hello, my name is alice",
         },
         {
-          role: "User",
+          role: "user",
           content: "Hello, my name is alice",
         },
         {
-          role: "Assistant",
+          role: "assistant",
           content: "Hello, my name is alice",
         },
       ],
@@ -92,19 +92,19 @@ export const testData = [
           content: "Hello, my name is alice",
         },
         {
-          role: "User",
+          role: "user",
           content: "Hello, my name is alice",
         },
         {
-          role: "Assistant",
+          role: "assistant",
           content: "Hello, my name is alice",
         },
         {
-          role: "User",
+          role: "user",
           content: "Hello, my name is alice",
         },
         {
-          role: "Assistant",
+          role: "assistant",
           content: "Hello, my name is alice",
         },
       ],
@@ -121,19 +121,19 @@ export const testData = [
           content: "Hello, my name is John",
         },
         {
-          role: "User",
+          role: "user",
           content: "Hello, my name is John",
         },
         {
-          role: "Assistant",
+          role: "assistant",
           content: "Hello, my name is John",
         },
         {
-          role: "User",
+          role: "user",
           content: "Hello, my name is John",
         },
         {
-          role: "Assistant",
+          role: "assistant",
           content: "Hello, my name is John",
         },
       ],
@@ -148,19 +148,19 @@ export const testData = [
           content: "Hello, my name is John",
         },
         {
-          role: "User",
+          role: "user",
           content: "Hello, my name is John",
         },
         {
-          role: "Assistant",
+          role: "assistant",
           content: "Hello, my name is John",
         },
         {
-          role: "User",
+          role: "user",
           content: "Hello, my name is John",
         },
         {
-          role: "Assistant",
+          role: "assistant",
           content: "Hello, my name is John",
         },
       ],

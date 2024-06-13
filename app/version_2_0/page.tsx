@@ -13,8 +13,8 @@ import { chatCompletion, createNewModelData } from "../utils/modelProcessing";
 import { createTestNewModelData } from "../utils/modelProcessing";
 import AlertModal from "../components/AlertModal/AlertModal";
 import {
-  createStringInpterpolation,
-  upsertStringInpterpolations,
+  createStringInterpolation,
+  upsertStringInterpolations,
 } from "../utils/functions";
 import Modal from "../components/Modal/Modal";
 import StringInterpolationList from "../components/Modal/StringInterpolationList/StringInterpolationList";
@@ -91,7 +91,7 @@ const Version_2_0 = () => {
         let newMessages = [];
         let newSysMessage = "";
         if (sysMessage) {
-          newSysMessage = createStringInpterpolation(
+          newSysMessage = createStringInterpolation(
             sysMessage,
             stringInterpolation
           );
@@ -169,7 +169,7 @@ const Version_2_0 = () => {
 
   const updateSystemMessage = () => {
     try {
-      const newSysMessage = createStringInpterpolation(
+      const newSysMessage = createStringInterpolation(
         sysMessage,
         stringInterpolation
       );
@@ -245,7 +245,7 @@ const Version_2_0 = () => {
 
   const go = async (modelData1: ModelData[] | undefined) => {
     // setIsUserInputDisabled(true);
-    const newSysMessage = createStringInpterpolation(
+    const newSysMessage = createStringInterpolation(
       sysMessage,
       stringInterpolation
     );
@@ -354,8 +354,9 @@ const Version_2_0 = () => {
       stringInterpolations: stringInterpolations,
       newModelData: newModelData,
     };
-
+    console.log(testData, "hi")
     console.log(await createTestNewModelData(props));
+    console.log(upsertStringInterpolations(systemMessage, testData, stringInterpolations));
     // const template = "Hello, {{name}}. Welcome to {{place}}.";
     // const interpolations: StringInterpolation[] = [
     //   { key: 1, variable: "name", field: "Alice" },

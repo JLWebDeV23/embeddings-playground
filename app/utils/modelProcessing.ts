@@ -10,10 +10,7 @@ import { ChatCompletion } from "openai/resources/index.mjs";
 import similarity from "compute-cosine-similarity";
 import { ModelsData } from "../pages/ModelCompare/ModelCompare";
 import { Mode } from "fs";
-import {
-  createStringInpterpolation,
-  upsertStringInpterpolations,
-} from "./functions";
+import { upsertStringInterpolations } from "./functions";
 // import LlamaAI from "llamaai";
 
 type Model = {
@@ -188,6 +185,8 @@ export const createNewModelData = async (
 ): Promise<ModelData> => {
   let newModelDataCopy: ModelData = JSON.parse(JSON.stringify(newModelData)); // create a copy of the newModelData
   let tempModelDataCopy: ModelData = JSON.parse(JSON.stringify(newModelData)); // only to use for chatcompletion
+  console.log("originalModelData", originalModelData);
+  console.log("newModelData", newModelData);
 
   const systemMessage = originalModelData.messages.find(
     (message) => message.role === "system"
@@ -196,13 +195,14 @@ export const createNewModelData = async (
     newModelDataCopy.messages.push(systemMessage);
     tempModelDataCopy.messages.push(systemMessage);
   }
-
   for (let index = 0; index < originalModelData.messages.length; index++) {
     const message = originalModelData.messages[index];
-    if (message.role === "user") {
+    console.log(message.role);
+    if (message.role.toLowerCase() === "user") {
       newModelDataCopy.messages.push(message);
+      console.log(newModelDataCopy, "here");
       tempModelDataCopy.messages.push(message);
-    } else if (message.role === "assistant") {
+    } else if (message.role.toLowerCase() === "assistant") {
       const newMessage = JSON.parse(
         JSON.stringify(await chatCompletion(tempModelDataCopy))
       );
@@ -216,6 +216,7 @@ export const createNewModelData = async (
       tempModelDataCopy.messages.push(message);
     }
   }
+  console.log("newModelDataCopy", newModelDataCopy);
   return newModelDataCopy;
 };
 
@@ -232,22 +233,17 @@ export const createTestNewModelData = async (
   const { modelData, newModelData, systemMessage, stringInterpolations } =
     props;
 
-  const changedSysMessageData = upsertStringInpterpolations(
+  const changedSysMessageData = upsertStringInterpolations(
     systemMessage,
     modelData,
     stringInterpolations
   );
   const updatedData = await Promise.all(
-    changedSysMessageData.map(async (colData) => {
-      const [firstData, ...restData] = colData;
-      const updatedColData = [
-        ...colData,
-        await createNewModelData(firstData, newModelData),
-      ];
-
-      return updatedColData;
+    changedSysMessageData.map(async (colData: ModelData[]) => {
+      return [...colData, await createNewModelData(colData[0], newModelData)];
     })
   );
+  console.log("updatedColData", updatedData);
 
   return updatedData;
 };
