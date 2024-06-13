@@ -19,7 +19,7 @@ const config: Config = {
         white: "#ffffff",
         gray: "#1D232A",
         lightGray: "#343740",
-        foreground : "#E8EAED",
+        foreground: "#E8EAED",
         card: "#1D232A",
         surface: "#141414",
       },

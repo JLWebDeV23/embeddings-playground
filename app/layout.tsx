@@ -20,7 +20,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <Header />
-        <main className="m-5 flex flex-col flex-1">{children}</main>
+        <main>
+          {children}
+        </main>
         <Footer />
         <script
           type="module"

@@ -15,8 +15,8 @@ import Logo from "../Logo/Logo";
 
 const Header = () => {
   return (
-    <header>
-      <Navbar shouldHideOnScroll>
+    <header className="p-3">
+      <Navbar>
         <NavbarBrand>
           <Link color="foreground" href="/">
             <Logo />

@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect, useState, useCallback } from "react";
-import InputBox from "../components/InputBox/InputBox";
 import Response from "../components/Response/Response";
 import { ScrollShadow } from "@nextui-org/scroll-shadow";
 import {
@@ -17,6 +16,181 @@ import StringInterpolationList from "../components/Modal/StringInterpolationList
 import StringInterpolationDisplay from "../components/Modal/StringInterpolationDisplay/StringInterpolationDisplay";
 import AddStringInterpolation from "../components/Modal/AddStringInterpolation/AddStringInterpolation";
 
+import ModelCompare from "../components/ModelCompare";
+import UserInput from "../components/UserInput";
+import ModelAnswerGroup from "../components/ModelAnswer/ModelAnswerGroup";
+
+const MockAnswer = [
+  [
+    {
+      "model": "OpenAI",
+      "subModel": "gpt-3.5-turbo",
+      "messages": [
+        {
+          "role": "system",
+          "content": "Hello, my name is Joey"
+        },
+        {
+          "role": "User",
+          "content": "Hello, my name is Joey"
+        },
+        {
+          "role": "Assistant",
+          "content": "Hello, my name is Joey"
+        },
+        {
+          "role": "User",
+          "content": "Hello, my name is Joey"
+        },
+        {
+          "role": "Assistant",
+          "content": "Hello, my name is Joey"
+        }
+      ],
+      "locked": true
+    },
+    {
+      "model": "LlaMA 3",
+      "subModel": "llama3-8b-8192",
+      "messages": [
+        {
+          "role": "system",
+          "content": "Hello, my name is Joey"
+        },
+        {
+          "role": "User",
+          "content": "Hello, my name is Joey"
+        },
+        {
+          "role": "Assistant",
+          "content": "Hello, my name is Ai"
+        },
+        {
+          "role": "User",
+          "content": "Hello, my name is Joey"
+        },
+        {
+          "role": "Assistant",
+          "content": "Hello, my name is Joey"
+        }
+      ],
+      "locked": true
+    }
+  ],
+  [
+    {
+      "model": "OpenAI",
+      "subModel": "gpt-3.5-turbo",
+      "messages": [
+        {
+          "role": "system",
+          "content": "Hello, my name is alice"
+        },
+        {
+          "role": "User",
+          "content": "Hello, my name is alice"
+        },
+        {
+          "role": "Assistant",
+          "content": "Hello, my name is alice"
+        },
+        {
+          "role": "User",
+          "content": "Hello, my name is alice"
+        },
+        {
+          "role": "Assistant",
+          "content": "Hello, my name is alice"
+        }
+      ],
+      "locked": true
+    },
+    {
+      "model": "LlaMA 3",
+      "subModel": "llama3-8b-8192",
+      "messages": [
+        {
+          "role": "system",
+          "content": "Hello, my name is alice"
+        },
+        {
+          "role": "User",
+          "content": "Hello, my name is alice"
+        },
+        {
+          "role": "Assistant",
+          "content": "Hello, my name is alice"
+        },
+        {
+          "role": "User",
+          "content": "Hello, my name is alice"
+        },
+        {
+          "role": "Assistant",
+          "content": "Hello, my name is alice"
+        }
+      ],
+      "locked": true
+    }
+  ],
+  [
+    {
+      "model": "OpenAI",
+      "subModel": "gpt-3.5-turbo",
+      "messages": [
+        {
+          "role": "system",
+          "content": "Hello, my name is John"
+        },
+        {
+          "role": "User",
+          "content": "Hello, my name is John"
+        },
+        {
+          "role": "Assistant",
+          "content": "Hello, my name is John"
+        },
+        {
+          "role": "User",
+          "content": "Hello, my name is John"
+        },
+        {
+          "role": "Assistant",
+          "content": "Hello, my name is John"
+        }
+      ],
+      "locked": true
+    },
+    {
+      "model": "LlaMA 3",
+      "subModel": "llama3-8b-8192",
+      "messages": [
+        {
+          "role": "system",
+          "content": "Hello, my name is John"
+        },
+        {
+          "role": "User",
+          "content": "Hello, my name is John"
+        },
+        {
+          "role": "Assistant",
+          "content": "Hello, my name is John"
+        },
+        {
+          "role": "User",
+          "content": "Hello, my name is John"
+        },
+        {
+          "role": "Assistant",
+          "content": "Hello, my name is John"
+        }
+      ],
+      "locked": true
+    }
+  ]
+]
+
 const Version_2_0 = () => {
 
   const handleAddResponseClick = (value: string) => {
@@ -25,103 +199,23 @@ const Version_2_0 = () => {
 
   return (
     <>
-      <ModelCompare />
-      <UserInput handleAddResponseClick={handleAddResponseClick} className="mt-auto" />
+      <div className="m-5 gap-3 flex flex-col flex-1">
+        <ModelCompare />
+        {
+          MockAnswer.map((obj, index) => (
+            <ModelAnswerGroup key={index} answers={obj} />
+          ))
+        }
+
+      </div>
+      <div className="sticky bottom-0 p-5 gap-3 flex flex-col flex-1  backdrop-blur-md" >
+
+        <UserInput handleAddResponseClick={handleAddResponseClick} className="pt-4 w-full" />
+      </div>
     </>
   );
 };
 
-const ModelCompare = () => {
-  const [sysMessage, setSysMessage] = useState<string>("");
-
-  const submitSysMessage = () => {
-    console.log(sysMessage);
-  }
-
-  return (
-    <div className="flex flex-col bg-card p-3 rounded-md">
-      <h1 className="font-bold text-xl">Model Compare</h1>
-      <div className="flex gap-3 pt-3 items-end">
-        <InputBox
-          inputText={"System Message"}
-          isButtonVisabled
-          value={sysMessage}
-          handleInput={(e) => setSysMessage(e.target.value)}
-          onSubmit={submitSysMessage}
-        />
-        <button
-          className="btn btn-lg"
-          onClick={() => alert("not implemented")}
-        >
-          GO
-        </button>
-      </div>
-      <div className="divider"></div>
-      <div className="flex gap-3 flex-wrap">
-        <button
-          className="btn btn-sm btn-disabled"
-          onClick={() => alert("not implemented")}
-        >
-          LlaMA 3: llama3-8b-8192
-        </button>
-        <button
-          className="btn btn-sm btn-disabled"
-          onClick={() => alert("not implemented")}
-        >
-          LlaMA 3: llama3-8b-8192
-        </button>
-        <button
-          className="btn btn-sm"
-          onClick={() => alert("not implemented")}
-        >
-          Add a new model
-        </button>
-      </div>
-    </div>
-  )
-}
-
-const UserInput = ({
-  handleAddResponseClick,
-  isUserInputDisabled = false,
-  className,
-  ...rest
-}: {
-  isUserInputDisabled?: boolean,
-  className?: string,
-  handleAddResponseClick: (value: string) => void
-} & React.HTMLAttributes<HTMLDivElement>) => {
-  const [prompt, setPrompt] = useState<string>("");
-  const showAlert = false;
-
-  const isButtonDisabled = prompt.length === 0;
-
-  return (
-    <div className={`flex flex-col bg-card p-3 rounded-xl ${className}`} {...rest}>
-
-      <InputBox
-        onSubmit={(value: string) => {
-          handleAddResponseClick(value);
-          setPrompt("");
-          // chatcompletion and display to model one => add to modelsData
-          // chatcompletion of value using selected models and push both value to user and the derived completion to the ModelsData
-        }}
-        value={prompt}
-        handleInput={(e) => setPrompt(e.target.value)}
-        isButtonDisabled={isButtonDisabled}
-        btnName="Add"
-        inputText="User Message"
-        isUserInputDisabled={isUserInputDisabled}
-        showAlert={showAlert}
-        btnStyle={
-          isButtonDisabled
-            ? "cursor-not-allowed rounded-none rounded-r-lg h-full translate-x-[15%]"
-            : "text-lime-50 cursor-pointer bg-emerald-300 rounded-none rounded-r-lg h-full translate-x-[15%] "
-        }
-      />
-    </div>
-  );
-};
 
 const _Version_2_0 = () => {
   const [modelData, setModelData] = useState<ModelData[]>([]);
