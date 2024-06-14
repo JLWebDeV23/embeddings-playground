@@ -9,12 +9,19 @@ import {
 } from "../utils/interfaces";
 import ModelHeader from "../components/ModelHeader/ModelHeader";
 import { chatCompletion, createNewModelData } from "../utils/modelProcessing";
+import { createTestNewModelData } from "../utils/modelProcessing";
 import AlertModal from "../components/AlertModal/AlertModal";
-import { createStringInpterpolation } from "../utils/functions";
+import {
+  createStringInterpolation,
+  upsertStringInterpolations,
+} from "../utils/functions";
 import Modal from "../components/Modal/Modal";
 import StringInterpolationList from "../components/Modal/StringInterpolationList/StringInterpolationList";
 import StringInterpolationDisplay from "../components/Modal/StringInterpolationDisplay/StringInterpolationDisplay";
 import AddStringInterpolation from "../components/Modal/AddStringInterpolation/AddStringInterpolation";
+import { key } from "ionicons/icons";
+import test from "node:test";
+import { testData } from "./TestData/testData";
 
 import ModelCompare from "../components/ModelCompare";
 import UserInput from "../components/UserInput";
@@ -284,7 +291,7 @@ const _Version_2_0 = () => {
         let newMessages = [];
         let newSysMessage = "";
         if (sysMessage) {
-          newSysMessage = createStringInpterpolation(
+          newSysMessage = createStringInterpolation(
             sysMessage,
             stringInterpolation
           );
@@ -362,7 +369,7 @@ const _Version_2_0 = () => {
 
   const updateSystemMessage = () => {
     try {
-      const newSysMessage = createStringInpterpolation(
+      const newSysMessage = createStringInterpolation(
         sysMessage,
         stringInterpolation
       );
@@ -425,8 +432,8 @@ const _Version_2_0 = () => {
           ...interpolation.list,
           {
             key: interpolation.list.length,
-            field: variable,
-            value: field,
+            field: field,
+            variable: variable,
           },
         ],
       };
@@ -438,7 +445,7 @@ const _Version_2_0 = () => {
 
   const go = async (modelData1: ModelData[] | undefined) => {
     // setIsUserInputDisabled(true);
-    const newSysMessage = createStringInpterpolation(
+    const newSysMessage = createStringInterpolation(
       sysMessage,
       stringInterpolation
     );
@@ -494,11 +501,78 @@ const _Version_2_0 = () => {
     console.log(value);
   };
 
+  const handleTest = async () => {
+    // const testData = [
+    //   [
+    //     {
+    //       model: "OpenAI",
+    //       subModel: "gpt-3.5-turbo",
+    //       messages: [],
+    //       locked: true,
+    //     },
+    //   ],
+    // ] as ModelData[][];
+    const newModelData: ModelData = {
+      model: "LlaMA 3",
+      subModel: "llama3-8b-8192",
+      messages: [],
+      locked: false,
+    };
+    const systemMessage = "Hello, my name is {{name}}";
+    const stringInterpolations: StringInterpolations[] = [
+      {
+        list: [
+          {
+            key: 0,
+            field: "Joey",
+            variable: "name",
+          },
+        ],
+      },
+      {
+        list: [
+          {
+            key: 0,
+            field: "Alice",
+            variable: "name",
+          },
+        ],
+      },
+      {
+        list: [
+          {
+            key: 0,
+            field: "John",
+            variable: "name",
+          },
+        ],
+      },
+    ];
+    const props = {
+      systemMessage: systemMessage,
+      modelData: testData,
+      stringInterpolations: stringInterpolations,
+      newModelData: newModelData,
+    };
+    console.log(testData, "hi")
+    console.log(await createTestNewModelData(props));
+    console.log(upsertStringInterpolations(systemMessage, testData, stringInterpolations));
+    // const template = "Hello, {{name}}. Welcome to {{place}}.";
+    // const interpolations: StringInterpolation[] = [
+    //   { key: 1, variable: "name", field: "Alice" },
+    //   { key: 2, variable: "place", field: "Wonderland" },
+    // ];
+    // console.log(createStringInpterpolation(template, interpolations));
+  };
+
   return (
     <div className="flex-col w-full">
       <div className="flex items-end p-2 border-b-2 border-black">
         <h1 className="flex-grow pl-2 font-sans text-2xl">Model Compare</h1>
         <div className="flex ml-auto items-end">
+          <button className="btn btn-square ml-4" onClick={handleTest}>
+            test
+          </button>
           {/* // Todo: add caution msg onclick again, history will be remove for new chat */}
           <ModelHeader
             dropdownContentDirection="left"

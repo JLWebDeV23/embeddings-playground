@@ -5,7 +5,11 @@ import { QdrantClient } from "@qdrant/js-client-rest";
 import OpenAI from "openai";
 import MistralClient from "@mistralai/mistralai";
 import Anthropic from "@anthropic-ai/sdk";
-import { StringIntepolation } from "./interfaces";
+import {
+  ModelData,
+  StringInterpolation,
+  StringInterpolations,
+} from "./interfaces";
 
 // utils/functions.ts
 export const client = new QdrantClient({
@@ -120,18 +124,87 @@ export const createChatCompletionLogProb = async (
   return completion.choices[0];
 };
 
-export const createStringInpterpolation = (str: string, data: any): string => {
-  const dataMap = data.reduce(
-    (acc: any, { value, field }: StringIntepolation) => {
-      acc[value] = field;
-      return acc;
-    },
-    {}
-  );
+export const createStringInterpolation = (str: string, data: any): string => {
+  // console.log("data", data);
+  // console.log("str", str);
+  // const dataMap = data.reduce(
+  //   (acc: any, { variable, field }: StringInterpolation) => {
+  //     acc[variable] = field;
+  //     return acc;
+  //   },
+  //   {}
+  // );
+  // // Use a regular expression to find placeholders and replace them with values from the map
+  // return str.replace(
+  //   /\{\{(\w+)\}\}/g,
+  //   (_, key) => dataMap[key] || `{{${key}}}`
+  // );
+  let newString = str;
+  data.forEach((interpolation: any) => {
+    const regex = new RegExp(`\\{{${interpolation.variable}\\}}`, "g");
+    newString = newString.replace(regex, interpolation.field);
+  });
+  return newString;
+};
 
-  // Use a regular expression to find placeholders and replace them with values from the map
-  return str.replace(
-    /\{\{(\w+)\}\}/g,
-    (_, key) => dataMap[key] || `{{${key}}}`
-  );
+export const upsertStringInterpolations = (
+  systemMessage: string,
+  modelData: ModelData[][],
+  stringInterpolations: StringInterpolations[]
+): ModelData[][] => {
+  const baseModelData = modelData[0][0];
+  let updatedModelData: ModelData[][] = [];
+
+  if (baseModelData.messages.length === 0) {
+    updatedModelData = stringInterpolations.map((stringInterpolation) => {
+      const newSystemMessage = createStringInterpolation(
+        systemMessage,
+        stringInterpolation.list
+      );
+      return [
+        {
+          model: baseModelData.model,
+          subModel: baseModelData.subModel,
+          messages: [
+            {
+              role: "system",
+              content: newSystemMessage,
+            },
+          ],
+          locked: baseModelData.locked,
+        },
+      ];
+    });
+  } else {
+    updatedModelData = modelData.map((colData, colDataIndex) => {
+      const updatedColData = [...colData];
+      const stringInterpolation = stringInterpolations[colDataIndex];
+      if (stringInterpolation) {
+        const newSystemMessage = createStringInterpolation(
+          systemMessage,
+          stringInterpolation.list
+        );
+
+        if (
+          !updatedColData[0].messages.find(
+            (message) => message.role === "system"
+          )
+        ) {
+          updatedColData[0].messages.unshift({
+            role: "system",
+            content: newSystemMessage,
+          });
+        } else {
+          updatedColData[0].messages = updatedColData[0].messages.map(
+            (message) =>
+              message.role === "system"
+                ? { role: "system", content: newSystemMessage }
+                : message
+          );
+        }
+      }
+      return updatedColData;
+    });
+  }
+  return updatedModelData;
 };
