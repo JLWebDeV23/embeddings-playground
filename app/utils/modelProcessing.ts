@@ -1,4 +1,9 @@
-import { ModelData, StringInterpolations, modelSDK } from "./interfaces";
+import {
+  Message,
+  ModelData,
+  StringInterpolations,
+  modelSDK,
+} from "./interfaces";
 import dotenv from "dotenv";
 dotenv.config();
 import OpenAI from "openai";
@@ -11,6 +16,9 @@ import similarity from "compute-cosine-similarity";
 import { ModelsData } from "../pages/ModelCompare/ModelCompare";
 import { Mode } from "fs";
 import { upsertStringInterpolations } from "./functions";
+import { assert } from "console";
+import { user } from "@nextui-org/react";
+import { syncSharp } from "ionicons/icons";
 // import LlamaAI from "llamaai";
 
 type Model = {
@@ -298,9 +306,12 @@ type InsertUserPromptProps = {
 };
 
 // Add User Input Button
-export const insertUserPrompt = async (props: InsertUserPromptProps) => {
+export const insertUserPrompt = async (
+  props: InsertUserPromptProps
+): Promise<ModelData[][] | undefined> => {
   const { modelData, userPrompt, systemMessage, stringInterpolations } = props;
 
+  // Generate the new system message data
   const changedSysMessageData = upsertStringInterpolations(
     systemMessage,
     modelData,
@@ -308,12 +319,18 @@ export const insertUserPrompt = async (props: InsertUserPromptProps) => {
   );
 
   try {
-    if (modelData) {
-      const newModelData = await Promise.all(
-        changedSysMessageData.map(async (colData) => {
-          const baseModelDataHistoryMessages = colData[0].messages;
-          return colData.map(async (data, index) => {
+    if (!modelData) {
+      throw new Error("modelData is undefined");
+    }
+
+    const newModelData = await Promise.all(
+      changedSysMessageData.map(async (colData) => {
+        const baseModelDataHistoryMessages = colData[0].messages;
+
+        return Promise.all(
+          colData.map(async (data, index) => {
             let baseModelDataMessage: string = "";
+
             if (index === 0) {
               const newMessage = await chatCompletion({
                 ...data,
@@ -322,10 +339,17 @@ export const insertUserPrompt = async (props: InsertUserPromptProps) => {
                   { role: "user", content: userPrompt },
                 ],
               });
+
               baseModelDataMessage = newMessage!.content!;
+
+              const assistantMessage: Message = {
+                role: newMessage!.role,
+                content: newMessage!.content!,
+              };
+
               return {
                 ...data,
-                messages: [...data.messages, newMessage],
+                messages: [...data.messages, assistantMessage],
               };
             } else {
               const newMessage = await chatCompletion({
@@ -335,25 +359,43 @@ export const insertUserPrompt = async (props: InsertUserPromptProps) => {
                   { role: "user", content: userPrompt },
                 ],
               });
-              const assistantMessage = {
+
+              const assistantMessage: Message = {
                 role: newMessage!.role,
-                content: newMessage!.content,
-                score: await createCosineSimilarity(
-                  baseModelDataMessage,
-                  newMessage!.content
-                ),
+                content: newMessage!.content!,
+                score:
+                  (await createCosineSimilarity(
+                    baseModelDataMessage,
+                    newMessage!.content!
+                  )) || undefined,
               };
+
               return {
                 ...data,
                 messages: [...data.messages, assistantMessage],
               };
             }
-          });
-        })
-      );
-      return newModelData;
-    }
+          })
+        );
+      })
+    );
+
+    return newModelData;
   } catch (error) {
     console.error("Error in insertUserPrompt:", error);
+    return undefined;
   }
 };
+
+// modelData, userPrompt, systemMessage, stringInterpolations
+// obj = {
+//   modelData: {
+//     model: "OpenAI",
+//     subModel: "davinci",
+//     messages: [];
+//   locked: true;
+//   },
+//   userPrompt: "Hello",
+//   synctemMessage: "Hello",
+//   stringInterpolations: [give me your Array :)]
+// }
