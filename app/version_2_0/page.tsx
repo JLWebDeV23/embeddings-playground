@@ -9,8 +9,7 @@ import {
   StringInterpolations,
 } from "../utils/interfaces";
 import ModelHeader from "../components/ModelHeader/ModelHeader";
-import { chatCompletion, createNewModelData } from "../utils/modelProcessing";
-import { createTestNewModelData } from "../utils/modelProcessing";
+import { chatCompletion, createNewModelData, getNewModelData} from "../utils/modelProcessing";
 import AlertModal from "../components/AlertModal/AlertModal";
 import {
   createStringInterpolation,
@@ -163,7 +162,7 @@ const Version_2_0 = () => {
       locked: false,
     };
     const [firstModelData, ...restModelData] = modelData;
-    const result = await createNewModelData(firstModelData, newModelData);
+    const result = await getNewModelData(firstModelData, newModelData);
     setModelData([...modelData, result]);
   };
 
@@ -273,7 +272,7 @@ const Version_2_0 = () => {
             ...data,
             messages: [],
           };
-          const createdNewModelData = await createNewModelData(
+          const createdNewModelData = await getNewModelData(
             newModelData[0],
             emptyData
           );
@@ -355,7 +354,7 @@ const Version_2_0 = () => {
       newModelData: newModelData,
     };
     console.log(testData, "hi")
-    console.log(await createTestNewModelData(props));
+    console.log(await createNewModelData(props));
     console.log(upsertStringInterpolations(systemMessage, testData, stringInterpolations));
     // const template = "Hello, {{name}}. Welcome to {{place}}.";
     // const interpolations: StringInterpolation[] = [
