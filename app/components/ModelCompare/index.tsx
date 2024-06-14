@@ -3,10 +3,22 @@ import InputBox from '@/app/components/InputBox/InputBox';
 import { Button, Select, SelectItem, SelectSection } from "@nextui-org/react";
 import models from "@/public/assets/data/ModelData.json";
 import { IonIcon } from '@ionic/react';
+import { type ModelData, type StringInterpolation } from '@/app/utils/interfaces';
 
 
-export default function ModelCompare() {
-    const [sysMessage, setSysMessage] = useState<string>("");
+interface ModelCompareProps {
+    handleGoClick: ({ newSystemMessage, interpolations, models }: {
+        newSystemMessage: string,
+        interpolations: StringInterpolation[],
+        models: ModelData[]
+
+    }) => void
+}
+
+export default function ModelCompare({
+    handleGoClick
+}: ModelCompareProps) {
+    const [systemMessage, setSystemMessage] = useState<string>("");
     const [selectedModels, setSelectedModels] = useState<string[]>([]);
 
     const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -14,7 +26,7 @@ export default function ModelCompare() {
     }
 
     const submitSysMessage = () => {
-        console.log(sysMessage);
+        console.log(systemMessage);
     }
 
     return (
@@ -24,13 +36,13 @@ export default function ModelCompare() {
                 <InputBox
                     inputText={"System Message"}
                     isButtonVisabled
-                    value={sysMessage}
-                    handleInput={(e) => setSysMessage(e.target.value)}
+                    value={systemMessage}
+                    handleInput={(e) => setSystemMessage(e.target.value)}
                     onSubmit={submitSysMessage}
                 />
                 <button
                     className="btn btn-lg"
-                    onClick={() => alert("not implemented")}
+                    onClick={() => handleGoClick({ newSystemMessage: systemMessage, interpolations: [], models: selectedModels })}
                 >
                     GO
                 </button>
@@ -64,6 +76,6 @@ export default function ModelCompare() {
                     )}
                 </Select>
             </div>
-        </div>
+        </div >
     )
 }

@@ -19,9 +19,6 @@ import Modal from "../components/Modal/Modal";
 import StringInterpolationList from "../components/Modal/StringInterpolationList/StringInterpolationList";
 import StringInterpolationDisplay from "../components/Modal/StringInterpolationDisplay/StringInterpolationDisplay";
 import AddStringInterpolation from "../components/Modal/AddStringInterpolation/AddStringInterpolation";
-import { key } from "ionicons/icons";
-import test from "node:test";
-import { testData } from "./TestData/testData";
 
 import ModelCompare from "../components/ModelCompare";
 import UserInput from "../components/UserInput";
@@ -198,16 +195,84 @@ const MockAnswer = [
   ]
 ]
 
+const MockInput = {
+  systemMessage: "You are a {{user}} and I am a {{system}}.",
+  userMessage: "Hello who are you?",
+  interpolations: [
+    {
+      list: [
+        {
+          key: 0,
+          field: "Joey",
+          variable: "name",
+        },
+      ],
+    },
+    {
+      list: [
+        {
+          key: 0,
+          field: "alice",
+          variable: "name",
+        },
+      ],
+    },
+    {
+      list: [
+        {
+          key: 0,
+          field: "John",
+          variable: "name",
+        },
+      ],
+    },
+  ],
+  models: [[{
+    "model": "OpenAI",
+    "subModel": "gpt-3.5-turbo",
+    "messages": [],
+    "locked": true
+  }]]
+}
+
+const buildInput = (
+  systemMessage: string,
+  userMessage: string,
+  interpolations: StringInterpolations[],
+  models: ModelData[][]
+) => {
+  return {
+    systemMessage: systemMessage,
+    userMessage: userMessage,
+    interpolations: interpolations,
+    models: models
+  }
+}
+
 const Version_2_0 = () => {
+  const [systemMessage, setSystemMessage] = useState<string>("");
+
+  const handleGoClick = ({ newSystemMessage, interpolations, models }: {
+    newSystemMessage: string,
+    interpolations: StringInterpolation[],
+    models: ModelData[]
+
+  }) => {
+    setSystemMessage(newSystemMessage);
+    console.log(newSystemMessage, interpolations, models);
+  }
+
 
   const handleAddResponseClick = (value: string) => {
-    console.log(value);
+    console.log(buildInput(systemMessage, value, [], [[]]));
   }
 
   return (
     <>
       <div className="m-5 gap-3 flex flex-col flex-1">
-        <ModelCompare />
+        <ModelCompare
+          handleGoClick={handleGoClick}
+        />
         {
           MockAnswer.map((obj, index) => (
             <ModelAnswerGroup key={index} answers={obj} />
@@ -216,8 +281,10 @@ const Version_2_0 = () => {
 
       </div>
       <div className="sticky bottom-0 p-5 gap-3 flex flex-col flex-1  backdrop-blur-md" >
-
-        <UserInput handleAddResponseClick={handleAddResponseClick} className="pt-4 w-full" />
+        <UserInput
+          handleAddResponseClick={handleAddResponseClick}
+          className="pt-4 w-full"
+        />
       </div>
     </>
   );

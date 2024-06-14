@@ -5,16 +5,18 @@ export default function UserInput({
     handleAddResponseClick,
     isUserInputDisabled = false,
     className,
+    placeholder = "User Message",
     ...rest
 }: {
+    placeholder?: string,
     isUserInputDisabled?: boolean,
     className?: string,
     handleAddResponseClick: (value: string) => void
 } & React.HTMLAttributes<HTMLDivElement>) {
-    const [prompt, setPrompt] = useState<string>("");
+    const [inputValue, setInputValue] = useState<string>("");
     const showAlert = false;
 
-    const isButtonDisabled = prompt.length === 0;
+    const isButtonDisabled = inputValue.length === 0;
 
     return (
         <div className={`flex flex-col bg-card p-3 rounded-xl ${className}`} {...rest}>
@@ -22,15 +24,15 @@ export default function UserInput({
             <InputBox
                 onSubmit={(value: string) => {
                     handleAddResponseClick(value);
-                    setPrompt("");
+                    setInputValue("");
                     // chatcompletion and display to model one => add to modelsData
                     // chatcompletion of value using selected models and push both value to user and the derived completion to the ModelsData
                 }}
-                value={prompt}
-                handleInput={(e) => setPrompt(e.target.value)}
+                value={inputValue}
+                handleInput={(e) => setInputValue(e.target.value)}
                 isButtonDisabled={isButtonDisabled}
                 btnName="Add"
-                inputText="User Message"
+                inputText={placeholder}
                 isUserInputDisabled={isUserInputDisabled}
                 showAlert={showAlert}
                 btnStyle={
