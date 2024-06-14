@@ -208,3 +208,16 @@ export const upsertStringInterpolations = (
   }
   return updatedModelData;
 };
+
+type ApiKeyProps = {
+  name: string;
+  apiKey: string;
+};
+const addAPIKey = async (props: ApiKeyProps) => {
+  const { name, apiKey } = props;
+  sessionStorage.setItem(name, apiKey);
+};
+
+const removeAPIKey = async (name: string) => {
+  sessionStorage.removeItem(name);
+};

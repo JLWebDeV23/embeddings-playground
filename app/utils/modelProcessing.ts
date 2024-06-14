@@ -254,6 +254,7 @@ type goProps = {
   stringInterpolations: StringInterpolations[];
 };
 
+// go prompt click
 export const go = async (props: goProps) => {
   const { modelData, systemMessage, stringInterpolations } = props;
 
@@ -295,6 +296,7 @@ type InsertUserPromptProps = {
   stringInterpolations: StringInterpolations[];
 };
 
+// Add user prompt click
 export const insertUserPrompt = async (props: InsertUserPromptProps) => {
   const { modelData, userPrompt, systemMessage, stringInterpolations } = props;
 
