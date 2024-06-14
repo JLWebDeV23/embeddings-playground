@@ -10,6 +10,7 @@ import { ChatCompletion } from "openai/resources/index.mjs";
 import similarity from "compute-cosine-similarity";
 import { ModelsData } from "../pages/ModelCompare/ModelCompare";
 import { Mode } from "fs";
+import { upsertStringInterpolations } from "./functions";
 // import LlamaAI from "llamaai";
 
 type Model = {
@@ -178,12 +179,14 @@ export const createCosineSimilarity: (
 };
 
 // create new model data
-export const createNewModelData = async (
+export const getNewModelData = async (
   originalModelData: ModelData,
   newModelData: ModelData
 ): Promise<ModelData> => {
   let newModelDataCopy: ModelData = JSON.parse(JSON.stringify(newModelData)); // create a copy of the newModelData
   let tempModelDataCopy: ModelData = JSON.parse(JSON.stringify(newModelData)); // only to use for chatcompletion
+  console.log("originalModelData", originalModelData);
+  console.log("newModelData", newModelData);
 
   const systemMessage = originalModelData.messages.find(
     (message) => message.role === "system"
@@ -192,13 +195,14 @@ export const createNewModelData = async (
     newModelDataCopy.messages.push(systemMessage);
     tempModelDataCopy.messages.push(systemMessage);
   }
-
   for (let index = 0; index < originalModelData.messages.length; index++) {
     const message = originalModelData.messages[index];
-    if (message.role === "user") {
+    console.log(message.role);
+    if (message.role.toLowerCase() === "user") {
       newModelDataCopy.messages.push(message);
+      console.log(newModelDataCopy, "here");
       tempModelDataCopy.messages.push(message);
-    } else if (message.role === "assistant") {
+    } else if (message.role.toLowerCase() === "assistant") {
       const newMessage = JSON.parse(
         JSON.stringify(await chatCompletion(tempModelDataCopy))
       );
@@ -212,35 +216,141 @@ export const createNewModelData = async (
       tempModelDataCopy.messages.push(message);
     }
   }
+  console.log("newModelDataCopy", newModelDataCopy);
   return newModelDataCopy;
 };
 
-// modelData [][]
-// stringInterpolations []
-// UserMessage
-// SystemMessage
+type CreateNewModelDataProps = {
+  modelData: ModelData[][];
+  newModelData: ModelData;
+  systemMessage: string;
+  stringInterpolations: StringInterpolations[];
+};
 
-// const createMultipleModelData = async (stringInterpolations: StringInterpolations[], modelData: ModelsData, systemMessage: string, userMessage: string) => {
-//   let result: ModelData[][] = [];
+export const createNewModelData = async (
+  props: CreateNewModelDataProps
+): Promise<ModelData[][]> => {
+  const { modelData, newModelData, systemMessage, stringInterpolations } =
+    props;
 
-//   for (let i = 0; i < modelData.messages.length; i++) {
-//     const message = modelData.messages[i];
-//     if (message.role === "assistant") {
-//       let sysMessages: any[] = [];
-//       for (let j = 0; j < stringInterpolations.length; j++) {
-//         const newSysMsg = await createStringInterpolation(message, stringInterpolations[j]);
-//         sysMessages.push(newSysMsg);
-//       }
-//       result.push(sysMessages);
-//     }
-//   }
+  const changedSysMessageData = upsertStringInterpolations(
+    systemMessage,
+    modelData,
+    stringInterpolations
+  );
+  const updatedData = await Promise.all(
+    changedSysMessageData.map(async (colData: ModelData[]) => {
+      return [...colData, await getNewModelData(colData[0], newModelData)];
+    })
+  );
+  console.log("updatedColData", updatedData);
 
-//   stringInterpolations.forEach(element => {
+  return updatedData;
+};
 
-//     return result.push();
-//   }
+type goProps = {
+  modelData: ModelData[][];
+  systemMessage: string;
+  stringInterpolations: StringInterpolations[];
+};
 
-//   )
+export const go = async (props: goProps) => {
+  const { modelData, systemMessage, stringInterpolations } = props;
 
-// return result;
-// };
+  const changedSysMessageData = upsertStringInterpolations(
+    systemMessage,
+    modelData,
+    stringInterpolations
+  );
+
+  const newModelData = await Promise.all(
+    changedSysMessageData.map(async (colData) => {
+      colData.map(async (data) => {
+        if (!data.locked) {
+          // Create an empty model data object
+          const emptyData = {
+            ...data,
+            messages: [],
+          };
+          const createdNewModelData = await getNewModelData(
+            colData[0],
+            emptyData
+          );
+          // Return the empty data object
+          return createdNewModelData;
+        }
+        // If the data is locked, return it as is
+        return data;
+      });
+      return colData;
+    })
+  );
+  return newModelData;
+};
+
+type InsertUserPromptProps = {
+  modelData: ModelData[][];
+  userPrompt: string;
+  systemMessage: string;
+  stringInterpolations: StringInterpolations[];
+};
+
+export const insertUserPrompt = async (props: InsertUserPromptProps) => {
+  const { modelData, userPrompt, systemMessage, stringInterpolations } = props;
+
+  const changedSysMessageData = upsertStringInterpolations(
+    systemMessage,
+    modelData,
+    stringInterpolations
+  );
+
+  try {
+    if (modelData) {
+      const newModelData = await Promise.all(
+        changedSysMessageData.map(async (colData) => {
+          const baseModelDataHistoryMessages = colData[0].messages;
+          return colData.map(async (data, index) => {
+            let baseModelDataMessage: string = "";
+            if (index === 0) {
+              const newMessage = await chatCompletion({
+                ...data,
+                messages: [
+                  ...data.messages,
+                  { role: "user", content: userPrompt },
+                ],
+              });
+              baseModelDataMessage = newMessage!.content!;
+              return {
+                ...data,
+                messages: [...data.messages, newMessage],
+              };
+            } else {
+              const newMessage = await chatCompletion({
+                ...data,
+                messages: [
+                  ...baseModelDataHistoryMessages,
+                  { role: "user", content: userPrompt },
+                ],
+              });
+              const assistantMessage = {
+                role: newMessage!.role,
+                content: newMessage!.content,
+                score: await createCosineSimilarity(
+                  baseModelDataMessage,
+                  newMessage!.content
+                ),
+              };
+              return {
+                ...data,
+                messages: [...data.messages, assistantMessage],
+              };
+            }
+          });
+        })
+      );
+      return newModelData;
+    }
+  } catch (error) {
+    console.error("Error in insertUserPrompt:", error);
+  }
+};

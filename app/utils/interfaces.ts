@@ -56,8 +56,8 @@ export interface ApiKey {
 
 export interface StringInterpolation {
   key: number;
+  variable: string;
   field: string;
-  value: string;
 }
 
 export interface StringInterpolations {
