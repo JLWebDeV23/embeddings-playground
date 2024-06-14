@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
 import InputBox from '@/app/components/InputBox/InputBox';
-import { Button, Select, SelectItem, SelectSection } from "@nextui-org/react";
+import { Select, SelectItem, SelectSection } from "@nextui-org/react";
 import models from "@/public/assets/data/ModelData.json";
-import { IonIcon } from '@ionic/react';
-import { type ModelData, type StringInterpolation } from '@/app/utils/interfaces';
+import { type Model, type StringInterpolation } from '@/app/utils/interfaces';
 
 
 interface ModelCompareProps {
     handleGoClick: ({ newSystemMessage, interpolations, models }: {
         newSystemMessage: string,
         interpolations: StringInterpolation[],
-        models: ModelData[]
+        models: Model[]
 
     }) => void
 }
@@ -19,19 +18,41 @@ export default function ModelCompare({
     handleGoClick
 }: ModelCompareProps) {
     const [systemMessage, setSystemMessage] = useState<string>("");
-    const [selectedModels, setSelectedModels] = useState<string[]>([]);
+    const [selectedModels, setSelectedModels] = useState<Model[]>([]);
 
     const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setSelectedModels([...selectedModels, e.target.value]);
+        const model: Model = JSON.parse(e.target.value);
+        setSelectedModels([...selectedModels, model]);
     }
 
     const submitSysMessage = () => {
-        console.log(systemMessage);
+        setSystemMessage(systemMessage);
     }
 
     return (
         <div className="flex flex-col bg-card p-3 rounded-md">
             <h1 className="font-bold text-xl">Model Compare</h1>
+            <div className="divider"></div>
+            <div className="flex gap-3 flex-wrap">
+                <Select
+                    placeholder="Select the initial model"
+                    className="max-w-64"
+                    onChange={handleChange}
+                    label="Initial model"
+
+                >
+                    {models.map((model, findex) =>
+                        <SelectSection title={model.model} key={model.model}>
+                            {model.submodel.map((submodel, sindex) =>
+                                <SelectItem key={JSON.stringify({
+                                    model: model.model,
+                                    subModel: submodel.model
+                                })} value={sindex}>{submodel.model}</SelectItem>
+                            )}
+                        </SelectSection>
+                    )}
+                </Select>
+            </div>
             <div className="flex gap-3 pt-3 items-end">
                 <InputBox
                     inputText={"System Message"}
@@ -47,35 +68,7 @@ export default function ModelCompare({
                     GO
                 </button>
             </div>
-            <div className="divider"></div>
-            <div className="flex gap-3 flex-wrap">
-                {
-                    selectedModels.map((model, index) => (
-                        <Button
-                            key={index}
-                            endContent={<IonIcon name='close-outline' />}
-                            onClick={() => alert("not implemented")}
-                        >
-                            {model}
-                        </Button>
-                    ))
-                }
-                <Select
-                    placeholder="Add a new model"
-                    className="max-w-64"
-                    onChange={handleChange}
-                    selectedKeys={[]}
-                    aria-label="Select a model"
-                >
-                    {models.map((model, findex) =>
-                        <SelectSection title={model.model} key={model.model}>
-                            {model.submodel.map((submodel, sindex) =>
-                                <SelectItem key={submodel.model} value={sindex}>{submodel.model}</SelectItem>
-                            )}
-                        </SelectSection>
-                    )}
-                </Select>
-            </div>
+
         </div >
     )
 }

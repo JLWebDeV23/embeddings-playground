@@ -45,7 +45,10 @@ export interface ModelData {
   locked: boolean;
 }
 
-
+export interface Model {
+  model: string;
+  subModel: string;
+}
 
 export interface ModelDatas extends Array<ModelData> { }
 

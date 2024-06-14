@@ -167,16 +167,16 @@ export const createCosineSimilarity: (
   response1: string | null,
   response2: string | null
 ) => {
-  // Embeddings
-  const embedding1: number[] = await createEmbedding(response1!);
-  const embedding2: number[] = await createEmbedding(response2!);
+    // Embeddings
+    const embedding1: number[] = await createEmbedding(response1!);
+    const embedding2: number[] = await createEmbedding(response2!);
 
-  const cosineSimilarity: NodeRequire = require("compute-cosine-similarity");
+    const cosineSimilarity: NodeRequire = require("compute-cosine-similarity");
 
-  const similarityScore = similarity(embedding1, embedding2);
-  // const roundedSimilarity = Number(similarityScore?.toFixed(7));
-  return similarityScore;
-};
+    const similarityScore = similarity(embedding1, embedding2);
+    // const roundedSimilarity = Number(similarityScore?.toFixed(7));
+    return similarityScore;
+  };
 
 // create new model data
 export const getNewModelData = async (
