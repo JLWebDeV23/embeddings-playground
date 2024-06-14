@@ -227,6 +227,7 @@ type CreateNewModelDataProps = {
   stringInterpolations: StringInterpolations[];
 };
 
+// Add New Model Button
 export const createNewModelData = async (
   props: CreateNewModelDataProps
 ): Promise<ModelData[][]> => {
@@ -254,6 +255,7 @@ type goProps = {
   stringInterpolations: StringInterpolations[];
 };
 
+// GO Button
 export const go = async (props: goProps) => {
   const { modelData, systemMessage, stringInterpolations } = props;
 
@@ -295,6 +297,7 @@ type InsertUserPromptProps = {
   stringInterpolations: StringInterpolations[];
 };
 
+// Add User Input Button
 export const insertUserPrompt = async (props: InsertUserPromptProps) => {
   const { modelData, userPrompt, systemMessage, stringInterpolations } = props;
 

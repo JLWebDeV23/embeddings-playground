@@ -8,7 +8,7 @@ import {
   StringInterpolations,
 } from "../utils/interfaces";
 import ModelHeader from "../components/ModelHeader/ModelHeader";
-import { chatCompletion, createNewModelData, getNewModelData} from "../utils/modelProcessing";
+import { chatCompletion, createNewModelData, getNewModelData, insertUserPrompt} from "../utils/modelProcessing";
 import AlertModal from "../components/AlertModal/AlertModal";
 import {
   createStringInterpolation,
@@ -25,6 +25,7 @@ import { testData } from "./TestData/testData";
 import ModelCompare from "../components/ModelCompare";
 import UserInput from "../components/UserInput";
 import ModelAnswerGroup from "../components/ModelAnswer/ModelAnswerGroup";
+
 
 const MockAnswer = [
   [
