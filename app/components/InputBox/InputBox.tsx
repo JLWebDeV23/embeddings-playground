@@ -1,15 +1,7 @@
 import React, { useState } from "react";
 import styles from "./InputBox.module.css";
 import { ModelsData } from "@/app/pages/ModelCompare/ModelCompare";
-import AlertModal from "../AlertModal/AlertModal";
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  useDisclosure,
-} from "@nextui-org/modal";
+
 import { Button } from "@nextui-org/button";
 
 type InputBoxProps = {

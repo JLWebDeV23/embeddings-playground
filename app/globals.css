@@ -15,7 +15,6 @@
     --dark-grey: #1a1a1c;
     --green: #78c3aadb;
     /* --primary: #6ee7b7 */
-    background-color: #000000;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -55,12 +54,11 @@ body {
         "Helvetica Neue";
     /* Light background */
     font-family: "Roboto", sans-serif;
-    height: 100%;
+    @apply bg-black;
 }
 
 /* Header styles */
 header {
-    background-color: #000000;
     margin: 5px;
     min-height: 10vh;
     max-height: 13vh;
@@ -68,7 +66,6 @@ header {
 
 /* Footer styles */
 footer {
-    background-color: #000000;
     padding: 1rem 0;
     text-align: center;
 }

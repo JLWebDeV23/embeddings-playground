@@ -33,16 +33,15 @@ export default function ModelCompare() {
             </div>
             <div className="divider"></div>
             <div className="flex gap-3 flex-wrap">
-                {/*                 <Select
-                    label="Favorite Animal"
+                <Select
                     placeholder="Select an animal"
                     className="max-w-xs"
                 >
-                    {models.map((model, findex) => (
-                        <SelectItem key={findex} value={model.model}>
+                    {models.map((model, findex) =>
+                        <SelectItem key={findex}>
                             {model.model}
                         </SelectItem>
-                    ))}
+                    )}
                 </Select>
                 {models.map((model, index) => (
                     <button
@@ -53,7 +52,7 @@ export default function ModelCompare() {
                         {model.model}
                     </button>
                 ))
-                } */}
+                }
                 <button
                     className="btn btn-sm btn-disabled"
                     onClick={() => alert("not implemented")}
