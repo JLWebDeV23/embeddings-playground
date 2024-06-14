@@ -45,7 +45,9 @@ export interface ModelData {
   locked: boolean;
 }
 
-export interface ModelDatas extends Array<ModelData> {}
+
+
+export interface ModelDatas extends Array<ModelData> { }
 
 export interface ApiKey {
   key: string;
