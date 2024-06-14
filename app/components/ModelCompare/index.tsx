@@ -6,19 +6,20 @@ import { type Model, type StringInterpolation } from '@/app/utils/interfaces';
 
 
 interface ModelCompareProps {
-    handleGoClick: ({ newSystemMessage, interpolations, models }: {
+    handleGoClick: ({ newSystemMessage, interpolations }: {
         newSystemMessage: string,
         interpolations: StringInterpolation[],
-        models: Model[]
-
-    }) => void
+    }) => void,
+    selectedModels: Model[],
+    setSelectedModels: (models: Model[]) => void
 }
 
 export default function ModelCompare({
-    handleGoClick
+    handleGoClick,
+    selectedModels,
+    setSelectedModels
 }: ModelCompareProps) {
     const [systemMessage, setSystemMessage] = useState<string>("");
-    const [selectedModels, setSelectedModels] = useState<Model[]>([]);
 
     const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const model: Model = JSON.parse(e.target.value);
@@ -63,7 +64,7 @@ export default function ModelCompare({
                 />
                 <button
                     className="btn btn-lg"
-                    onClick={() => handleGoClick({ newSystemMessage: systemMessage, interpolations: [], models: selectedModels })}
+                    onClick={() => handleGoClick({ newSystemMessage: systemMessage, interpolations: [] })}
                 >
                     GO
                 </button>

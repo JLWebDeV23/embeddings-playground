@@ -138,6 +138,8 @@ export const upsertStringInterpolations = (
   modelData: ModelData[][],
   stringInterpolations: StringInterpolations[]
 ): ModelData[][] => {
+
+  console.log("modelData", modelData);
   const baseModelData = modelData[0][0];
   let updatedModelData: ModelData[][] = [];
 

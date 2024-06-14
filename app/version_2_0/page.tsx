@@ -242,13 +242,22 @@ const MockInput = {
 
 
 const Version_2_0 = () => {
+  const [models, setModels] = useState<Model[]>([]);
   const [systemMessage, setSystemMessage] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const initialModelData = [[{
+    "model": models.length > 0 ? models[0].model : '',
+    "subModel": models.length > 0 ? models[0].subModel : '',
+    "messages": [],
+    "locked": true
+  }]]
+
   const [modelData, setmodelData] = useState<ModelData[][]>([[]]);
 
-  const handleGoClick = ({ newSystemMessage, interpolations, models }: {
+  const handleGoClick = ({ newSystemMessage, interpolations }: {
     newSystemMessage: string,
     interpolations: StringInterpolation[],
-    models: Model[]
   }) => {
     setSystemMessage(newSystemMessage);
 
@@ -256,33 +265,28 @@ const Version_2_0 = () => {
       console.log("No models selected")
       return;
     }
-    /* set({
-      model: models[0].model,
-      subModel: models[0].subModel,
-      messages: [],
-      locked: false;
-    }) */
+    setIsLoading(true);
     go({
-      modelData: modelData,
+      modelData: modelData[0].length > 0 ? modelData : initialModelData,
       systemMessage: newSystemMessage,
       stringInterpolations: [{ list: interpolations }],
     }).then((response) => {
       setmodelData(response);
+      setIsLoading(false);
     });
   }
 
-  /* 
-  type InsertUserPromptProps = {
-    modelData: ModelData][];
-    userPrompt: string;
-    systemMessage: string;
-    stringInterpolations: StringInterpolations[];
-  };
-  */
 
   const handleAddResponseClick = (value: string) => {
+
+    if (models.length === 0) {
+      console.log("No models selected")
+      return;
+    }
+
+    setIsLoading(true);
     insertUserPrompt({
-      modelData: modelData,
+      modelData: modelData[0].length > 0 ? modelData : initialModelData,
       userPrompt: value,
       systemMessage: systemMessage,
       stringInterpolations: [{
@@ -296,6 +300,7 @@ const Version_2_0 = () => {
       if (response) {
         setmodelData(response);
       }
+      setIsLoading(false);
     })
   }
 
@@ -304,10 +309,12 @@ const Version_2_0 = () => {
       <div className="m-5 gap-3 flex flex-col flex-1">
         <ModelCompare
           handleGoClick={handleGoClick}
+          selectedModels={models}
+          setSelectedModels={setModels}
         />
         {
           modelData.map((obj, index) => (
-            <ModelAnswerGroup key={index} answers={obj} />
+            <ModelAnswerGroup key={index} answers={obj} isLoading={isLoading} />
           ))
         }
 
