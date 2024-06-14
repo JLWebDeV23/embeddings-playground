@@ -125,20 +125,6 @@ export const createChatCompletionLogProb = async (
 };
 
 export const createStringInterpolation = (str: string, data: any): string => {
-  // console.log("data", data);
-  // console.log("str", str);
-  // const dataMap = data.reduce(
-  //   (acc: any, { variable, field }: StringInterpolation) => {
-  //     acc[variable] = field;
-  //     return acc;
-  //   },
-  //   {}
-  // );
-  // // Use a regular expression to find placeholders and replace them with values from the map
-  // return str.replace(
-  //   /\{\{(\w+)\}\}/g,
-  //   (_, key) => dataMap[key] || `{{${key}}}`
-  // );
   let newString = str;
   data.forEach((interpolation: any) => {
     const regex = new RegExp(`\\{{${interpolation.variable}\\}}`, "g");
@@ -207,4 +193,17 @@ export const upsertStringInterpolations = (
     });
   }
   return updatedModelData;
+};
+
+type ApiKeyProps = {
+  name: string;
+  apiKey: string;
+};
+const addAPIKey = async (props: ApiKeyProps) => {
+  const { name, apiKey } = props;
+  sessionStorage.setItem(name, apiKey);
+};
+
+const removeAPIKey = async (name: string) => {
+  sessionStorage.removeItem(name);
 };

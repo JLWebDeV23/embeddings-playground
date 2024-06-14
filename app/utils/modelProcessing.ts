@@ -179,7 +179,7 @@ export const createCosineSimilarity: (
 };
 
 // create new model data
-export const createNewModelData = async (
+export const getNewModelData = async (
   originalModelData: ModelData,
   newModelData: ModelData
 ): Promise<ModelData> => {
@@ -227,7 +227,8 @@ type CreateNewModelDataProps = {
   stringInterpolations: StringInterpolations[];
 };
 
-export const createTestNewModelData = async (
+// Add New Model Button
+export const createNewModelData = async (
   props: CreateNewModelDataProps
 ): Promise<ModelData[][]> => {
   const { modelData, newModelData, systemMessage, stringInterpolations } =
@@ -240,54 +241,119 @@ export const createTestNewModelData = async (
   );
   const updatedData = await Promise.all(
     changedSysMessageData.map(async (colData: ModelData[]) => {
-      return [...colData, await createNewModelData(colData[0], newModelData)];
+      return [...colData, await getNewModelData(colData[0], newModelData)];
     })
   );
   console.log("updatedColData", updatedData);
 
   return updatedData;
 };
-// const createMultipleModelData = async (stringInterpolations: StringInterpolations[], modelData: ModelsData, systemMessage: string, userMessage: string) => {
-//   let result: ModelData[][] = [];
 
-//   for (let i = 0; i < modelData.messages.length; i++) {
-//     const message = modelData.messages[i];
-//     if (message.role === "assistant") {
-//       let sysMessages: any[] = [];
-//       for (let j = 0; j < stringInterpolations.length; j++) {
-//         const newSysMsg = await createStringInterpolation(message, stringInterpolations[j]);
-//         sysMessages.push(newSysMsg);
-//       }
-//       result.push(sysMessages);
-//     }
-//   }
+type goProps = {
+  modelData: ModelData[][];
+  systemMessage: string;
+  stringInterpolations: StringInterpolations[];
+};
 
-//   stringInterpolations.forEach(element => {
+// GO Button
+export const go = async (props: goProps) => {
+  const { modelData, systemMessage, stringInterpolations } = props;
 
-//     return result.push();
-//   }
+  const changedSysMessageData = upsertStringInterpolations(
+    systemMessage,
+    modelData,
+    stringInterpolations
+  );
 
-//   )
+  const newModelData = await Promise.all(
+    changedSysMessageData.map(async (colData) => {
+      colData.map(async (data) => {
+        if (!data.locked) {
+          // Create an empty model data object
+          const emptyData = {
+            ...data,
+            messages: [],
+          };
+          const createdNewModelData = await getNewModelData(
+            colData[0],
+            emptyData
+          );
+          // Return the empty data object
+          return createdNewModelData;
+        }
+        // If the data is locked, return it as is
+        return data;
+      });
+      return colData;
+    })
+  );
+  return newModelData;
+};
 
-// return result;
-// };
+type InsertUserPromptProps = {
+  modelData: ModelData[][];
+  userPrompt: string;
+  systemMessage: string;
+  stringInterpolations: StringInterpolations[];
+};
 
-// GO
+// Add User Input Button
+export const insertUserPrompt = async (props: InsertUserPromptProps) => {
+  const { modelData, userPrompt, systemMessage, stringInterpolations } = props;
 
-// modelData [][]
-// const updateModelData = (stringInterpolations: StringInterpolations[], modelData: ModelsData[][], systemMessage: string, userMessage: string) => {
+  const changedSysMessageData = upsertStringInterpolations(
+    systemMessage,
+    modelData,
+    stringInterpolations
+  );
 
-//     const modelDataCopy = modelData.map((data) => {
-//       // Updating Systmen message
-//       const newSystemMessage = createStringInpterpolation(systemMessage, stringInterpolations);
-//       const [firstMessage, ...restMessage] = data;
-//       const updateSystemMessage = data.slice
-
-//       return data
-//     })
-//   return updatedModelData;
-// }
-
-// stringInterpolations []
-// UserMessage
-// SystemMessage
+  try {
+    if (modelData) {
+      const newModelData = await Promise.all(
+        changedSysMessageData.map(async (colData) => {
+          const baseModelDataHistoryMessages = colData[0].messages;
+          return colData.map(async (data, index) => {
+            let baseModelDataMessage: string = "";
+            if (index === 0) {
+              const newMessage = await chatCompletion({
+                ...data,
+                messages: [
+                  ...data.messages,
+                  { role: "user", content: userPrompt },
+                ],
+              });
+              baseModelDataMessage = newMessage!.content!;
+              return {
+                ...data,
+                messages: [...data.messages, newMessage],
+              };
+            } else {
+              const newMessage = await chatCompletion({
+                ...data,
+                messages: [
+                  ...baseModelDataHistoryMessages,
+                  { role: "user", content: userPrompt },
+                ],
+              });
+              const assistantMessage = {
+                role: newMessage!.role,
+                content: newMessage!.content,
+                score: await createCosineSimilarity(
+                  baseModelDataMessage,
+                  newMessage!.content
+                ),
+              };
+              return {
+                ...data,
+                messages: [...data.messages, assistantMessage],
+              };
+            }
+          });
+        })
+      );
+      return newModelData;
+    }
+  } catch (error) {
+    console.error("Error in insertUserPrompt:", error);
+  }
+};
