@@ -199,11 +199,34 @@ type ApiKeyProps = {
   name: string;
   apiKey: string;
 };
-const addAPIKey = async (props: ApiKeyProps) => {
+export const addApiKey = (props: ApiKeyProps) => {
   const { name, apiKey } = props;
-  sessionStorage.setItem(name, apiKey);
+  try {
+    sessionStorage.setItem(name, apiKey);
+  } catch (error) {
+    console.error("Add API Key Error:", error);
+  }
 };
 
-const removeAPIKey = async (name: string) => {
-  sessionStorage.removeItem(name);
+export const removeApiKey = (props: ApiKeyProps) => {
+  const { name } = props;
+  try {
+    sessionStorage.removeItem(name);
+  } catch (error) {
+    console.error("Remove API Key Error:", error);
+  }
+};
+
+export const getApiKeys = (): ApiKeyProps[] => {
+  const apiKeys: ApiKeyProps[] = [];
+  try {
+    for (let i = 1; i < sessionStorage.length; i++) {
+      const key = sessionStorage.key(i);
+      const value = sessionStorage.getItem(key!);
+      apiKeys.push({ name: key!, apiKey: value! });
+    }
+  } catch (error) {
+    console.error("Fetch API Keys Error:", error);
+  }
+  return apiKeys;
 };
