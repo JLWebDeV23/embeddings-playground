@@ -13,6 +13,7 @@ interface ModelCompareProps {
     }) => void;
     selectedModels: Model[];
     setSelectedModels: (models: Model[]) => void;
+    setSystemMessageInUserPrompt: (message: string) => void;
 }
 
 /* 
@@ -22,6 +23,7 @@ export default function ModelCompare({
     handleGoClick,
     selectedModels,
     setSelectedModels,
+    setSystemMessageInUserPrompt,
 }: ModelCompareProps) {
     const [systemMessage, setSystemMessage] = useState<string>("");
 
@@ -49,7 +51,7 @@ export default function ModelCompare({
                     inputText={"System Message"}
                     isButtonVisabled
                     value={systemMessage}
-                    handleInput={(e) => setSystemMessage(e.target.value)}
+                    handleInput={(e) => {setSystemMessage(e.target.value); setSystemMessageInUserPrompt(e.target.value)}}
                     onSubmit={submitSysMessage}
                 />
                 <button

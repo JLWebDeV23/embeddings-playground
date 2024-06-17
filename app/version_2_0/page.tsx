@@ -357,12 +357,14 @@ const Version_2_0 = () => {
         });
     };
 
-    const handleAddResponseClick = (value: string) => {
+    const handleAddResponseClick = (value: string,) => {
         if (models.length === 0) {
             console.log("No models selected");
             return;
         }
-
+        console.log("systemMessage", systemMessage);
+        
+        // setSystemMessage(systemMessage)
         setIsLoading(true);
         insertUserPrompt({
             modelData: modelData,
@@ -439,6 +441,7 @@ const Version_2_0 = () => {
                     handleGoClick={handleGoClick}
                     selectedModels={models}
                     setSelectedModels={setModels}
+                    setSystemMessageInUserPrompt={setSystemMessage}
                 />
                 {modelData.map((obj, index) => (
                     <ModelAnswerGroup

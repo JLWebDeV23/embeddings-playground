@@ -11,19 +11,22 @@ export default function UserInput({
     placeholder?: string,
     isUserInputDisabled?: boolean,
     className?: string,
-    handleAddResponseClick: (value: string) => void
+    handleAddResponseClick: (value: string, systemMessage: string) => void
 } & React.HTMLAttributes<HTMLDivElement>) {
     const [inputValue, setInputValue] = useState<string>("");
+    const [systemMessageInAdd, setSystemMessageInAdd] = useState<string>("");
     const showAlert = false;
 
     const isButtonDisabled = inputValue.length === 0;
+
+
 
     return (
         <div className={`flex flex-col bg-card p-3 rounded-xl ${className}`} {...rest}>
 
             <InputBox
                 onSubmit={(value: string) => {
-                    handleAddResponseClick(value);
+                    handleAddResponseClick(value, systemMessageInAdd);
                     setInputValue("");
                     // chatcompletion and display to model one => add to modelsData
                     // chatcompletion of value using selected models and push both value to user and the derived completion to the ModelsData
