@@ -1,58 +1,48 @@
-import React, { useState } from 'react';
-import InputBox from '@/app/components/InputBox/InputBox';
-import { Select, SelectItem, SelectSection } from "@nextui-org/react";
-import models from "@/public/assets/data/ModelData.json";
-import { type Model, type StringInterpolation } from '@/app/utils/interfaces';
-
+import React, { useState } from "react";
+import InputBox from "@/app/components/InputBox/InputBox";
+import ModelSelector from "@/app/components/ModelSelector";
+import { type Model, type StringInterpolation } from "@/app/utils/interfaces";
 
 interface ModelCompareProps {
-    handleGoClick: ({ newSystemMessage, interpolations }: {
-        newSystemMessage: string,
-        interpolations: StringInterpolation[],
-    }) => void,
-    selectedModels: Model[],
-    setSelectedModels: (models: Model[]) => void
+    handleGoClick: ({
+        newSystemMessage,
+        interpolations,
+    }: {
+        newSystemMessage: string;
+        interpolations: StringInterpolation[];
+    }) => void;
+    selectedModels: Model[];
+    setSelectedModels: (models: Model[]) => void;
 }
 
+/* 
+    This component is used to select the initial model for the chat and set the system message.
+*/
 export default function ModelCompare({
     handleGoClick,
     selectedModels,
-    setSelectedModels
+    setSelectedModels,
 }: ModelCompareProps) {
     const [systemMessage, setSystemMessage] = useState<string>("");
 
-    const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const model: Model = JSON.parse(e.target.value);
-        setSelectedModels([...selectedModels, model]);
-    }
+    const handleChange = (model: Model) => {
+        setSelectedModels([model]);
+    };
 
     const submitSysMessage = () => {
         setSystemMessage(systemMessage);
-    }
+    };
 
     return (
         <div className="flex flex-col bg-card p-3 rounded-md">
             <h1 className="font-bold text-xl">Model Compare</h1>
             <div className="divider"></div>
             <div className="flex gap-3 flex-wrap">
-                <Select
+                <ModelSelector
                     placeholder="Select the initial model"
-                    className="max-w-64"
-                    onChange={handleChange}
                     label="Initial model"
-
-                >
-                    {models.map((model, findex) =>
-                        <SelectSection title={model.model} key={model.model}>
-                            {model.submodel.map((submodel, sindex) =>
-                                <SelectItem key={JSON.stringify({
-                                    model: model.model,
-                                    subModel: submodel.model
-                                })} value={sindex}>{submodel.model}</SelectItem>
-                            )}
-                        </SelectSection>
-                    )}
-                </Select>
+                    onChange={handleChange}
+                />
             </div>
             <div className="flex gap-3 pt-3 items-end">
                 <InputBox
@@ -64,12 +54,16 @@ export default function ModelCompare({
                 />
                 <button
                     className="btn btn-lg"
-                    onClick={() => handleGoClick({ newSystemMessage: systemMessage, interpolations: [] })}
+                    onClick={() =>
+                        handleGoClick({
+                            newSystemMessage: systemMessage,
+                            interpolations: [],
+                        })
+                    }
                 >
                     GO
                 </button>
             </div>
-
-        </div >
-    )
+        </div>
+    );
 }
