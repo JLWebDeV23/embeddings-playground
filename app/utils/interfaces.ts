@@ -50,8 +50,6 @@ export interface Model {
   subModel: string;
 }
 
-export interface ModelDatas extends Array<ModelData> { }
-
 export interface ApiKey {
   key: string;
   name: string;

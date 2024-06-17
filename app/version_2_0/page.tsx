@@ -199,6 +199,55 @@ interface ModelData {
   messages: Message[];
   locked: boolean;
 } */
+const MockInput2 = {
+    systemMessage: "You are {{user}} and I am a {{system}}.",
+    userPrompt: "Hello who are you?",
+    stringInterpolations: [
+        {
+            list: [
+                {
+                    key: 0,
+                    field: "AI",
+                    variable: "system",
+                },
+                {
+                    key: 0,
+                    field: "Joey",
+                    variable: "user",
+                },
+            ],
+        },
+        {
+            list: [
+                {
+                    key: 0,
+                    field: "AI",
+                    variable: "system",
+                },
+                {
+                    key: 0,
+                    field: "Alice",
+                    variable: "user",
+                },
+            ],
+        },
+        {
+            list: [
+                {
+                    key: 0,
+                    field: "AI",
+                    variable: "system",
+                },
+                {
+                    key: 0,
+                    field: "John",
+                    variable: "user",
+                },
+            ],
+        },
+    ],
+    modelData: MockAnswer,
+};
 
 const MockInput = {
     systemMessage: "You are a {{user}} and I am a {{system}}.",
