@@ -40,13 +40,16 @@ export const chatCompletion = async (model: any) => {
   let response: Response = null;
   let groq: Groq;
 
-  // model.messages = model.messages.map((data: any) => ({
-  //   message: {
-  //     role: data.message.role,
-  //     content: data.message.content,
-  //   },
-  // }));
-  console.log("model", model);
+  model = {
+    ...model,
+    messages: model.messages.map((message: any) => {
+      return {
+        role: JSON.parse(JSON.stringify(message.role.toLowerCase())),
+        content: message.content,
+      };
+    }),
+  };
+
   switch (model.model) {
     case "OpenAI":
       const client = new OpenAI({
@@ -71,7 +74,6 @@ export const chatCompletion = async (model: any) => {
         dangerouslyAllowBrowser: true,
       });
       try {
-        console.log("model", model.messages);
         response = await groq.chat.completions.create({
           messages: model.messages,
           model: model.subModel,
@@ -175,16 +177,16 @@ export const createCosineSimilarity: (
   response1: string | null,
   response2: string | null
 ) => {
-    // Embeddings
-    const embedding1: number[] = await createEmbedding(response1!);
-    const embedding2: number[] = await createEmbedding(response2!);
+  // Embeddings
+  const embedding1: number[] = await createEmbedding(response1!);
+  const embedding2: number[] = await createEmbedding(response2!);
 
-    const cosineSimilarity: NodeRequire = require("compute-cosine-similarity");
+  const cosineSimilarity: NodeRequire = require("compute-cosine-similarity");
 
-    const similarityScore = similarity(embedding1, embedding2);
-    // const roundedSimilarity = Number(similarityScore?.toFixed(7));
-    return similarityScore;
-  };
+  const similarityScore = similarity(embedding1, embedding2);
+  // const roundedSimilarity = Number(similarityScore?.toFixed(7));
+  return similarityScore;
+};
 
 // create new model data
 export const getNewModelData = async (
@@ -332,33 +334,43 @@ export const insertUserPrompt = async (
             let baseModelDataMessage: string = "";
 
             if (index === 0) {
-              const newMessage = await chatCompletion({
+              const newData = {
                 ...data,
                 messages: [
                   ...data.messages,
                   { role: "user", content: userPrompt },
                 ],
-              });
-
+              };
+              data = newData;
+              console.log("Data", data);
+              console.log("chatCompletion", chatCompletion(data));
+              const newMessage = JSON.parse(
+                JSON.stringify(await chatCompletion(data))
+              );
+              console.log("New Message", newMessage);
               baseModelDataMessage = newMessage!.content!;
 
               const assistantMessage: Message = {
                 role: newMessage!.role,
                 content: newMessage!.content!,
               };
-
+              console.log("Message", data.messages);
               return {
                 ...data,
                 messages: [...data.messages, assistantMessage],
               };
             } else {
-              const newMessage = await chatCompletion({
+              const newData = {
                 ...data,
                 messages: [
-                  ...baseModelDataHistoryMessages,
+                  ...data.messages,
                   { role: "user", content: userPrompt },
                 ],
-              });
+              };
+              data = newData;
+              const newMessage = JSON.parse(
+                JSON.stringify(await chatCompletion(data))
+              );
 
               const assistantMessage: Message = {
                 role: newMessage!.role,
