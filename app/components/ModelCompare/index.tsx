@@ -20,7 +20,6 @@ interface ModelCompareProps {
 */
 export default function ModelCompare({
     handleGoClick,
-    selectedModels,
     setSelectedModels,
 }: ModelCompareProps) {
     const [systemMessage, setSystemMessage] = useState<string>("");
