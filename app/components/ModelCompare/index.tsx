@@ -21,7 +21,6 @@ interface ModelCompareProps {
 */
 export default function ModelCompare({
     handleGoClick,
-    selectedModels,
     setSelectedModels,
     setSystemMessageInUserPrompt,
 }: ModelCompareProps) {

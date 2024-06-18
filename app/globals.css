@@ -76,9 +76,15 @@ footer {
     border-color: var(--green);
 }
 
-code {
+pre {
     font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
         monospace;
+    @apply bg-background rounded-md p-2 my-3;
+}
+
+pre::before {
+    content: attr(data-lang);
+    @apply rounded-t-md p-1;
 }
 
 @layer utilities {

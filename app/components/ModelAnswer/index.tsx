@@ -1,7 +1,7 @@
 import { Model, ModelData, ModelsActionFunction } from "@/app/utils/interfaces";
 import IonIcon from "@reacticons/ionicons";
-import { useState } from "react";
 import ModelSelector from "@/app/components/ModelSelector";
+import ReactMarkdown from "react-markdown";
 
 function ChatBubble({ text, role }: { text: string; role: string }) {
     return (
@@ -12,7 +12,9 @@ function ChatBubble({ text, role }: { text: string; role: string }) {
                     role === "user" ? "self-end bg-surface/50" : ""
                 }`}
             >
-                <p className="text-sm text-gray-500">{text}</p>
+                <p className="text-sm text-gray-500">
+                    <ReactMarkdown>{text}</ReactMarkdown>
+                </p>
             </div>
         </>
     );
@@ -73,14 +75,12 @@ function ModelAnswerHeader({
                         <IonIcon name="lock-open-outline" />
                     )}
                 </button>
-                {modelNumber !== 0 && (
-                    <button
-                        onClick={onRemoveClick}
-                        className="text-sm text-gray-500 p-1 rounded-md aspect-square"
-                    >
-                        <IonIcon name="trash-outline" />
-                    </button>
-                )}
+                <button
+                    onClick={onRemoveClick}
+                    className="text-sm text-gray-500 p-1 rounded-md aspect-square"
+                >
+                    <IonIcon name="trash-outline" />
+                </button>
             </div>
         </div>
     );
@@ -101,7 +101,7 @@ export default function ModelAnswer({
 }) {
     return (
         <div
-            className={`flex flex-col rounded-md min-w-80 w-full ${
+            className={`flex flex-col rounded-md min-w-96 w-full items-center  ${
                 isLoading ? "skeleton" : "bg-card"
             }`}
         >
@@ -112,7 +112,8 @@ export default function ModelAnswer({
                 onModelsAction={onModelsAction}
                 isLast={isLast}
             />
-            <div className="flex flex-col p-2">
+            {/* max-w-[800px] */}
+            <div className="flex flex-col p-2 w-full gap-5">
                 {answer.messages.map((message, index) => (
                     <ChatBubble
                         key={index}
