@@ -5,7 +5,8 @@ const Footer = () => {
     <footer className="flex justify-between p-5 bg-card text-base-content gap-2">
       <div className="flex flex-col items-start gap-2">
         <h2>Author: Joey Liou</h2>
-        <h2>Co-author: Thomas Csere? (this multiple / is killing me :o)</h2>
+        <h2>UI?: Mathias (Please EDIT Mathias :P)</h2>
+        <h2>Co-author: Thomas Csere</h2>
       </div>
 
       <div className="flex flex-col items-end gap-2">
@@ -50,7 +51,6 @@ const Footer = () => {
           <p>Copyright © 2024 - All right reserved by Joey Liou</p>
         </aside>
       </div>
-
     </footer>
   );
 };
