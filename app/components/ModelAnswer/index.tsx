@@ -51,7 +51,7 @@ function ModelAnswerHeader({
             <div className="flex gap-2 h-full flex-1 justify-end min-h-8">
                 {isLast && (
                     <ModelSelector
-                        placeholder="Add a new model"
+                        placeholder="Compare with a new model"
                         aria-label="Add a new model"
                         size="sm"
                         onChange={(model) => onSelectItem(model)}
@@ -114,13 +114,21 @@ export default function ModelAnswer({
             />
             {/* max-w-[800px] */}
             <div className="flex flex-col p-2 w-full gap-5">
-                {answer.messages.map((message, index) => (
-                    <ChatBubble
-                        key={index}
-                        role={message.role}
-                        text={message.content}
-                    />
-                ))}
+                {answer.messages.length < 1 && !isLoading ? (
+                    <div className="min-h-10 flex h-full items-center">
+                        <p className="opacity-50 w-full text-center">
+                            Type a message to start a conversation
+                        </p>
+                    </div>
+                ) : (
+                    answer.messages.map((message, index) => (
+                        <ChatBubble
+                            key={index}
+                            role={message.role}
+                            text={message.content}
+                        />
+                    ))
+                )}
             </div>
         </div>
     );

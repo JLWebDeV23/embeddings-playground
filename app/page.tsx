@@ -1,13 +1,13 @@
-'use client'
+"use client";
 
 import Version_2_0 from "./version_2_0/page";
 
-import { NextUIProvider } from '@nextui-org/react'
+import { NextUIProvider } from "@nextui-org/react";
 
 export default function Home() {
-  return (
-    <NextUIProvider>
-      <Version_2_0 />
-    </NextUIProvider>
-  );
+    return (
+        <NextUIProvider className="flex flex-col flex-1">
+            <Version_2_0 />
+        </NextUIProvider>
+    );
 }

@@ -76,13 +76,13 @@ const Version_2_0 = () => {
         });
     };
 
-    const handleAddResponseClick = (value: string,) => {
+    const handleAddResponseClick = (value: string) => {
         if (models.length === 0) {
             console.log("No models selected");
             return;
         }
         console.log("systemMessage", systemMessage);
-        
+
         // setSystemMessage(systemMessage)
         setIsLoading(true);
         insertUserPrompt({
@@ -178,23 +178,29 @@ const Version_2_0 = () => {
 
     return (
         <>
-            <div className="m-5 gap-3 flex flex-col flex-1">
+            <div className="m-5 gap-3 flex flex-col flex-1 ">
                 <ModelCompare
                     handleGoClick={handleGoClick}
                     selectedModels={models}
                     setSelectedModels={setModels}
                     setSystemMessageInUserPrompt={setSystemMessage}
                 />
-                {modelData.map((obj, index) => (
-                    <ModelAnswerGroup
-                        key={index}
-                        answers={obj}
-                        isLoading={isLoading}
-                        onModelsAction={handleModelAction}
-                    />
-                ))}
+                {models.length > 0 ? (
+                    modelData.map((obj, index) => (
+                        <ModelAnswerGroup
+                            key={index}
+                            answers={obj}
+                            isLoading={isLoading}
+                            onModelsAction={handleModelAction}
+                        />
+                    ))
+                ) : (
+                    <div className="flex justify-center items-center opacity-50 flex-1 min-h-20">
+                        Select a model to start
+                    </div>
+                )}
             </div>
-            <div className="sticky bottom-0 p-5 gap-3 flex flex-col flex-1 backdrop-blur-md">
+            <div className="sticky bottom-0 p-5 gap-3 flex flex-col  backdrop-blur-md">
                 <UserInput
                     handleAddResponseClick={handleAddResponseClick}
                     className="pt-4 w-full"
