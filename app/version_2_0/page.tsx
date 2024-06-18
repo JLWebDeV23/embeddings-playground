@@ -50,6 +50,21 @@ const Version_2_0 = () => {
     // Set the loading animation on the last one
     const [isLastLoading, setIsLastLoading] = useState<boolean>(false);
 
+    /* Array of string interpolations */
+    const [interpolations, setInterpolations] = useState<
+        StringInterpolations[]
+    >([
+        {
+            list: [
+                {
+                    key: 0,
+                    variable: "name",
+                    field: "Joey",
+                },
+            ],
+        },
+    ]);
+
     /* Answers from the api */
     const [apiModelData, setapiModelData] = useState<ModelData[][]>([[]]);
 
@@ -67,7 +82,7 @@ const Version_2_0 = () => {
         setSystemMessage(newSystemMessage);
 
         if (models.length === 0) {
-            console.log("No models selected");
+            console.error("No models selected");
             return;
         }
         setIsLoading(true);
@@ -77,7 +92,6 @@ const Version_2_0 = () => {
             stringInterpolations: [{ list: interpolations }],
         }).then((response) => {
             setapiModelData(response);
-            console.log(response);
             setIsLoading(false);
         });
     };
@@ -85,10 +99,9 @@ const Version_2_0 = () => {
     /* function to handle a click on the add button (in UserInput) */
     const handleAddResponseClick = (value: string) => {
         if (models.length === 0) {
-            console.log("No models selected");
+            console.error("No models selected");
             return;
         }
-        console.log("systemMessage", systemMessage);
 
         // setSystemMessage(systemMessage)
         setIsLoading(true);
@@ -96,20 +109,9 @@ const Version_2_0 = () => {
             modelData: modelData,
             userPrompt: value,
             systemMessage: systemMessage,
-            stringInterpolations: [
-                {
-                    list: [
-                        {
-                            key: 0,
-                            variable: "name",
-                            field: "Joey",
-                        },
-                    ],
-                },
-            ],
+            stringInterpolations: interpolations,
         }).then((response) => {
             if (response) {
-                console.log(response);
                 setapiModelData(response);
             }
             setIsLoading(false);
@@ -199,8 +201,6 @@ const Version_2_0 = () => {
         setapiModelData([[]]);
     };
 
-    console.log("models", models);
-
     return (
         <>
             <div className="m-5 gap-3 flex flex-col flex-1 ">
@@ -208,6 +208,8 @@ const Version_2_0 = () => {
                     handleGoClick={handleGoClick}
                     selectedModels={models}
                     onSelectModel={handleSelectModel}
+                    interpolations={interpolations}
+                    setInterpolations={setInterpolations}
                     setSystemMessageInUserPrompt={setSystemMessage}
                 />
                 {models.length > 0 ? (
@@ -221,7 +223,7 @@ const Version_2_0 = () => {
                         />
                     ))
                 ) : (
-                    <div className="flex justify-center items-center opacity-50 flex-1 min-h-20">
+                    <div className="flex justify-center items-center opacity-50 min-h-20">
                         Select a model to start
                     </div>
                 )}

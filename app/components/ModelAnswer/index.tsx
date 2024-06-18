@@ -52,6 +52,7 @@ function ModelAnswerHeader({
                 {isLast && (
                     <ModelSelector
                         placeholder="Compare with a new model"
+                        className="max-w-64"
                         aria-label="Add a new model"
                         size="sm"
                         onChange={(model) => onSelectItem(model)}

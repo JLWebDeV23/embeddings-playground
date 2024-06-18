@@ -25,11 +25,8 @@ export default function ModelSelector({
         onChange(model);
     };
 
-    console.log("selectedModels in ModelSelector", selectedModels);
-
     return (
         <Select
-            className="max-w-64"
             onChange={(e) => handleChange(e)}
             selectedKeys={selectedModels?.length === 0 ? "" : undefined}
             {...props}

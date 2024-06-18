@@ -64,8 +64,6 @@ main {
 
 /* Header styles */
 header {
-    margin: 5px;
-    min-height: 10vh;
     max-height: 13vh;
 }
 
