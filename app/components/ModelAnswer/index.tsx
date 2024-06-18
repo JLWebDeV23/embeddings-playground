@@ -12,9 +12,9 @@ function ChatBubble({ text, role }: { text: string; role: string }) {
                     role === "user" ? "self-end bg-surface/50" : ""
                 }`}
             >
-                <p className="text-sm text-gray-500">
+                <div className="text-sm text-gray-500">
                     <ReactMarkdown>{text}</ReactMarkdown>
-                </p>
+                </div>
             </div>
         </>
     );

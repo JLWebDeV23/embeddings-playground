@@ -4,10 +4,12 @@ import { ModelData, ModelsActionFunction } from "@/app/utils/interfaces";
 export default function ModelAnswerGroup({
     answers,
     isLoading,
+    isLastLoading,
     onModelsAction,
 }: {
     answers: ModelData[];
     isLoading: boolean;
+    isLastLoading: boolean;
     onModelsAction: ModelsActionFunction;
 }) {
     return (
@@ -22,7 +24,11 @@ export default function ModelAnswerGroup({
                                 modelNumber={index}
                                 answer={answer}
                                 onModelsAction={onModelsAction}
-                                isLoading={isLoading}
+                                isLoading={
+                                    isLoading ||
+                                    (isLastLoading &&
+                                        index === answers.length - 1)
+                                }
                                 isLast={index === answers.length - 1}
                             />
                         ))}

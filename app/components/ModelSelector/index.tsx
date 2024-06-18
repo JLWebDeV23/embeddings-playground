@@ -10,11 +10,13 @@ import modelsData from "@/public/assets/data/ModelData.json";
 type ModelSelectorProps = {
     models?: typeof modelsData;
     onChange: (model: Model) => void;
+    selectedModels?: Model[];
 } & Omit<SelectProps, "children" | "onChange">;
 
 export default function ModelSelector({
     models = modelsData,
     onChange,
+    selectedModels,
     ...props
 }: ModelSelectorProps) {
     const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -23,10 +25,13 @@ export default function ModelSelector({
         onChange(model);
     };
 
+    console.log("selectedModels in ModelSelector", selectedModels);
+
     return (
         <Select
             className="max-w-64"
             onChange={(e) => handleChange(e)}
+            selectedKeys={selectedModels?.length === 0 ? "" : undefined}
             {...props}
         >
             {models.map((model) => (

@@ -12,7 +12,7 @@ interface ModelCompareProps {
         interpolations: StringInterpolation[];
     }) => void;
     selectedModels: Model[];
-    setSelectedModels: (models: Model[]) => void;
+    onSelectModel: (models: Model) => void;
     setSystemMessageInUserPrompt: (message: string) => void;
 }
 
@@ -21,18 +21,17 @@ interface ModelCompareProps {
 */
 export default function ModelCompare({
     handleGoClick,
-    setSelectedModels,
+    onSelectModel,
     setSystemMessageInUserPrompt,
+    selectedModels,
 }: ModelCompareProps) {
     const [systemMessage, setSystemMessage] = useState<string>("");
-
-    const handleChange = (model: Model) => {
-        setSelectedModels([model]);
-    };
 
     const submitSysMessage = () => {
         setSystemMessage(systemMessage);
     };
+
+    console.log("selectedModels in modelsCompare", selectedModels);
 
     return (
         <div className="flex flex-col bg-card p-3 rounded-md">
@@ -42,7 +41,8 @@ export default function ModelCompare({
                 <ModelSelector
                     placeholder="Select the initial model"
                     label="Initial model"
-                    onChange={handleChange}
+                    selectedModels={selectedModels}
+                    onChange={onSelectModel}
                 />
             </div>
             <div className="flex gap-3 pt-3 items-end">
@@ -50,7 +50,10 @@ export default function ModelCompare({
                     inputText={"System Message"}
                     isButtonVisabled
                     value={systemMessage}
-                    handleInput={(e) => {setSystemMessage(e.target.value); setSystemMessageInUserPrompt(e.target.value)}}
+                    handleInput={(e) => {
+                        setSystemMessage(e.target.value);
+                        setSystemMessageInUserPrompt(e.target.value);
+                    }}
                     onSubmit={submitSysMessage}
                 />
                 <button

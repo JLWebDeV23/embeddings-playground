@@ -43,14 +43,20 @@ const resolveModelData = (
 };
 
 const Version_2_0 = () => {
+    /* Array of selected models */
     const [models, setModels] = useState<Model[]>([]);
     const [systemMessage, setSystemMessage] = useState<string>("");
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    // Set the loading animation on the last one
+    const [isLastLoading, setIsLastLoading] = useState<boolean>(false);
 
+    /* Answers from the api */
     const [apiModelData, setapiModelData] = useState<ModelData[][]>([[]]);
 
+    /* Value recalculated when either the model Array or the apiModelData matrix changes */
     const modelData: ModelData[][] = resolveModelData(models, apiModelData);
 
+    /* function to handle a click on the go button (in ModelCompare) */
     const handleGoClick = ({
         newSystemMessage,
         interpolations,
@@ -76,6 +82,7 @@ const Version_2_0 = () => {
         });
     };
 
+    /* function to handle a click on the add button (in UserInput) */
     const handleAddResponseClick = (value: string) => {
         if (models.length === 0) {
             console.log("No models selected");
@@ -109,6 +116,12 @@ const Version_2_0 = () => {
         });
     };
 
+    /* 
+        function to handle model actions in the ModelAnswerGroup component 
+        @param action: "add" | "pop" | "lock" - action to perform on the models array
+        @param index: number - index of the model in the models array
+        @param model: Model - model to add to the models array
+    */
     const handleModelAction: ModelsActionFunction = ({
         action,
         index = models.length - 1,
@@ -116,16 +129,10 @@ const Version_2_0 = () => {
     }) => {
         switch (action) {
             case "add":
+                // Add the model to the end of the models array
                 if (!model) throw new Error("Model is required");
                 setModels([...models, model]);
-
-                /* type CreateNewModelDataProps = {
-                    modelData: ModelData[][];
-                    newModelData: ModelData;
-                    systemMessage: string;
-                    stringInterpolations: StringInterpolations[];
-                }; */
-
+                setIsLastLoading(true);
                 createNewModelData({
                     modelData: modelData,
                     newModelData: {
@@ -137,16 +144,25 @@ const Version_2_0 = () => {
                     systemMessage: systemMessage,
                     stringInterpolations: [{ list: [] }],
                 }).then((response) => {
-                    console.log(response);
                     setapiModelData(() => response);
+                    setIsLastLoading(false);
                 });
 
                 break;
             case "pop":
+                // Remove the model at index from the models array
+
+                if (index === 0) {
+                    setModels([]);
+                    setapiModelData([[]]);
+                    break;
+                }
+
                 setModels(() => [
                     ...models.slice(0, index),
                     ...models.slice(index + 1),
                 ]);
+                // Remove the model at index from the apiModelData matrix
                 setapiModelData((prev) => {
                     const newModelData = [...prev];
                     newModelData.forEach((interpolationAnswer) => {
@@ -156,6 +172,7 @@ const Version_2_0 = () => {
                 });
                 break;
             case "lock":
+                // Toggle the lock status of the model at index
                 setapiModelData(() => {
                     const newModelData = modelData.map((interpolationAnswer) =>
                         interpolationAnswer.map((modelData, i) => {
@@ -176,13 +193,21 @@ const Version_2_0 = () => {
         }
     };
 
+    /* function to handle a model selection in the ModelCompare component */
+    const handleSelectModel = (model: Model) => {
+        setModels([model]);
+        setapiModelData([[]]);
+    };
+
+    console.log("models", models);
+
     return (
         <>
             <div className="m-5 gap-3 flex flex-col flex-1 ">
                 <ModelCompare
                     handleGoClick={handleGoClick}
                     selectedModels={models}
-                    setSelectedModels={setModels}
+                    onSelectModel={handleSelectModel}
                     setSystemMessageInUserPrompt={setSystemMessage}
                 />
                 {models.length > 0 ? (
@@ -191,6 +216,7 @@ const Version_2_0 = () => {
                             key={index}
                             answers={obj}
                             isLoading={isLoading}
+                            isLastLoading={isLastLoading}
                             onModelsAction={handleModelAction}
                         />
                     ))
