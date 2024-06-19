@@ -1,7 +1,8 @@
-import { Model, ModelData, ModelsActionFunction } from "@/app/utils/interfaces";
+import { Model, ModelData } from "@/app/utils/interfaces";
 import IonIcon from "@reacticons/ionicons";
 import ModelSelector from "@/app/components/ModelSelector";
 import ReactMarkdown from "react-markdown";
+import useModelData from "@/app/hooks/useModelData";
 
 function ChatBubble({ text, role }: { text: string; role: string }) {
     return (
@@ -25,24 +26,24 @@ function ModelAnswerHeader({
     modelNumber,
     isLocked,
     isLast = false,
-    onModelsAction,
 }: {
     name: string;
     isLocked: boolean;
     modelNumber: number;
     isLast?: boolean;
-    onModelsAction: ModelsActionFunction;
 }) {
+    const { handleModelsAction } = useModelData();
+
     const onSelectItem = (model: Model) => {
-        onModelsAction({ action: "add", model });
+        handleModelsAction({ action: "add", model });
     };
 
     const onLockClick = () => {
-        onModelsAction({ action: "lock", index: modelNumber });
+        handleModelsAction({ action: "lock", index: modelNumber });
     };
 
     const onRemoveClick = () => {
-        onModelsAction({ action: "pop", index: modelNumber });
+        handleModelsAction({ action: "pop", index: modelNumber });
     };
 
     return (
@@ -89,28 +90,25 @@ function ModelAnswerHeader({
 
 export default function ModelAnswer({
     answer,
-    isLoading,
     modelNumber,
     isLast,
-    onModelsAction,
 }: {
     answer: ModelData;
-    isLoading: boolean;
     modelNumber: number;
     isLast?: boolean;
-    onModelsAction: ModelsActionFunction;
 }) {
+    const { isLoading, isLastLoading } = useModelData();
+
     return (
         <div
             className={`flex flex-col rounded-md min-w-96 w-full items-center  ${
-                isLoading ? "skeleton" : "bg-card"
+                isLoading || (isLastLoading && isLast) ? "skeleton" : "bg-card"
             }`}
         >
             <ModelAnswerHeader
                 name={answer.subModel}
                 isLocked={answer.locked}
                 modelNumber={modelNumber}
-                onModelsAction={onModelsAction}
                 isLast={isLast}
             />
             {/* max-w-[800px] */}

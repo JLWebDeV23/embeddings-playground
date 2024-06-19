@@ -1,3 +1,4 @@
+import useModelData from "@/app/hooks/useModelData";
 import { StringInterpolations } from "@/app/utils/interfaces";
 import {
     Button,
@@ -10,48 +11,79 @@ import {
     useDisclosure,
 } from "@nextui-org/react";
 import { Tab, Tabs } from "@nextui-org/tabs";
+import { useState } from "react";
 
-export function EditStringInterpoplations({
-    interpolations,
-    setInterpolations,
+type changeInterpolationVariableFunction = ({
+    index,
+    pageNumber,
+    variable,
+    field,
 }: {
-    interpolations: StringInterpolations[];
-    setInterpolations: (interpolations: StringInterpolations[]) => void;
-}) {
+    index: number;
+    pageNumber?: number | undefined;
+    variable?: string;
+    field?: string;
+}) => void;
+
+export function EditStringInterpoplations() {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-    const changeInterpolationVariable = ({
+    const { interpolations } = useModelData();
+
+    /* Function used to update the InterpolationVariables array
+     * @param index: The index of the variable in the list
+     * @param pageNumber: The page number (optional if we just want to update the variable name)
+     * @param variable: The variable name (optional)
+     * @param field: The field name (optional)
+     */
+    const changeInterpolationVariable: changeInterpolationVariableFunction = ({
         index,
         pageNumber,
         variable,
         field,
-    }: {
-        index: number;
-        pageNumber?: number | undefined;
-        variable?: string;
-        field?: string;
     }) => {
-        return setInterpolations(
-            interpolations.map((page, i) => {
-                if (i === pageNumber || pageNumber === undefined) {
+        /* If a user wants to add a new page, we duplicate the last one */
+        if (pageNumber && pageNumber === interpolations.length) {
+            return;
+        }
+        /* The user wants to either add or update a value in the interpolations array */
+        return interpolations.map((page, i) => {
+            /* The user wants to add a new variable / field set */
+            if (index === page.list.length && variable && field) {
+                return {
+                    ...page,
+                    list: [
+                        ...page.list,
+                        {
+                            key: page.list.length,
+                            variable: variable,
+                            field: field,
+                        },
+                    ],
+                };
+            }
+            /* The user wants to edit a variable or a field
+             * We only update the variable or the field if the page number matches the index but we update the variable name in every page
+             */
+            const list = page.list.map((interpolations, j) => {
+                if (j === index) {
                     return {
-                        ...page,
-                        list: page.list.map((interpolation, j) => {
-                            if (j === index) {
-                                return {
-                                    ...interpolation,
-                                    variable:
-                                        variable || interpolation.variable,
-                                    field: field || interpolation.field,
-                                };
-                            }
-                            return interpolation;
-                        }),
+                        ...interpolations,
+                        variable: variable || interpolations.variable,
+                        field:
+                            field && pageNumber === i
+                                ? field
+                                : interpolations.field,
                     };
                 }
-                return page;
-            })
-        );
+                return interpolations;
+            });
+
+            return {
+                ...page,
+                list: list,
+            };
+        });
     };
     return (
         <>
@@ -67,17 +99,21 @@ export function EditStringInterpoplations({
                             </ModalHeader>
                             <ModalBody>
                                 <Tabs aria-label="Interpolations">
-                                    {interpolations.map(
-                                        (interpolations, page) => (
+                                    {interpolations?.map(
+                                        (interpolation, page) => (
                                             <Tab
                                                 key={page}
                                                 title={`Page ${page + 1}`}
                                             >
-                                                {InterpolationPage(
-                                                    interpolations,
-                                                    page,
-                                                    changeInterpolationVariable
-                                                )}
+                                                <InterpolationPage
+                                                    changeInterpolationVariable={
+                                                        changeInterpolationVariable
+                                                    }
+                                                    interpolations={
+                                                        interpolation
+                                                    }
+                                                    page={page}
+                                                />
                                             </Tab>
                                         )
                                     )}
@@ -96,52 +132,106 @@ export function EditStringInterpoplations({
     );
 }
 
-function InterpolationPage(
-    interpolations: StringInterpolations,
-    page: number,
-    changeInterpolationVariable: ({
-        index,
-        pageNumber,
-        variable,
-        field,
-    }: {
-        index: number;
-        pageNumber?: number | undefined;
-        variable?: string;
-        field?: string;
-    }) => void
-) {
+type InterpolationPageProps = {
+    interpolations: StringInterpolations;
+    page: number;
+    changeInterpolationVariable: changeInterpolationVariableFunction;
+};
+
+function InterpolationPage({
+    interpolations,
+    page,
+    changeInterpolationVariable,
+}: InterpolationPageProps) {
     return (
         <div className="flex flex-col gap-3">
-            {interpolations.list.map((interpolation, index) => (
-                <div className="flex gap-3" key={index}>
-                    <Input
-                        type="text"
-                        label={`Variable ${index + 1}`}
-                        placeholder="name"
-                        value={interpolations.list[index].variable}
-                        onValueChange={(value) =>
-                            changeInterpolationVariable({
-                                index: index,
-                                variable: value,
-                            })
-                        }
-                    />
-                    <Input
-                        type="text"
-                        label={`Field ${index + 1}`}
-                        placeholder="Joey"
-                        value={interpolations.list[index].field}
-                        onValueChange={(value) =>
-                            changeInterpolationVariable({
-                                pageNumber: page,
-                                index: index,
-                                field: value,
-                            })
-                        }
-                    />
-                </div>
-            ))}
+            {interpolations.list.map((_, index) =>
+                InterpolationInput({
+                    index,
+                    interpolations,
+                    changeInterpolationVariable,
+                    page,
+                })
+            )}
+            <InterpolationInput
+                index={interpolations.list.length}
+                interpolations={interpolations}
+                changeInterpolationVariable={changeInterpolationVariable}
+                page={page}
+            />
+        </div>
+    );
+}
+
+function InterpolationInput({
+    index,
+    interpolations,
+    changeInterpolationVariable,
+    page,
+}: {
+    index: number;
+    interpolations: StringInterpolations;
+    changeInterpolationVariable: changeInterpolationVariableFunction;
+    page: number;
+}) {
+    console.log("I am here before states");
+    const [variable, setVariable] = useState<string>("1234");
+    /* () => {
+    if (index < interpolations.list.length) {
+        return interpolations.list[index].field;
+    }
+    return "";
+}; */
+    /* 
+() => {
+    if (index < interpolations.list.length) {
+        return interpolations.list[index].variable;
+    }
+    return "";
+}; */
+    const [field, setField] = useState<string>("5678");
+    console.log("I am here after states");
+    return (
+        <div className="flex gap-3" key={index}>
+            <Input
+                type="text"
+                label={`Variable ${index + 1}`}
+                placeholder={
+                    index < interpolations.list.length
+                        ? interpolations.list[index].variable
+                        : "name"
+                }
+                value={variable}
+                onValueChange={setVariable}
+            />
+            <Input
+                type="text"
+                label={`Field ${index + 1}`}
+                placeholder={
+                    index < interpolations.list.length
+                        ? interpolations.list[index].field
+                        : "John Doe"
+                }
+                value={field}
+                onValueChange={setField}
+            />
+            <Button
+                onClick={() => {
+                    console.log(variable, field);
+                    if (variable.length > 0 && field.length > 0) {
+                        changeInterpolationVariable({
+                            index,
+                            pageNumber: page,
+                            variable,
+                            field,
+                        });
+                        return;
+                    }
+                    console.log("Invalid input");
+                }}
+            >
+                Save
+            </Button>
         </div>
     );
 }

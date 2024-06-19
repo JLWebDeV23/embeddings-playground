@@ -1,16 +1,10 @@
 import ModelAnswer from ".";
-import { ModelData, ModelsActionFunction } from "@/app/utils/interfaces";
+import { ModelData } from "@/app/utils/interfaces";
 
 export default function ModelAnswerGroup({
     answers,
-    isLoading,
-    isLastLoading,
-    onModelsAction,
 }: {
     answers: ModelData[];
-    isLoading: boolean;
-    isLastLoading: boolean;
-    onModelsAction: ModelsActionFunction;
 }) {
     return (
         <div className="flex flex-col gap-3">
@@ -23,12 +17,6 @@ export default function ModelAnswerGroup({
                                 key={index}
                                 modelNumber={index}
                                 answer={answer}
-                                onModelsAction={onModelsAction}
-                                isLoading={
-                                    isLoading ||
-                                    (isLastLoading &&
-                                        index === answers.length - 1)
-                                }
                                 isLast={index === answers.length - 1}
                             />
                         ))}

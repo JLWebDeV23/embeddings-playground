@@ -1,42 +1,23 @@
 import React, { useState } from "react";
 import InputBox from "@/app/components/InputBox/InputBox";
 import ModelSelector from "@/app/components/ModelSelector";
-import {
-    type Model,
-    type StringInterpolation,
-    type StringInterpolations,
-} from "@/app/utils/interfaces";
-import { EditStringInterpoplations } from "@/app/components/Modal/EditStringInterpolations";
 
-interface ModelCompareProps {
-    handleGoClick: ({
-        newSystemMessage,
-        interpolations,
-    }: {
-        newSystemMessage: string;
-        interpolations: StringInterpolation[];
-    }) => void;
-    selectedModels: Model[];
-    onSelectModel: (models: Model) => void;
-    interpolations: StringInterpolations[];
-    setInterpolations: (interpolations: StringInterpolations[]) => void;
-    setSystemMessageInUserPrompt: (message: string) => void;
-}
+import { EditStringInterpoplations } from "@/app/components/Modal/EditStringInterpolations";
+import useModelData from "@/app/hooks/useModelData";
 
 /* 
     This component is used to select the initial model for the chat and set the system message.
 */
-export default function ModelCompare({
-    handleGoClick,
-    onSelectModel,
-    setSystemMessageInUserPrompt,
-    selectedModels,
-    interpolations,
-    setInterpolations,
-}: ModelCompareProps) {
+export default function ModelCompare() {
     const [systemMessage, setSystemMessage] = useState<string>("");
     const submitSysMessage = () => {
         setSystemMessage(systemMessage);
+    };
+
+    const { handleGoClick, models } = useModelData();
+
+    const handleModelSelection = (model: string) => {
+        console.log(model);
     };
 
     return (
@@ -45,18 +26,15 @@ export default function ModelCompare({
                 <h1 className="font-bold text-xl whitespace-nowrap">
                     Model Compare
                 </h1>
-                <EditStringInterpoplations
-                    interpolations={interpolations}
-                    setInterpolations={setInterpolations}
-                />
+                <EditStringInterpoplations />
             </div>
             <div className="flex flex-col p-3">
                 <div className="flex flex-col gap-3 flex-wrap">
                     <ModelSelector
                         placeholder="Select the initial model"
                         label="Initial model"
-                        selectedModels={selectedModels}
-                        onChange={onSelectModel}
+                        selectedModels={models}
+                        onChange={(e) => handleModelSelection}
                         className="w-full max-w-64"
                     />
                 </div>
@@ -66,8 +44,9 @@ export default function ModelCompare({
                         isButtonVisabled
                         value={systemMessage}
                         handleInput={(e) => {
+                            console.log(e.target.value);
                             setSystemMessage(e.target.value);
-                            setSystemMessageInUserPrompt(e.target.value);
+                            // setSystemMessageInUserPrompt(e.target.value);
                         }}
                         onSubmit={submitSysMessage}
                     />
