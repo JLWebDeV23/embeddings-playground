@@ -8,12 +8,12 @@ import SystemMessageProvider from "@/app/providers/SystemMessageProvider";
 
 export default function Home() {
     return (
-        <ModelDataProvider>
-            <SystemMessageProvider>
+        <SystemMessageProvider>
+            <ModelDataProvider>
                 <NextUIProvider className="flex flex-col flex-1">
                     <Version_2_0 />
                 </NextUIProvider>
-            </SystemMessageProvider>
-        </ModelDataProvider>
+            </ModelDataProvider>
+        </SystemMessageProvider>
     );
 }

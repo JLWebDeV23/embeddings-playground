@@ -11,18 +11,21 @@ import {
     createNewModelData,
 } from "@/app/utils/modelProcessing";
 import { PropsWithChildren, createContext, useState } from "react";
+import useSystemMessage from "@/app/hooks/useSystemMessage";
 
 type handleGoClickFunction = (args: {
     newSystemMessage: string;
     interpolations: StringInterpolation[];
 }) => void;
 
+type handleAddResponseClickFunction = (value: string) => void;
+
 type ModelsActionsFunction = ({
     action,
     index,
     model,
 }: {
-    action: "add" | "pop" | "lock";
+    action: "set_initial" | "reset" | "add" | "pop" | "lock";
     index?: number;
     model?: Model;
 }) => void;
@@ -34,7 +37,7 @@ export const Context = createContext<{
     modelData: ModelData[][];
     interpolations: StringInterpolations[];
     handleGoClick: handleGoClickFunction;
-    handleAddResponseClick: (value: string) => void;
+    handleAddResponseClick: handleAddResponseClickFunction;
     handleModelsAction: ModelsActionsFunction;
 } | null>(null);
 
@@ -68,78 +71,9 @@ const newModelData = (model: Model, locked = false) => {
 export default function ModelDataProvider({ children }: PropsWithChildren) {
     const [models, setModels] = useState<Model[]>([]);
 
-    /* Array of string interpolations */
-    const [interpolations, setInterpolations] = useState<
-        StringInterpolations[]
-    >([
-        {
-            list: [
-                {
-                    key: 0,
-                    variable: "name",
-                    field: "Joey",
-                },
-            ],
-        },
-    ]);
-
-    /* Answers from the api */
-    const [apiModelData, setapiModelData] = useState<ModelData[][]>([[]]);
-
-    /* States to knwow when we load data */
-    const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [isLastLoading, setIsLastLoading] = useState<boolean>(false);
-
-    const modelData: ModelData[][] = resolveModelData(models, apiModelData);
-
-    /* function to handle a click on the go button (in ModelCompare) */
-    const handleGoClick: handleGoClickFunction = ({
-        newSystemMessage,
-        interpolations,
-    }) => {
-        //setSystemMessage(newSystemMessage);
-
-        if (models.length === 0) {
-            console.error("No models selected");
-            return;
-        }
-        setIsLoading(true);
-        go({
-            modelData: modelData,
-            systemMessage: newSystemMessage,
-            stringInterpolations: [{ list: interpolations }],
-        }).then((response) => {
-            setapiModelData(response);
-            setIsLoading(false);
-        });
-    };
-
-    /* function to handle a click on the add button (in UserInput) */
-    const handleAddResponseClick = (value: string) => {
-        if (models.length === 0) {
-            console.error("No models selected");
-            return;
-        }
-
-        // setSystemMessage(systemMessage)
-        setIsLoading(true);
-        insertUserPrompt({
-            modelData: modelData,
-            userPrompt: value,
-            /*  systemMessage: systemMessage, */
-            systemMessage: "",
-            stringInterpolations: interpolations,
-        }).then((response) => {
-            if (response) {
-                setapiModelData(response);
-            }
-            setIsLoading(false);
-        });
-    };
-
     /* 
         function to handle model actions in the ModelAnswerGroup component 
-        @param action: "add" | "pop" | "lock" - action to perform on the models array
+        @param action: "set_initial" | "reset" | "add" | "pop" | "lock" - action to perform on the models array
         @param index: number - index of the model in the models array
         @param model: Model - model to add to the models array
     */
@@ -149,6 +83,17 @@ export default function ModelDataProvider({ children }: PropsWithChildren) {
         model,
     }) => {
         switch (action) {
+            case "set_initial":
+                // Set the model as the only model in the models array
+                if (!model) throw new Error("Model is required");
+                setModels([model]);
+                setApiModelData([[]]);
+                break;
+            case "reset":
+                // Reset the models array
+                setModels([]);
+                setApiModelData([[]]);
+                break;
             case "add":
                 // Add the model to the end of the models array
                 if (!model) throw new Error("Model is required");
@@ -162,10 +107,10 @@ export default function ModelDataProvider({ children }: PropsWithChildren) {
                         messages: [],
                         locked: false,
                     },
-                    systemMessage: "",
+                    systemMessage: systemMessage,
                     stringInterpolations: [{ list: [] }],
                 }).then((response) => {
-                    setapiModelData(() => response);
+                    setApiModelData(() => response);
                     setIsLastLoading(false);
                 });
 
@@ -175,7 +120,7 @@ export default function ModelDataProvider({ children }: PropsWithChildren) {
 
                 if (index === 0) {
                     setModels([]);
-                    setapiModelData([[]]);
+                    setApiModelData([[]]);
                     break;
                 }
 
@@ -184,7 +129,7 @@ export default function ModelDataProvider({ children }: PropsWithChildren) {
                     ...models.slice(index + 1),
                 ]);
                 // Remove the model at index from the apiModelData matrix
-                setapiModelData((prev) => {
+                setApiModelData((prev) => {
                     const newModelData = [...prev];
                     newModelData.forEach((interpolationAnswer) => {
                         interpolationAnswer.splice(index, 1);
@@ -194,7 +139,7 @@ export default function ModelDataProvider({ children }: PropsWithChildren) {
                 break;
             case "lock":
                 // Toggle the lock status of the model at index
-                setapiModelData(() => {
+                setApiModelData(() => {
                     const newModelData = modelData.map((interpolationAnswer) =>
                         interpolationAnswer.map((modelData, i) => {
                             if (i === index) {
@@ -212,6 +157,73 @@ export default function ModelDataProvider({ children }: PropsWithChildren) {
             default:
                 break;
         }
+    };
+
+    const { systemMessage } = useSystemMessage();
+
+    /* Array of string interpolations */
+    const [interpolations, setInterpolations] = useState<
+        StringInterpolations[]
+    >([
+        {
+            list: [
+                {
+                    key: 0,
+                    variable: "name",
+                    field: "Joey",
+                },
+            ],
+        },
+    ]);
+
+    /* Answers from the api */
+    const [apiModelData, setApiModelData] = useState<ModelData[][]>([[]]);
+
+    /* States to knwow when we load data */
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [isLastLoading, setIsLastLoading] = useState<boolean>(false);
+
+    const modelData: ModelData[][] = resolveModelData(models, apiModelData);
+
+    /* function to handle a click on the go button (in ModelCompare) */
+    const handleGoClick: handleGoClickFunction = ({
+        newSystemMessage,
+        interpolations,
+    }) => {
+        if (models.length === 0) {
+            console.error("No models selected");
+            return;
+        }
+        setIsLoading(true);
+        go({
+            modelData: modelData,
+            systemMessage: newSystemMessage,
+            stringInterpolations: [{ list: interpolations }],
+        }).then((response) => {
+            setApiModelData(response);
+            setIsLoading(false);
+        });
+    };
+
+    /* function to handle a click on the add button (in UserInput) */
+    const handleAddResponseClick = (value: string) => {
+        if (models.length === 0) {
+            console.error("No models selected");
+            return;
+        }
+
+        setIsLoading(true);
+        insertUserPrompt({
+            modelData: modelData,
+            userPrompt: value,
+            systemMessage: systemMessage,
+            stringInterpolations: interpolations,
+        }).then((response) => {
+            if (response) {
+                setApiModelData(response);
+            }
+            setIsLoading(false);
+        });
     };
 
     return (

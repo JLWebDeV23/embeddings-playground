@@ -4,20 +4,19 @@ import ModelSelector from "@/app/components/ModelSelector";
 
 import { EditStringInterpoplations } from "@/app/components/Modal/EditStringInterpolations";
 import useModelData from "@/app/hooks/useModelData";
+import useSystemMessage from "@/app/hooks/useSystemMessage";
+import { Model } from "@/app/utils/interfaces";
 
 /* 
     This component is used to select the initial model for the chat and set the system message.
 */
 export default function ModelCompare() {
-    const [systemMessage, setSystemMessage] = useState<string>("");
-    const submitSysMessage = () => {
-        setSystemMessage(systemMessage);
-    };
+    const { systemMessage, handleSystemMessage } = useSystemMessage();
 
-    const { handleGoClick, models } = useModelData();
+    const { handleGoClick, models, handleModelsAction } = useModelData();
 
-    const handleModelSelection = (model: string) => {
-        console.log(model);
+    const handleModelSelection = (model: Model) => {
+        handleModelsAction({ action: "set_initial", model: model });
     };
 
     return (
@@ -34,7 +33,7 @@ export default function ModelCompare() {
                         placeholder="Select the initial model"
                         label="Initial model"
                         selectedModels={models}
-                        onChange={(e) => handleModelSelection}
+                        onChange={handleModelSelection}
                         className="w-full max-w-64"
                     />
                 </div>
@@ -45,10 +44,9 @@ export default function ModelCompare() {
                         value={systemMessage}
                         handleInput={(e) => {
                             console.log(e.target.value);
-                            setSystemMessage(e.target.value);
-                            // setSystemMessageInUserPrompt(e.target.value);
+                            handleSystemMessage(e.target.value);
                         }}
-                        onSubmit={submitSysMessage}
+                        onSubmit={handleSystemMessage}
                     />
                     <button
                         className="btn btn-lg"

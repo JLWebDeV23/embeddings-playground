@@ -174,7 +174,6 @@ function InterpolationInput({
     changeInterpolationVariable: changeInterpolationVariableFunction;
     page: number;
 }) {
-    console.log("I am here before states");
     const [variable, setVariable] = useState<string>("1234");
     /* () => {
     if (index < interpolations.list.length) {
@@ -190,7 +189,6 @@ function InterpolationInput({
     return "";
 }; */
     const [field, setField] = useState<string>("5678");
-    console.log("I am here after states");
     return (
         <div className="flex gap-3" key={index}>
             <Input

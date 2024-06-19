@@ -6,11 +6,12 @@ export default function UserInput({
     isUserInputDisabled = false,
     className,
     placeholder = "User Message",
+    systemMessage = "",
     ...rest
 }: {
     placeholder?: string;
     isUserInputDisabled?: boolean;
-    className?: string;
+    systemMessage?: string;
 } & React.HTMLAttributes<HTMLDivElement>) {
     const [inputValue, setInputValue] = useState<string>("");
     const showAlert = false;
@@ -26,7 +27,7 @@ export default function UserInput({
         >
             <InputBox
                 onSubmit={(value: string) => {
-                    handleAddResponseClick(value);
+                    handleAddResponseClick(value, "System");
                     setInputValue("");
                     // chatcompletion and display to model one => add to modelsData
                     // chatcompletion of value using selected models and push both value to user and the derived completion to the ModelsData
