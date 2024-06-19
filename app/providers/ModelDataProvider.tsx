@@ -108,7 +108,7 @@ export default function ModelDataProvider({ children }: PropsWithChildren) {
                         locked: false,
                     },
                     systemMessage: systemMessage,
-                    stringInterpolations: [{ list: [] }],
+                    stringInterpolations: interpolations,
                 }).then((response) => {
                     setApiModelData(() => response);
                     setIsLastLoading(false);
