@@ -1,4 +1,4 @@
-import React, { act, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import ModelData from "../../../public/assets/data/ModelData.json";
 
 type ModelHeaderProps = {
@@ -22,7 +22,7 @@ const ModelHeader: React.FC<ModelHeaderProps> = ({
     if (activeSubModel) {
       onSubModelChange(model, activeSubModel);
     }
-  }, [activeSubModel]);
+  }, [activeSubModel, model, onSubModelChange]);
 
   return (
     <section className="flex justify-between w-full items-end z-20">
