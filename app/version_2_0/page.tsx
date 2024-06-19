@@ -56,6 +56,8 @@ const Version_2_0 = () => {
     /* Value recalculated when either the model Array or the apiModelData matrix changes */
     const modelData: ModelData[][] = resolveModelData(models, apiModelData);
 
+    // useEffect(() => {}, [])
+
     /* function to handle a click on the go button (in ModelCompare) */
     const handleGoClick = ({
         newSystemMessage,
@@ -230,6 +232,7 @@ const Version_2_0 = () => {
                 <UserInput
                     handleAddResponseClick={handleAddResponseClick}
                     className="pt-4 w-full"
+                    isUserInputDisabled={models.length === 0}
                 />
             </div>
         </>

@@ -31,7 +31,7 @@ const InputBox = ({
     <div className={styles.container}>
       <div className={`bg-card ${styles.entryArea}`}>
         <input
-          className={`overflow-hidden ${styles.input} ${props.isUserInputDisabled ? 'text-slate-600' : ''}`}
+          className={`overflow-hidden ${styles.input} ${props.isUserInputDisabled ? 'opacity-25' : ''}`}
           type="text"
           value={value}
           onInput={handleInput}
@@ -43,7 +43,7 @@ const InputBox = ({
             }
           }}
         />
-        <div className={styles.labelLine}>{inputText}</div>
+        <div className={`${props.isUserInputDisabled ? 'opacity-10' : ''} ${styles.labelLine}`}>{inputText}</div>
         {!props.isButtonVisabled && (
           <Button
             disabled={props.isButtonDisabled}
