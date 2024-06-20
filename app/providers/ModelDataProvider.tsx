@@ -27,7 +27,7 @@ type ModelsActionsFunction = ({
     model?: Model;
 }) => void;
 
-type changeInterpolationVariableFunction = ({
+type changeInterpolationVariablesFunction = ({
     index,
     pageNumber,
     variable,
@@ -45,7 +45,7 @@ export const Context = createContext<{
     models: Model[];
     modelData: ModelData[][];
     interpolations: StringInterpolations[];
-    changeInterpolationVariable: changeInterpolationVariableFunction;
+    changeInterpolationVariables: changeInterpolationVariablesFunction;
     handleGoClick: handleGoClickFunction;
     handleAddResponseClick: handleAddResponseClickFunction;
     handleModelsAction: ModelsActionsFunction;
@@ -80,6 +80,8 @@ const newModelData = (model: Model, locked = false) => {
 
 export default function ModelDataProvider({ children }: PropsWithChildren) {
     const [models, setModels] = useState<Model[]>([]);
+
+    const { systemMessage } = useSystemMessage();
 
     /* 
         function to handle model actions in the ModelAnswerGroup component 
@@ -169,8 +171,6 @@ export default function ModelDataProvider({ children }: PropsWithChildren) {
         }
     };
 
-    const { systemMessage } = useSystemMessage();
-
     /* Array of string interpolations */
     const [interpolations, setInterpolations] = useState<
         StringInterpolations[]
@@ -192,55 +192,53 @@ export default function ModelDataProvider({ children }: PropsWithChildren) {
      * @param variable: The variable name (optional)
      * @param field: The field name (optional)
      */
-    const changeInterpolationVariable: changeInterpolationVariableFunction = ({
-        index,
-        pageNumber,
-        variable,
-        field,
-    }) => {
-        setInterpolations((prev) => {
-            /* If a user wants to add a new page, we duplicate the last one */
-            if (pageNumber && pageNumber === prev.length) {
-                return [...prev, prev[prev.length - 1]];
-            }
-            /* The user wants to either add or update a value in the interpolations array */
-            return prev.map((page, i) => {
-                /* The user wants to add a new variable / field set */
-                if (index === page.list.length && variable && field) {
-                    return {
-                        ...page,
-                        list: [
-                            ...page.list,
-                            {
-                                key: page.list.length,
-                                variable: variable,
-                                field: field,
-                            },
-                        ],
-                    };
+    const changeInterpolationVariables: changeInterpolationVariablesFunction =
+        ({ index, pageNumber, variable, field }) => {
+            setInterpolations((prev) => {
+                /* If a user wants to add a new page, we duplicate the last one */
+                if (pageNumber && pageNumber === prev.length) {
+                    return [...prev, prev[prev.length - 1]];
                 }
-                /* The user wants to edit a variable or a field
-                 * We only update the variable or the field if the page number matches the index but we update the variable name in every page
-                 */
-                const list = page.list.map((prev, j) => {
-                    if (j === index) {
+                /* The user wants to either add or update a value in the interpolations array */
+                return prev.map((page, i) => {
+                    /* The user wants to add a new variable / field set */
+                    if (index === page.list.length && variable && field) {
                         return {
-                            ...prev,
-                            variable: variable || prev.variable,
-                            field:
-                                field && pageNumber === i ? field : prev.field,
+                            ...page,
+                            list: [
+                                ...page.list,
+                                {
+                                    key: page.list.length,
+                                    variable: variable,
+                                    field: field,
+                                },
+                            ],
                         };
                     }
-                    return prev;
-                });
+                    /* The user wants to edit a variable or a field
+                     * We only update the field if the page number matches the index but we update the variable name in every page
+                     */
+                    const list = page.list.map((prev, j) => {
+                        if (j === index) {
+                            return {
+                                ...prev,
+                                variable: variable || prev.variable,
+                                field:
+                                    field && pageNumber === i
+                                        ? field
+                                        : prev.field,
+                            };
+                        }
+                        return prev;
+                    });
 
-                return {
-                    ...page,
-                    list: list,
-                };
+                    return {
+                        ...page,
+                        list: list,
+                    };
+                });
             });
-        });
-    };
+        };
 
     /* Answers from the api */
     const [apiModelData, setApiModelData] = useState<ModelData[][]>([[]]);
@@ -258,7 +256,6 @@ export default function ModelDataProvider({ children }: PropsWithChildren) {
             return;
         }
         setIsLoading(true);
-        console.log("interpolations", interpolations);
         go({
             modelData: modelData,
             systemMessage: newSystemMessage,
@@ -296,7 +293,7 @@ export default function ModelDataProvider({ children }: PropsWithChildren) {
                 models,
                 modelData,
                 interpolations,
-                changeInterpolationVariable,
+                changeInterpolationVariables,
                 handleGoClick,
                 handleAddResponseClick,
                 handleModelsAction,

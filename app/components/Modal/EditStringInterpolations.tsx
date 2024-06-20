@@ -16,14 +16,14 @@ import { useState } from "react";
 export function EditStringInterpoplations() {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-    const { interpolations, changeInterpolationVariable } = useModelData();
+    const { interpolations, changeInterpolationVariables } = useModelData();
 
     return (
         <>
             <Button className="w-full sm:w-fit" onPress={onOpen}>
                 Set Interpolations variables
             </Button>
-            <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="lg">
+            <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="2xl">
                 <ModalContent>
                     {(onClose) => (
                         <>
@@ -34,16 +34,11 @@ export function EditStringInterpoplations() {
                                 <Tabs
                                     aria-label="Interpolations"
                                     onSelectionChange={(key) => {
-                                        console.log(
-                                            "New e",
-                                            key,
-                                            interpolations.length
-                                        );
                                         if (
                                             key ===
                                             interpolations.length.toString()
                                         ) {
-                                            changeInterpolationVariable({
+                                            changeInterpolationVariables({
                                                 pageNumber:
                                                     interpolations.length,
                                             });
@@ -101,6 +96,7 @@ function InterpolationPage({ interpolations, page }: InterpolationPageProps) {
                     page={page}
                 />
             ))}
+            <p>New Entry</p>
             <InterpolationInput
                 index={interpolations.list.length}
                 interpolations={interpolations}
@@ -133,11 +129,50 @@ function InterpolationInput({
         return "";
     }
 
-    const { changeInterpolationVariable } = useModelData();
+    const { changeInterpolationVariables } = useModelData();
     const [variable, setVariable] = useState<string>(initVariable());
     const [field, setField] = useState<string>(initField());
+
+    function saveVariable() {
+        if (
+            index < interpolations.list.length &&
+            variable.length > 0 &&
+            variable !== interpolations.list[index].variable
+        ) {
+            changeInterpolationVariables({
+                index,
+                variable,
+            });
+        }
+    }
+
+    function saveField() {
+        if (
+            index < interpolations.list.length &&
+            field.length > 0 &&
+            field !== interpolations.list[index].field
+        ) {
+            changeInterpolationVariables({
+                index,
+                pageNumber: page,
+                field,
+            });
+        }
+    }
+
+    function addInterpolation() {
+        changeInterpolationVariables({
+            index,
+            pageNumber: page,
+            variable,
+            field,
+        });
+        setVariable("");
+        setField("");
+    }
+
     return (
-        <div className="flex gap-3" key={index}>
+        <div className="flex gap-3 items-center" key={index}>
             <Input
                 type="text"
                 label={`Variable ${index + 1}`}
@@ -148,6 +183,7 @@ function InterpolationInput({
                 }
                 value={variable}
                 onValueChange={setVariable}
+                onBlur={saveVariable}
             />
             <Input
                 type="text"
@@ -159,28 +195,35 @@ function InterpolationInput({
                 }
                 value={field}
                 onValueChange={setField}
+                onBlur={saveField}
             />
-            <Button
-                onClick={() => {
-                    if (variable.length > 0 && field.length > 0) {
-                        changeInterpolationVariable({
-                            index,
-                            pageNumber: page,
-                            variable,
-                            field,
-                        });
-                        if (index >= interpolations.list.length) {
-                            setVariable("");
-                            setField("");
-                        }
-                        return;
-                    }
-                    console.error("Invalid input");
-                }}
-            >
-                Save
-            </Button>
-            <Button>Delete</Button>
+
+            {
+                // Remove button
+                index < interpolations.list.length && (
+                    <Button
+                        color="danger"
+                        variant="light"
+                        onPress={() => {
+                            console.log("Remove", index);
+                        }}
+                    >
+                        Remove
+                    </Button>
+                )
+            }
+            {
+                // Add button
+                index === interpolations.list.length && (
+                    <Button
+                        color="primary"
+                        variant="light"
+                        onPress={addInterpolation}
+                    >
+                        Add
+                    </Button>
+                )
+            }
         </div>
     );
 }
