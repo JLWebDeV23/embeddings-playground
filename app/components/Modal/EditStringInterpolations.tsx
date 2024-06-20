@@ -100,18 +100,19 @@ function InterpolationPage({
     const { deleteInterpolationPage } = useModelData();
     return (
         <div className="flex flex-col gap-3">
-            <Button
-                variant="flat"
-                color="danger"
-                className="w-fit self-end -mt-16 mb-3 "
-                onClick={() => {
-                    onDeletePage(page);
-                    console.log("delete page", page);
-                    deleteInterpolationPage(page);
-                }}
-            >
-                Delete Page
-            </Button>
+            {page > 0 && (
+                <Button
+                    variant="flat"
+                    color="danger"
+                    className="w-fit self-end -mt-16 mb-3 "
+                    onClick={() => {
+                        onDeletePage(page);
+                        deleteInterpolationPage(page);
+                    }}
+                >
+                    Delete Page
+                </Button>
+            )}
             {interpolations.list.map((_, index) => (
                 <InterpolationInput
                     key={index}
@@ -197,58 +198,66 @@ function InterpolationInput({
     }
 
     return (
-        <div className="flex gap-3 items-center" key={index}>
-            <Input
-                type="text"
-                label={`Variable ${index + 1}`}
-                placeholder={
-                    index < interpolations.list.length
-                        ? interpolations.list[index].variable
-                        : "name"
-                }
-                value={variable}
-                onValueChange={setVariable}
-                onBlur={saveVariable}
-            />
-            <Input
-                type="text"
-                label={`Field ${index + 1}`}
-                placeholder={
-                    index < interpolations.list.length
-                        ? interpolations.list[index].field
-                        : "John Doe"
-                }
-                value={field}
-                onValueChange={setField}
-                onBlur={saveField}
-            />
+        <>
+            <div className="flex gap-3 items-center" key={index}>
+                <Input
+                    type="text"
+                    label={`Variable ${index + 1}`}
+                    placeholder={
+                        index < interpolations.list.length
+                            ? interpolations.list[index].variable
+                            : "name"
+                    }
+                    value={variable}
+                    onValueChange={setVariable}
+                    onBlur={saveVariable}
+                />
+                <Input
+                    type="text"
+                    label={`Field ${index + 1}`}
+                    placeholder={
+                        index < interpolations.list.length
+                            ? interpolations.list[index].field
+                            : "John Doe"
+                    }
+                    value={field}
+                    onValueChange={setField}
+                    onBlur={saveField}
+                />
 
-            {
-                // Remove button
-                index < interpolations.list.length && (
-                    <Button
-                        color="danger"
-                        variant="light"
-                        onPress={() => {
-                            deleteInterpolationVariable(index);
-                        }}
-                    >
-                        Remove
-                    </Button>
-                )
-            }
-            {
-                // Add button
+                {
+                    // Remove button
+                    index < interpolations.list.length && (
+                        <Button
+                            color="danger"
+                            variant="light"
+                            onPress={() => {
+                                deleteInterpolationVariable(index);
+                            }}
+                        >
+                            Remove
+                        </Button>
+                    )
+                }
+                {
+                    // Add button
+                    index === interpolations.list.length && (
+                        <Button
+                            color="primary"
+                            variant="light"
+                            onPress={addInterpolation}
+                        >
+                            Add
+                        </Button>
+                    )
+                }
+            </div>
+            {(field !== "" || variable !== "") &&
                 index === interpolations.list.length && (
-                    <Button
-                        color="primary"
-                        variant="light"
-                        onPress={addInterpolation}
-                    >
-                        Add
-                    </Button>
-                )
-            }
-        </div>
+                    <p className="text-warning/70 text-xs -mb-7">
+                        New Entry not saved
+                    </p>
+                )}
+        </>
     );
 }
