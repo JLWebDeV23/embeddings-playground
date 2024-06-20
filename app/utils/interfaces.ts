@@ -66,9 +66,3 @@ export interface StringInterpolation {
 export interface StringInterpolations {
   list: StringInterpolation[];
 }
-
-export type ModelsActionFunction = ({ action, index, model }: {
-  action: "add" | "pop" | "lock";
-  index?: number;
-  model?: Model;
-}) => void

@@ -44,10 +44,6 @@ const config: Config = {
         colors: {
           background: "#141414",
           foreground: "#1D232A",
-          primary: {
-            foreground: "#6ee7b7",
-            DEFAULT: "red"
-          }
         },
       }
     }
