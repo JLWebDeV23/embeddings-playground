@@ -56,7 +56,7 @@ function ModelAnswerHeader({
     modelNumber: number;
     isLast?: boolean;
 }) {
-    const { handleModelsAction } = useModelData();
+    const { handleModelsAction, isLoading, isLastLoading } = useModelData();
 
     const onSelectItem = (model: Model) => {
         handleModelsAction({ action: "add", model });
@@ -81,6 +81,7 @@ function ModelAnswerHeader({
                         aria-label="Add a new model"
                         size="sm"
                         onChange={(model) => onSelectItem(model)}
+                        isDisabled={isLoading || isLastLoading}
                         startContent={
                             <IonIcon
                                 className="pt-0.5"
