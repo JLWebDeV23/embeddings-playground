@@ -9,7 +9,7 @@ const Footer = () => {
                 <h2>Co-author: Thomas Csere</h2>
             </div>
 
-            <div className="flex flex-col items-end gap-2">
+            <div className="flex flex-col items-end justify-end gap-2">
                 <nav>
                     <div className="grid grid-flow-col gap-4">
                         <a>

@@ -19,7 +19,7 @@ const Version_2_0 = () => {
                         <ModelAnswerGroup key={index} answers={obj} />
                     ))
                 ) : (
-                    <div className="flex justify-center items-center opacity-50 min-h-20">
+                    <div className="flex justify-center items-center opacity-50 min-h-20 h-full">
                         Select a model to start
                     </div>
                 )}
