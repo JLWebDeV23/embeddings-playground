@@ -1,6 +1,5 @@
 "use client";
-import React, { useState } from "react";
-import { Model, StringInterpolations } from "@/app/utils/interfaces";
+import React from "react";
 
 import ModelCompare from "../components/ModelCompare";
 import UserInput from "../components/UserInput";

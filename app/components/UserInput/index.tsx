@@ -27,7 +27,7 @@ export default function UserInput({
         >
             <InputBox
                 onSubmit={(value: string) => {
-                    handleAddResponseClick(value, "System");
+                    handleAddResponseClick(value);
                     setInputValue("");
                     // chatcompletion and display to model one => add to modelsData
                     // chatcompletion of value using selected models and push both value to user and the derived completion to the ModelsData

@@ -6,7 +6,7 @@ import {
 } from "@nextui-org/react";
 import { type Model } from "@/app/utils/interfaces";
 import modelsData from "@/public/assets/data/ModelData.json";
-import { use, useEffect } from "react";
+import { useEffect } from "react";
 
 type ModelSelectorProps = {
     models?: typeof modelsData;
