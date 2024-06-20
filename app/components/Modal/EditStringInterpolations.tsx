@@ -15,6 +15,7 @@ import { useState } from "react";
 
 export function EditStringInterpoplations() {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const [selectedPage, setSelectedPage] = useState<string>("0");
 
     const { interpolations, changeInterpolationVariables } = useModelData();
 
@@ -33,7 +34,9 @@ export function EditStringInterpoplations() {
                             <ModalBody>
                                 <Tabs
                                     aria-label="Interpolations"
+                                    selectedKey={selectedPage}
                                     onSelectionChange={(key) => {
+                                        setSelectedPage(key.toString());
                                         if (
                                             key ===
                                             interpolations.length.toString()
@@ -53,6 +56,9 @@ export function EditStringInterpoplations() {
                                                 title={`Page ${page + 1}`}
                                             >
                                                 <InterpolationPage
+                                                    onDeletePage={() => {
+                                                        setSelectedPage("0");
+                                                    }}
                                                     interpolations={
                                                         interpolation
                                                     }
@@ -83,11 +89,29 @@ export function EditStringInterpoplations() {
 type InterpolationPageProps = {
     interpolations: StringInterpolations;
     page: number;
+    onDeletePage: (page: number) => void;
 };
 
-function InterpolationPage({ interpolations, page }: InterpolationPageProps) {
+function InterpolationPage({
+    interpolations,
+    page,
+    onDeletePage,
+}: InterpolationPageProps) {
+    const { deleteInterpolationPage } = useModelData();
     return (
         <div className="flex flex-col gap-3">
+            <Button
+                variant="flat"
+                color="danger"
+                className="w-fit self-end -mt-16 mb-3 "
+                onClick={() => {
+                    onDeletePage(page);
+                    console.log("delete page", page);
+                    deleteInterpolationPage(page);
+                }}
+            >
+                Delete Page
+            </Button>
             {interpolations.list.map((_, index) => (
                 <InterpolationInput
                     key={index}
@@ -129,7 +153,8 @@ function InterpolationInput({
         return "";
     }
 
-    const { changeInterpolationVariables } = useModelData();
+    const { changeInterpolationVariables, deleteInterpolationVariable } =
+        useModelData();
     const [variable, setVariable] = useState<string>(initVariable());
     const [field, setField] = useState<string>(initField());
 
@@ -205,7 +230,7 @@ function InterpolationInput({
                         color="danger"
                         variant="light"
                         onPress={() => {
-                            console.log("Remove", index);
+                            deleteInterpolationVariable(index);
                         }}
                     >
                         Remove

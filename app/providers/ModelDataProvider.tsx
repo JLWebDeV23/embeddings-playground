@@ -46,6 +46,8 @@ export const Context = createContext<{
     modelData: ModelData[][];
     interpolations: StringInterpolations[];
     changeInterpolationVariables: changeInterpolationVariablesFunction;
+    deleteInterpolationPage: (index: number) => void;
+    deleteInterpolationVariable: (index: number) => void;
     handleGoClick: handleGoClickFunction;
     handleAddResponseClick: handleAddResponseClickFunction;
     handleModelsAction: ModelsActionsFunction;
@@ -240,6 +242,26 @@ export default function ModelDataProvider({ children }: PropsWithChildren) {
             });
         };
 
+    const deleteInterpolationPage = (index: number) => {
+        setInterpolations((prev) => {
+            if (prev.length === 1) {
+                return prev;
+            }
+            return prev.filter((_, i) => i !== index);
+        });
+    };
+
+    const deleteInterpolationVariable = (index: number) => {
+        setInterpolations((prev) => {
+            return prev.map((page) => {
+                return {
+                    ...page,
+                    list: page.list.filter((_, i) => i !== index),
+                };
+            });
+        });
+    };
+
     /* Answers from the api */
     const [apiModelData, setApiModelData] = useState<ModelData[][]>([[]]);
 
@@ -294,6 +316,8 @@ export default function ModelDataProvider({ children }: PropsWithChildren) {
                 modelData,
                 interpolations,
                 changeInterpolationVariables,
+                deleteInterpolationPage,
+                deleteInterpolationVariable,
                 handleGoClick,
                 handleAddResponseClick,
                 handleModelsAction,
