@@ -33,7 +33,7 @@ type changeInterpolationVariableFunction = ({
     variable,
     field,
 }: {
-    index: number;
+    index?: number;
     pageNumber?: number | undefined;
     variable?: string;
     field?: string;
@@ -201,7 +201,7 @@ export default function ModelDataProvider({ children }: PropsWithChildren) {
         setInterpolations((prev) => {
             /* If a user wants to add a new page, we duplicate the last one */
             if (pageNumber && pageNumber === prev.length) {
-                return prev;
+                return [...prev, prev[prev.length - 1]];
             }
             /* The user wants to either add or update a value in the interpolations array */
             return prev.map((page, i) => {

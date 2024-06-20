@@ -16,7 +16,7 @@ import { useState } from "react";
 export function EditStringInterpoplations() {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-    const { interpolations } = useModelData();
+    const { interpolations, changeInterpolationVariable } = useModelData();
 
     return (
         <>
@@ -31,7 +31,26 @@ export function EditStringInterpoplations() {
                                 Edit string interpolation variables
                             </ModalHeader>
                             <ModalBody>
-                                <Tabs aria-label="Interpolations">
+                                <Tabs
+                                    aria-label="Interpolations"
+                                    onSelectionChange={(key) => {
+                                        console.log(
+                                            "New e",
+                                            key,
+                                            interpolations.length
+                                        );
+                                        if (
+                                            key ===
+                                            interpolations.length.toString()
+                                        ) {
+                                            changeInterpolationVariable({
+                                                pageNumber:
+                                                    interpolations.length,
+                                            });
+                                            console.log(interpolations);
+                                        }
+                                    }}
+                                >
                                     {interpolations?.map(
                                         (interpolation, page) => (
                                             <Tab
@@ -47,6 +66,10 @@ export function EditStringInterpoplations() {
                                             </Tab>
                                         )
                                     )}
+                                    <Tab
+                                        title="New Page"
+                                        key={interpolations.length}
+                                    ></Tab>
                                 </Tabs>
                             </ModalBody>
                             <ModalFooter>
