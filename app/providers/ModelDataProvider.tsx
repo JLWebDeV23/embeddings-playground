@@ -13,10 +13,7 @@ import {
 import { PropsWithChildren, createContext, useState } from "react";
 import useSystemMessage from "@/app/hooks/useSystemMessage";
 
-type handleGoClickFunction = (args: {
-    newSystemMessage: string;
-    interpolations: StringInterpolation[];
-}) => void;
+type handleGoClickFunction = (args: { newSystemMessage: string }) => void;
 
 type handleAddResponseClickFunction = (value: string) => void;
 
@@ -30,12 +27,25 @@ type ModelsActionsFunction = ({
     model?: Model;
 }) => void;
 
+type changeInterpolationVariableFunction = ({
+    index,
+    pageNumber,
+    variable,
+    field,
+}: {
+    index: number;
+    pageNumber?: number | undefined;
+    variable?: string;
+    field?: string;
+}) => void;
+
 export const Context = createContext<{
     isLoading: boolean;
     isLastLoading: boolean;
     models: Model[];
     modelData: ModelData[][];
     interpolations: StringInterpolations[];
+    changeInterpolationVariable: changeInterpolationVariableFunction;
     handleGoClick: handleGoClickFunction;
     handleAddResponseClick: handleAddResponseClickFunction;
     handleModelsAction: ModelsActionsFunction;
@@ -176,6 +186,62 @@ export default function ModelDataProvider({ children }: PropsWithChildren) {
         },
     ]);
 
+    /* Function used to update the InterpolationVariables array
+     * @param index: The index of the variable in the list
+     * @param pageNumber: The page number (optional if we just want to update the variable name)
+     * @param variable: The variable name (optional)
+     * @param field: The field name (optional)
+     */
+    const changeInterpolationVariable: changeInterpolationVariableFunction = ({
+        index,
+        pageNumber,
+        variable,
+        field,
+    }) => {
+        setInterpolations((prev) => {
+            /* If a user wants to add a new page, we duplicate the last one */
+            if (pageNumber && pageNumber === prev.length) {
+                return prev;
+            }
+            /* The user wants to either add or update a value in the interpolations array */
+            return prev.map((page, i) => {
+                /* The user wants to add a new variable / field set */
+                if (index === page.list.length && variable && field) {
+                    return {
+                        ...page,
+                        list: [
+                            ...page.list,
+                            {
+                                key: page.list.length,
+                                variable: variable,
+                                field: field,
+                            },
+                        ],
+                    };
+                }
+                /* The user wants to edit a variable or a field
+                 * We only update the variable or the field if the page number matches the index but we update the variable name in every page
+                 */
+                const list = page.list.map((prev, j) => {
+                    if (j === index) {
+                        return {
+                            ...prev,
+                            variable: variable || prev.variable,
+                            field:
+                                field && pageNumber === i ? field : prev.field,
+                        };
+                    }
+                    return prev;
+                });
+
+                return {
+                    ...page,
+                    list: list,
+                };
+            });
+        });
+    };
+
     /* Answers from the api */
     const [apiModelData, setApiModelData] = useState<ModelData[][]>([[]]);
 
@@ -186,19 +252,17 @@ export default function ModelDataProvider({ children }: PropsWithChildren) {
     const modelData: ModelData[][] = resolveModelData(models, apiModelData);
 
     /* function to handle a click on the go button (in ModelCompare) */
-    const handleGoClick: handleGoClickFunction = ({
-        newSystemMessage,
-        interpolations,
-    }) => {
+    const handleGoClick: handleGoClickFunction = ({ newSystemMessage }) => {
         if (models.length === 0) {
             console.error("No models selected");
             return;
         }
         setIsLoading(true);
+        console.log("interpolations", interpolations);
         go({
             modelData: modelData,
             systemMessage: newSystemMessage,
-            stringInterpolations: [{ list: interpolations }],
+            stringInterpolations: interpolations,
         }).then((response) => {
             setApiModelData(response);
             setIsLoading(false);
@@ -232,6 +296,7 @@ export default function ModelDataProvider({ children }: PropsWithChildren) {
                 models,
                 modelData,
                 interpolations,
+                changeInterpolationVariable,
                 handleGoClick,
                 handleAddResponseClick,
                 handleModelsAction,

@@ -13,78 +13,11 @@ import {
 import { Tab, Tabs } from "@nextui-org/tabs";
 import { useState } from "react";
 
-type changeInterpolationVariableFunction = ({
-    index,
-    pageNumber,
-    variable,
-    field,
-}: {
-    index: number;
-    pageNumber?: number | undefined;
-    variable?: string;
-    field?: string;
-}) => void;
-
 export function EditStringInterpoplations() {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
     const { interpolations } = useModelData();
 
-    /* Function used to update the InterpolationVariables array
-     * @param index: The index of the variable in the list
-     * @param pageNumber: The page number (optional if we just want to update the variable name)
-     * @param variable: The variable name (optional)
-     * @param field: The field name (optional)
-     */
-    const changeInterpolationVariable: changeInterpolationVariableFunction = ({
-        index,
-        pageNumber,
-        variable,
-        field,
-    }) => {
-        /* If a user wants to add a new page, we duplicate the last one */
-        if (pageNumber && pageNumber === interpolations.length) {
-            return;
-        }
-        /* The user wants to either add or update a value in the interpolations array */
-        return interpolations.map((page, i) => {
-            /* The user wants to add a new variable / field set */
-            if (index === page.list.length && variable && field) {
-                return {
-                    ...page,
-                    list: [
-                        ...page.list,
-                        {
-                            key: page.list.length,
-                            variable: variable,
-                            field: field,
-                        },
-                    ],
-                };
-            }
-            /* The user wants to edit a variable or a field
-             * We only update the variable or the field if the page number matches the index but we update the variable name in every page
-             */
-            const list = page.list.map((interpolations, j) => {
-                if (j === index) {
-                    return {
-                        ...interpolations,
-                        variable: variable || interpolations.variable,
-                        field:
-                            field && pageNumber === i
-                                ? field
-                                : interpolations.field,
-                    };
-                }
-                return interpolations;
-            });
-
-            return {
-                ...page,
-                list: list,
-            };
-        });
-    };
     return (
         <>
             <Button className="w-full sm:w-fit" onPress={onOpen}>
@@ -106,9 +39,6 @@ export function EditStringInterpoplations() {
                                                 title={`Page ${page + 1}`}
                                             >
                                                 <InterpolationPage
-                                                    changeInterpolationVariable={
-                                                        changeInterpolationVariable
-                                                    }
                                                     interpolations={
                                                         interpolation
                                                     }
@@ -135,28 +65,22 @@ export function EditStringInterpoplations() {
 type InterpolationPageProps = {
     interpolations: StringInterpolations;
     page: number;
-    changeInterpolationVariable: changeInterpolationVariableFunction;
 };
 
-function InterpolationPage({
-    interpolations,
-    page,
-    changeInterpolationVariable,
-}: InterpolationPageProps) {
+function InterpolationPage({ interpolations, page }: InterpolationPageProps) {
     return (
         <div className="flex flex-col gap-3">
-            {interpolations.list.map((_, index) =>
-                InterpolationInput({
-                    index,
-                    interpolations,
-                    changeInterpolationVariable,
-                    page,
-                })
-            )}
+            {interpolations.list.map((_, index) => (
+                <InterpolationInput
+                    key={index}
+                    index={index}
+                    interpolations={interpolations}
+                    page={page}
+                />
+            ))}
             <InterpolationInput
                 index={interpolations.list.length}
                 interpolations={interpolations}
-                changeInterpolationVariable={changeInterpolationVariable}
                 page={page}
             />
         </div>
@@ -166,29 +90,29 @@ function InterpolationPage({
 function InterpolationInput({
     index,
     interpolations,
-    changeInterpolationVariable,
     page,
 }: {
     index: number;
     interpolations: StringInterpolations;
-    changeInterpolationVariable: changeInterpolationVariableFunction;
     page: number;
 }) {
-    const [variable, setVariable] = useState<string>("1234");
-    /* () => {
-    if (index < interpolations.list.length) {
-        return interpolations.list[index].field;
+    function initVariable() {
+        if (index < interpolations.list.length) {
+            return interpolations.list[index].variable;
+        }
+        return "";
     }
-    return "";
-}; */
-    /* 
-() => {
-    if (index < interpolations.list.length) {
-        return interpolations.list[index].variable;
+
+    function initField() {
+        if (index < interpolations.list.length) {
+            return interpolations.list[index].field;
+        }
+        return "";
     }
-    return "";
-}; */
-    const [field, setField] = useState<string>("5678");
+
+    const { changeInterpolationVariable } = useModelData();
+    const [variable, setVariable] = useState<string>(initVariable());
+    const [field, setField] = useState<string>(initField());
     return (
         <div className="flex gap-3" key={index}>
             <Input
@@ -215,7 +139,6 @@ function InterpolationInput({
             />
             <Button
                 onClick={() => {
-                    console.log(variable, field);
                     if (variable.length > 0 && field.length > 0) {
                         changeInterpolationVariable({
                             index,
@@ -223,13 +146,18 @@ function InterpolationInput({
                             variable,
                             field,
                         });
+                        if (index >= interpolations.list.length) {
+                            setVariable("");
+                            setField("");
+                        }
                         return;
                     }
-                    console.log("Invalid input");
+                    console.error("Invalid input");
                 }}
             >
                 Save
             </Button>
+            <Button>Delete</Button>
         </div>
     );
 }

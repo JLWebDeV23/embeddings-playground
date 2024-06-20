@@ -43,7 +43,6 @@ export default function ModelCompare() {
                         isButtonVisabled
                         value={systemMessage}
                         handleInput={(e) => {
-                            console.log(e.target.value);
                             handleSystemMessage(e.target.value);
                         }}
                         onSubmit={handleSystemMessage}
@@ -53,7 +52,6 @@ export default function ModelCompare() {
                         onClick={() =>
                             handleGoClick({
                                 newSystemMessage: systemMessage,
-                                interpolations: [],
                             })
                         }
                     >
