@@ -269,7 +269,11 @@ export default function ModelDataProvider({ children }: PropsWithChildren) {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isLastLoading, setIsLastLoading] = useState<boolean>(false);
 
-    const modelData: ModelData[][] = resolveModelData(models, apiModelData);
+    const modelData: ModelData[][] = resolveModelData(
+        models,
+        apiModelData,
+        interpolations.length
+    );
 
     /* function to handle a click on the go button (in ModelCompare) */
     const handleGoClick: handleGoClickFunction = ({ newSystemMessage }) => {

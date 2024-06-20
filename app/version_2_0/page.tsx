@@ -9,6 +9,7 @@ import useModelData from "../hooks/useModelData";
 
 const Version_2_0 = () => {
     const { models, modelData } = useModelData();
+    console.log(modelData);
     return (
         <>
             <div className="m-5 gap-3 flex flex-col flex-1 ">
