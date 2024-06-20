@@ -58,7 +58,7 @@ body {
 }
 
 main {
-    @apply flex flex-col h-screen;
+    @apply flex flex-col h-screen overflow-y-auto;
 }
 
 /* Header styles */
@@ -82,6 +82,11 @@ pre {
     font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
         monospace;
     @apply bg-background rounded-md p-2 my-3;
+}
+
+pre > * {
+    white-space: pre-line;
+    word-break: break-word;
 }
 
 pre::before {

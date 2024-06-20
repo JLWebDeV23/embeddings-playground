@@ -57,7 +57,13 @@ export function EditStringInterpoplations() {
                                             >
                                                 <InterpolationPage
                                                     onDeletePage={() => {
-                                                        setSelectedPage("0");
+                                                        setSelectedPage(
+                                                            page - 1 > 0
+                                                                ? (
+                                                                      page - 1
+                                                                  ).toString()
+                                                                : "0"
+                                                        );
                                                     }}
                                                     interpolations={
                                                         interpolation
@@ -244,7 +250,11 @@ function InterpolationInput({
                     index === interpolations.list.length && (
                         <Button
                             color="primary"
-                            variant="light"
+                            variant={
+                                field === "" || variable === ""
+                                    ? "light"
+                                    : "flat"
+                            }
                             onPress={addInterpolation}
                         >
                             Add

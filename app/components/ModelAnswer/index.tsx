@@ -3,21 +3,45 @@ import IonIcon from "@reacticons/ionicons";
 import ModelSelector from "@/app/components/ModelSelector";
 import ReactMarkdown from "react-markdown";
 import useModelData from "@/app/hooks/useModelData";
+import { Chip } from "@nextui-org/react";
 
 function ChatBubble({ text, role }: { text: string; role: string }) {
     return (
         <>
             {/* <p className={` text-xs px-2 py-1 ${role === "user" ? "self-end" : ""}`}>{role}</p> */}
             <div
-                className={`flex justify-start p-2 rounded-md ${
+                className={`flex justify-start p-2 rounded-md w-full ${
                     role === "user" ? "self-end bg-surface/50" : ""
                 }`}
             >
-                <div className="text-sm text-gray-500">
+                <div className="markdown text-sm text-gray-500 w-full">
                     <ReactMarkdown>{text}</ReactMarkdown>
                 </div>
             </div>
         </>
+    );
+}
+
+function ScoreBubble({ score }: { score: number }) {
+    function getScoreColor(score: number) {
+        if (score < 0.3) {
+            return "danger";
+        } else if (score < 0.7) {
+            return "warning";
+        } else {
+            return "success";
+        }
+    }
+
+    return (
+        <Chip
+            variant="dot"
+            size="sm"
+            color={getScoreColor(score)}
+            className="ml-3"
+        >
+            {score}
+        </Chip>
     );
 }
 
@@ -102,6 +126,7 @@ export default function ModelAnswer({
 }) {
     const { isLoading, isLastLoading } = useModelData();
 
+    console.log(answer);
     return (
         <div
             className={`flex flex-col rounded-md min-w-96 w-full items-center  ${
@@ -124,11 +149,15 @@ export default function ModelAnswer({
                     </div>
                 ) : (
                     answer.messages.map((message, index) => (
-                        <ChatBubble
-                            key={index}
-                            role={message.role}
-                            text={message.content}
-                        />
+                        <div className="flex flex-col" key={index}>
+                            <ChatBubble
+                                role={message.role}
+                                text={message.content}
+                            />
+                            {message.score && (
+                                <ScoreBubble score={message.score} />
+                            )}
+                        </div>
                     ))
                 )}
             </div>
