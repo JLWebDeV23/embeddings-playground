@@ -17,7 +17,8 @@ export function EditStringInterpoplations() {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const [selectedPage, setSelectedPage] = useState<string>("0");
 
-    const { interpolations, changeInterpolationVariables } = useModelData();
+    const { interpolations, changeInterpolationVariables, modelData } =
+        useModelData();
 
     return (
         <>
@@ -35,6 +36,13 @@ export function EditStringInterpoplations() {
                                 <Tabs
                                     aria-label="Interpolations"
                                     selectedKey={selectedPage}
+                                    disabledKeys={[
+                                        modelData.length > 0 &&
+                                        modelData[0].length > 0 &&
+                                        !(modelData[0][0].messages.length < 2)
+                                            ? interpolations.length.toString()
+                                            : "",
+                                    ]}
                                     onSelectionChange={(key) => {
                                         setSelectedPage(key.toString());
                                         if (
@@ -73,6 +81,7 @@ export function EditStringInterpoplations() {
                                             </Tab>
                                         )
                                     )}
+
                                     <Tab
                                         title="New Page"
                                         key={interpolations.length}
@@ -103,7 +112,8 @@ function InterpolationPage({
     page,
     onDeletePage,
 }: InterpolationPageProps) {
-    const { deleteInterpolationPage } = useModelData();
+    const { deleteInterpolationPage, modelData } = useModelData();
+
     return (
         <div className="flex flex-col gap-3">
             {page > 0 && (
@@ -111,6 +121,11 @@ function InterpolationPage({
                     variant="flat"
                     color="danger"
                     className="w-fit self-end -mt-16 mb-3 "
+                    isDisabled={
+                        modelData.length > 0 &&
+                        modelData[0].length > 0 &&
+                        !(modelData[0][0].messages.length < 2)
+                    }
                     onClick={() => {
                         onDeletePage(page);
                         deleteInterpolationPage(page);
