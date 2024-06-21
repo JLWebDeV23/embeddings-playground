@@ -1,9 +1,14 @@
 import { Model, ModelData } from "@/app/utils/interfaces";
 import IonIcon from "@reacticons/ionicons";
 import ModelSelector from "@/app/components/ModelSelector";
-import ReactMarkdown from "react-markdown";
+import Markdown from "react-markdown";
 import useModelData from "@/app/hooks/useModelData";
 import { Chip } from "@nextui-org/react";
+import rehypeAutolinkHeadings from "rehype-autolink-headings";
+import rehypeCodeTitles from "rehype-code-titles";
+import rehypePrism from "rehype-prism-plus";
+import rehypeSlug from "rehype-slug";
+import remarkGfm from "remark-gfm";
 
 function ChatBubble({ text, role }: { text: string; role: string }) {
     return (
@@ -15,7 +20,29 @@ function ChatBubble({ text, role }: { text: string; role: string }) {
                 }`}
             >
                 <div className="markdown text-sm text-gray-500 w-full">
-                    <ReactMarkdown>{text}</ReactMarkdown>
+                    <Markdown
+                        remarkPlugins={[remarkGfm]}
+                        rehypePlugins={[
+                            rehypeSlug,
+                            rehypeCodeTitles,
+                            [
+                                rehypePrism,
+                                {
+                                    ignoreMissing: true,
+                                },
+                            ],
+                            [
+                                rehypeAutolinkHeadings,
+                                {
+                                    properties: {
+                                        className: ["anchor"],
+                                    },
+                                },
+                            ],
+                        ]}
+                    >
+                        {text}
+                    </Markdown>
                 </div>
             </div>
         </>
