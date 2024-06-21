@@ -89,11 +89,6 @@ pre > * {
     word-break: break-word;
 }
 
-pre::before {
-    content: attr(data-lang);
-    @apply rounded-t-md p-1;
-}
-
 @layer utilities {
     .text-balance {
         text-wrap: balance;
@@ -160,11 +155,8 @@ pre::before {
 .token.symbol,
 .token.boolean,
 .token.constant,
-.token.deleted {
-    @apply text-blue-500;
-}
-
-.token.property,
+.token.deleted,
+token.property,
 .token.attr-value,
 .token.string {
     color: #9ecbff;

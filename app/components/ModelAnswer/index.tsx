@@ -5,7 +5,6 @@ import Markdown from "react-markdown";
 import useModelData from "@/app/hooks/useModelData";
 import { Chip } from "@nextui-org/react";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
-import rehypeCodeTitles from "rehype-code-titles";
 import rehypePrism from "rehype-prism-plus";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
@@ -15,8 +14,8 @@ function ChatBubble({ text, role }: { text: string; role: string }) {
         <>
             {/* <p className={` text-xs px-2 py-1 ${role === "user" ? "self-end" : ""}`}>{role}</p> */}
             <div
-                className={`flex justify-start p-2 rounded-md w-full ${
-                    role === "user" ? "self-end bg-surface/50" : ""
+                className={`flex justify-start rounded-md w-full ${
+                    role === "user" ? "p-2 self-end bg-surface/50" : ""
                 }`}
             >
                 <div className="markdown text-sm text-gray-500 w-full">
@@ -24,7 +23,6 @@ function ChatBubble({ text, role }: { text: string; role: string }) {
                         remarkPlugins={[remarkGfm]}
                         rehypePlugins={[
                             rehypeSlug,
-                            rehypeCodeTitles,
                             [
                                 rehypePrism,
                                 {
@@ -65,7 +63,7 @@ function ScoreBubble({ score }: { score: number }) {
             variant="dot"
             size="sm"
             color={getScoreColor(score)}
-            className="ml-3"
+            className="m-3 mb-0"
         >
             {score}
         </Chip>
@@ -177,7 +175,7 @@ export default function ModelAnswer({
                     </div>
                 ) : (
                     answer.messages.map((message, index) => (
-                        <div className="flex flex-col" key={index}>
+                        <div className="flex flex-col p-2" key={index}>
                             <ChatBubble
                                 role={message.role}
                                 text={message.content}
