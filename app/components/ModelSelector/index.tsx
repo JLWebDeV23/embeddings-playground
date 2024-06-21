@@ -25,9 +25,7 @@ export default function ModelSelector({
         const model: Model = JSON.parse(e.target.value);
         onChange(model);
     };
-    useEffect(() => {
-        console.log("selectedModels in ModelSelector", selectedModels);
-    }, [selectedModels]);
+    useEffect(() => {}, [selectedModels]);
 
     return (
         <Select

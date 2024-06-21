@@ -156,7 +156,7 @@ pre > * {
 .token.boolean,
 .token.constant,
 .token.deleted,
-token.property,
+.token.property,
 .token.attr-value,
 .token.string {
     color: #9ecbff;

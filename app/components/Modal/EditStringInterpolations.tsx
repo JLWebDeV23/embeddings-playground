@@ -53,7 +53,6 @@ export function EditStringInterpoplations() {
                                                 pageNumber:
                                                     interpolations.length,
                                             });
-                                            console.log(interpolations);
                                         }
                                     }}
                                 >

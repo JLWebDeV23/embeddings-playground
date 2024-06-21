@@ -9,17 +9,16 @@ import useModelData from "../hooks/useModelData";
 
 const Version_2_0 = () => {
     const { models, modelData } = useModelData();
-    console.log(modelData);
     return (
         <>
-            <div className="m-5 gap-3 flex flex-col flex-1 ">
+            <div className="m-5 mb-0 gap-5 flex flex-col flex-1 ">
                 <ModelCompare />
                 {models.length > 0 ? (
                     modelData.map((obj, index) => (
                         <ModelAnswerGroup key={index} answers={obj} />
                     ))
                 ) : (
-                    <div className="flex justify-center items-center opacity-50 min-h-20 h-full">
+                    <div className="flex justify-center items-center opacity-50 min-h-20 h-full rounded-md">
                         Select a model to start
                     </div>
                 )}
