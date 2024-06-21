@@ -12,7 +12,7 @@ type ModelSelectorProps = {
     models?: typeof modelsData;
     onChange: (model: Model) => void;
     selectedModels?: Model[];
-} & Omit<SelectProps, "children" | "onChange">;
+} & Omit<SelectProps, "children" | "onChange" | "id">;
 
 export default function ModelSelector({
     models = modelsData,

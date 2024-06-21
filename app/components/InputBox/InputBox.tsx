@@ -5,9 +5,9 @@ import { Button } from "@nextui-org/button";
 
 type InputBoxProps = {
     inputText: string;
-    onSubmit: (value: string) => void;
-    value: string;
-    handleInput: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onSubmit?: (value: string) => void;
+    value?: string;
+    handleInput?: (e: React.ChangeEvent<HTMLInputElement>) => void;
     btnName?: string;
     btnStyle?: string;
     isButtonVisabled?: boolean;
@@ -18,13 +18,14 @@ type InputBoxProps = {
 
 const InputBox = ({
     inputText,
-    onSubmit,
-    value,
-    handleInput,
+    onSubmit = () => {},
+    value = "",
+    handleInput = () => {},
     btnName = "Submit",
     ...props
 }: InputBoxProps) => {
     // Todo: fix on disable set the text color slate-600
+
     return (
         <div className={styles.container}>
             <div className={`bg-card ${styles.entryArea}`}>

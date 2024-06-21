@@ -1,13 +1,13 @@
 "use client";
 import React from "react";
 
-import ModelCompare from "../components/ModelCompare";
-import UserInput from "../components/UserInput";
-import ModelAnswerGroup from "../components/ModelAnswer/ModelAnswerGroup";
+import ModelCompare from "../ModelCompare";
+import UserInput from "../UserInput";
+import ModelAnswerGroup from "../ModelAnswer/ModelAnswerGroup";
 
-import useModelData from "../hooks/useModelData";
+import useModelData from "../../hooks/useModelData";
 
-const Version_2_0 = () => {
+export default function Version_2_0() {
     const { models, modelData } = useModelData();
     return (
         <>
@@ -31,6 +31,4 @@ const Version_2_0 = () => {
             </div>
         </>
     );
-};
-
-export default Version_2_0;
+}
