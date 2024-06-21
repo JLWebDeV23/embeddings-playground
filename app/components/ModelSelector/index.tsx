@@ -31,7 +31,6 @@ export default function ModelSelector({
 
     return (
         <Select
-            className="max-w-64"
             onChange={(e) => handleChange(e)}
             selectedKeys={selectedModels?.map((model) => JSON.stringify(model))}
             {...props}

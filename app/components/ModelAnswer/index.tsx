@@ -96,9 +96,9 @@ function ModelAnswerHeader({
     };
 
     return (
-        <div className="flex flex-row justify-between items-center w-full p-2 border-b-2  gap-3 border-b-surface">
+        <div className="flex flex-row justify-between items-center w-full p-2 border-b-2 gap-x-3 gap-y-1 border-b-surface flex-wrap">
             <h2 className="font-semibold pl-1">{name}</h2>
-            <div className="flex gap-2 h-full flex-1 justify-end min-h-8">
+            <div className="flex gap-2 h-fit flex-1 justify-end items-center min-h-8">
                 {isLast && (
                     <ModelSelector
                         placeholder="Compare with a new model"
@@ -152,10 +152,9 @@ export default function ModelAnswer({
 }) {
     const { isLoading, isLastLoading } = useModelData();
 
-    console.log(answer);
     return (
         <div
-            className={`flex flex-col rounded-md min-w-96 w-full items-center  ${
+            className={`flex flex-col rounded-md min-w-[28rem] w-full items-center  ${
                 isLoading || (isLastLoading && isLast) ? "skeleton" : "bg-card"
             }`}
         >
