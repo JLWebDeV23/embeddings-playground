@@ -42,7 +42,7 @@ export const chatCompletion = async (model: any) => {
   model = {
     ...model,
     messages: model.messages.map((message: any) => {
-      console.log("rôle", message.role)
+      console.log("rôle", message.role);
       return {
         role: JSON.parse(JSON.stringify(message.role.toLowerCase())),
         content: message.content,
@@ -50,87 +50,93 @@ export const chatCompletion = async (model: any) => {
     }),
   };
 
-  switch (model.model) {
-    case "OpenAI":
-      const client = new OpenAI({
-        apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
-        dangerouslyAllowBrowser: true,
-      });
-      try {
-        response = await client.chat.completions.create({
-          messages: model.messages,
-          model: model.subModel,
+  try {
+    switch (model.model) {
+      case "OpenAI":
+        const client = new OpenAI({
+          // apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
+          apiKey: "0",
+          dangerouslyAllowBrowser: true,
         });
-      } catch (error) {
-        console.error("Error in OpenAI ChatCompletion:", error);
-      }
-      // Extract the content from the response
-      content = response?.choices[0]?.message?.content || "";
-      break;
+        try {
+          response = await client.chat.completions.create({
+            messages: model.messages,
+            model: model.subModel,
+          });
+        } catch (error) {
+          console.error("Error in OpenAI ChatCompletion:", error);
+        }
+        // Extract the content from the response
+        content = response?.choices[0]?.message?.content || "";
+        break;
 
-    case "LlaMA 3":
-      groq = new Groq({
-        apiKey: process.env.NEXT_PUBLIC_GROPQ_API_KEY,
-        dangerouslyAllowBrowser: true,
-      });
-      try {
-        response = await groq.chat.completions.create({
-          messages: model.messages,
-          model: model.subModel,
+      case "LlaMA 3":
+        groq = new Groq({
+          apiKey: process.env.NEXT_PUBLIC_GROPQ_API_KEY,
+          dangerouslyAllowBrowser: true,
         });
-      } catch (error) {
-        console.error("Error in Groq ChatCompletion:", error);
-      }
+        try {
+          response = await groq.chat.completions.create({
+            messages: model.messages,
+            model: model.subModel,
+          });
+        } catch (error) {
+          console.error("Error in Groq ChatCompletion:", error);
+        }
 
-      content = response?.choices[0]?.message?.content || "";
-      break;
+        content = response?.choices[0]?.message?.content || "";
+        break;
 
-    case "Gemma":
-      groq = new Groq({
-        apiKey: process.env.NEXT_PUBLIC_GROPQ_API_KEY,
-        dangerouslyAllowBrowser: true,
-      });
-      try {
-        response = await groq.chat.completions.create({
-          messages: model.messages,
-          model: model.subModel,
+      case "Gemma":
+        groq = new Groq({
+          apiKey: process.env.NEXT_PUBLIC_GROPQ_API_KEY,
+          dangerouslyAllowBrowser: true,
         });
-      } catch (error) {
-        console.error("Error in Groq ChatCompletion:", error);
-      }
+        try {
+          response = await groq.chat.completions.create({
+            messages: model.messages,
+            model: model.subModel,
+          });
+        } catch (error) {
+          console.error("Error in Groq ChatCompletion:", error);
+        }
 
-      content = response?.choices[0]?.message?.content || "";
-      break;
+        content = response?.choices[0]?.message?.content || "";
+        break;
 
-    case "Mistral":
-      groq = new Groq({
-        apiKey: process.env.NEXT_PUBLIC_GROPQ_API_KEY,
-        dangerouslyAllowBrowser: true,
-      });
-      try {
-        response = await groq.chat.completions.create({
-          messages: model.messages,
-          model: model.subModel,
+      case "Mistral":
+        groq = new Groq({
+          apiKey: process.env.NEXT_PUBLIC_GROPQ_API_KEY,
+          dangerouslyAllowBrowser: true,
         });
-      } catch (error) {
-        console.error("Error in Groq ChatCompletion:", error);
-      }
+        try {
+          response = await groq.chat.completions.create({
+            messages: model.messages,
+            model: model.subModel,
+          });
+        } catch (error) {
+          console.error("Error in Groq ChatCompletion:", error);
+        }
 
-      content = response?.choices[0]?.message?.content || "";
-      break;
+        content = response?.choices[0]?.message?.content || "";
+        break;
 
-    // case "Claude":
-    //   const anthropic = new Anthropic({ apiKey: model.apiKey });
-    //   response = await anthropic.messages.create({
-    //     max_tokens: 1024,
-    //     messages: model.messages,
-    //     model: model.subModel,
-    //   });
-    //   // Extract the content from the response
-    //   content = response.content;
-    //   break;
+      // case "Claude":
+      //   const anthropic = new Anthropic({ apiKey: model.apiKey });
+      //   response = await anthropic.messages.create({
+      //     max_tokens: 1024,
+      //     messages: model.messages,
+      //     model: model.subModel,
+      //   });
+      //   // Extract the content from the response
+      //   content = response.content;
+      //   break;
+    }
+    console.log(response, response?.choices[0].message);
+    return response?.choices[0].message;
+  } catch (error) {
+    console.error("Model Error", error);
   }
-  return response?.choices[0].message;
 };
 
 // select model and return response from the model
@@ -177,16 +183,16 @@ export const createCosineSimilarity: (
   response1: string | null,
   response2: string | null
 ) => {
-    // Embeddings
-    const embedding1: number[] = await createEmbedding(response1!);
-    const embedding2: number[] = await createEmbedding(response2!);
+  // Embeddings
+  const embedding1: number[] = await createEmbedding(response1!);
+  const embedding2: number[] = await createEmbedding(response2!);
 
-    const cosineSimilarity: NodeRequire = require("compute-cosine-similarity");
+  const cosineSimilarity: NodeRequire = require("compute-cosine-similarity");
 
-    const similarityScore = similarity(embedding1, embedding2);
-    // const roundedSimilarity = Number(similarityScore?.toFixed(7));
-    return similarityScore;
-  };
+  const similarityScore = similarity(embedding1, embedding2);
+  // const roundedSimilarity = Number(similarityScore?.toFixed(7));
+  return similarityScore;
+};
 
 // create new model data
 export const getNewModelData = async (
@@ -195,8 +201,6 @@ export const getNewModelData = async (
 ): Promise<ModelData> => {
   let newModelDataCopy: ModelData = JSON.parse(JSON.stringify(newModelData)); // create a copy of the newModelData
   let tempModelDataCopy: ModelData = JSON.parse(JSON.stringify(newModelData)); // only to use for chatcompletion
-  console.log("originalModelData", originalModelData);
-  console.log("newModelData", newModelData);
 
   const systemMessage = originalModelData.messages.find(
     (message) => message.role === "system"
@@ -342,19 +346,15 @@ export const insertUserPrompt = async (
                 ],
               };
               data = newData;
-              console.log("Data", data);
-              console.log("chatCompletion", chatCompletion(data));
               const newMessage = JSON.parse(
                 JSON.stringify(await chatCompletion(data))
               );
-              console.log("New Message", newMessage);
               baseModelDataMessage = newMessage!.content!;
 
               const assistantMessage: Message = {
                 role: newMessage!.role,
                 content: newMessage!.content!,
               };
-              console.log("Message", data.messages);
               return {
                 ...data,
                 messages: [...data.messages, assistantMessage],
@@ -399,15 +399,11 @@ export const insertUserPrompt = async (
   }
 };
 
-// modelData, userPrompt, systemMessage, stringInterpolations
-// obj = {
-//   modelData: {
-//     model: "OpenAI",
-//     subModel: "davinci",
-//     messages: [];
-//   locked: true;
-//   },
-//   userPrompt: "Hello",
-//   synctemMessage: "Hello",
-//   stringInterpolations: [give me your Array :)]
-// }
+// Define the error handling function
+function handleError(error: any, context: string) {
+  console.error(`Error in ${context}:`, error);
+  console.log("Error Code", error.code);
+  return error.code;
+  // Additional error handling logic can go here
+  // For example, sending error details to a monitoring service, showing a notification to the user, etc.
+}
