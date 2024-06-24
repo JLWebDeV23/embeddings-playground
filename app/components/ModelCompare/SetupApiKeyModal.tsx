@@ -44,14 +44,18 @@ export default function SetupApiKeyModal() {
     ]);
 
     const needToSave = apiKeys.some((key) => {
-        if (key.value === "") return false;
         const savedKey = SavedApiKeys.find((k) => k.name === key.name);
-        return savedKey ? savedKey.apiKey !== key.value : true;
+        if (savedKey) {
+            return savedKey.apiKey !== key.value;
+        }
+        if (!savedKey && key.value !== "") {
+            return true;
+        }
+        return false;
     });
 
     function saveApiKeys(onClose: () => void) {
         apiKeys.forEach((key) => {
-            if (key.value === "") return;
             addApiKey({ name: key.name, apiKey: key.value });
         });
         onClose();

@@ -346,6 +346,7 @@ export default function ModelDataProvider({ children }: PropsWithChildren) {
             stringInterpolations: interpolations,
         })
             .then((response) => {
+                console.log(response);
                 if (response) {
                     setApiModelData(response);
                 }
