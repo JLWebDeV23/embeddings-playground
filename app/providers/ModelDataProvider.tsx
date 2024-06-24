@@ -287,6 +287,7 @@ export default function ModelDataProvider({ children }: PropsWithChildren) {
             systemMessage: newSystemMessage,
             stringInterpolations: interpolations,
         }).then((response) => {
+            console.log(response);
             setApiModelData(response);
             setIsLoading(false);
         });

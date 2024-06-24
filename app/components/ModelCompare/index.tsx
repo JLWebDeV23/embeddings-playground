@@ -5,6 +5,7 @@ import { EditStringInterpoplations } from "@/app/components/Modal/EditStringInte
 import useModelData from "@/app/hooks/useModelData";
 import useSystemMessage from "@/app/hooks/useSystemMessage";
 import { Model } from "@/app/utils/interfaces";
+import SetupApiKeyModal from "./SetupApiKeyModal";
 
 /* 
     This component is used to select the initial model for the chat and set the system message.
@@ -24,7 +25,10 @@ export default function ModelCompare() {
                 <h1 className="font-bold text-xl whitespace-nowrap">
                     Model Compare
                 </h1>
-                <EditStringInterpoplations />
+                <div className="flex gap-3 ">
+                    <EditStringInterpoplations />
+                    <SetupApiKeyModal />
+                </div>
             </div>
             <div className="flex flex-col p-3">
                 <div className="flex flex-col gap-3 flex-wrap">

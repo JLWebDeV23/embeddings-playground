@@ -201,9 +201,12 @@ type ApiKeyProps = {
   apiKey: string;
 };
 export const addApiKey = (props: ApiKeyProps) => {
-  const { name, apiKey } = props;
+
+  const API_KEYS = JSON.parse(sessionStorage.getItem("API_KEYS") || "[]");
+  const newApiKeys = [...API_KEYS, props];
+
   try {
-    sessionStorage.setItem(name, apiKey);
+    sessionStorage.setItem("API_KEYS", JSON.stringify(newApiKeys));
   } catch (error) {
     console.error("Add API Key Error:", error);
   }
@@ -212,22 +215,26 @@ export const addApiKey = (props: ApiKeyProps) => {
 export const removeApiKey = (props: ApiKeyProps) => {
   const { name } = props;
   try {
-    sessionStorage.removeItem(name);
+    const API_KEYS = JSON.parse(sessionStorage.getItem("API_KEYS") || "[]");
+    const newApiKeys = API_KEYS.filter((key: ApiKeyProps) => key.name !== name);
+    sessionStorage.setItem("API_KEYS", JSON.stringify(newApiKeys));
   } catch (error) {
     console.error("Remove API Key Error:", error);
   }
 };
 
 export const getApiKeys = (): ApiKeyProps[] => {
-  const apiKeys: ApiKeyProps[] = [];
-  try {
-    for (let i = 1; i < sessionStorage.length; i++) {
-      const key = sessionStorage.key(i);
-      const value = sessionStorage.getItem(key!);
-      apiKeys.push({ name: key!, apiKey: value! });
-    }
-  } catch (error) {
-    console.error("Fetch API Keys Error:", error);
-  }
-  return apiKeys;
+  const API_KEYS = JSON.parse(sessionStorage.getItem("API_KEYS") || "[]");
+  return API_KEYS.map((key: ApiKeyProps) => {
+    return {
+      name: key.name,
+      apiKey: key.apiKey,
+    };
+  });
 };
+
+export const getApiKey = (name: string): string | undefined => {
+  const API_KEYS = JSON.parse(sessionStorage.getItem("API_KEYS") || "[]");
+  const key = API_KEYS.find((key: ApiKeyProps) => key.name === name);
+  return key ? key.apiKey : undefined;
+}
