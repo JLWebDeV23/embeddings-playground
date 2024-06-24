@@ -297,7 +297,6 @@ export const go = async (props: goProps) => {
       return colData;
     })
   );
-  console.log("coucou")
   return newModelData;
 };
 
