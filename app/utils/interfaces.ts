@@ -66,3 +66,12 @@ export interface StringInterpolation {
 export interface StringInterpolations {
   list: StringInterpolation[];
 }
+
+export interface ModelError {
+  model: string;
+  subModel: string;
+  error: {
+    code: number;
+    message: object;
+  };
+}

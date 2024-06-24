@@ -2,6 +2,7 @@ import {
   Message,
   ModelData,
   StringInterpolations,
+  ModelError,
   modelSDK,
 } from "./interfaces";
 import dotenv from "dotenv";
@@ -20,7 +21,7 @@ import { assert } from "console";
 import { user } from "@nextui-org/react";
 import { syncSharp } from "ionicons/icons";
 // import LlamaAI from "llamaai";
-
+const testKey = "0";
 type Model = {
   model: string;
   subModel: string;
@@ -33,16 +34,17 @@ type Response =
   | OpenAI.ChatCompletion
   | OpenAI.Chat.Completions.ChatCompletion
   // | Anthropic.Message
+  | ModelError
   | null;
 
 export const chatCompletion = async (model: any) => {
   let content: string | null | Anthropic.TextBlock[] = null;
   let response: Response = null;
   let groq: Groq;
+
   model = {
     ...model,
     messages: model.messages.map((message: any) => {
-      console.log("rôle", message.role);
       return {
         role: JSON.parse(JSON.stringify(message.role.toLowerCase())),
         content: message.content,
@@ -50,93 +52,90 @@ export const chatCompletion = async (model: any) => {
     }),
   };
 
-  try {
-    switch (model.model) {
-      case "OpenAI":
-        const client = new OpenAI({
-          // apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
-          apiKey: "0",
-          dangerouslyAllowBrowser: true,
+  switch (model.model) {
+    case "OpenAI":
+      const client = new OpenAI({
+        // apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
+        apiKey: "0",
+        dangerouslyAllowBrowser: true,
+      });
+      try {
+        response = await client.chat.completions.create({
+          messages: model.messages,
+          model: model.subModel,
         });
-        try {
-          response = await client.chat.completions.create({
-            messages: model.messages,
-            model: model.subModel,
-          });
-        } catch (error) {
-          console.error("Error in OpenAI ChatCompletion:", error);
-        }
-        // Extract the content from the response
-        content = response?.choices[0]?.message?.content || "";
-        break;
+      } catch (error) {
+        handleError(model.model, model.subModel, JSON.stringify(error));
+      }
+      // Extract the content from the response
+      content = response?.choices[0]?.message?.content || "";
+      break;
 
-      case "LlaMA 3":
-        groq = new Groq({
-          apiKey: process.env.NEXT_PUBLIC_GROPQ_API_KEY,
-          dangerouslyAllowBrowser: true,
+    case "LlaMA 3":
+      groq = new Groq({
+        apiKey: process.env.NEXT_PUBLIC_GROPQ_API_KEY,
+        dangerouslyAllowBrowser: true,
+      });
+      try {
+        response = await groq.chat.completions.create({
+          messages: model.messages,
+          model: model.subModel,
         });
-        try {
-          response = await groq.chat.completions.create({
-            messages: model.messages,
-            model: model.subModel,
-          });
-        } catch (error) {
-          console.error("Error in Groq ChatCompletion:", error);
-        }
+      } catch (error) {
+        handleError(model.model, model.subModel, JSON.stringify(error));
+      }
 
-        content = response?.choices[0]?.message?.content || "";
-        break;
+      content = response?.choices[0]?.message?.content || "";
+      break;
 
-      case "Gemma":
-        groq = new Groq({
-          apiKey: process.env.NEXT_PUBLIC_GROPQ_API_KEY,
-          dangerouslyAllowBrowser: true,
+    case "Gemma":
+      groq = new Groq({
+        // apiKey: process.env.NEXT_PUBLIC_GROPQ_API_KEY,
+        apiKey: testKey,
+        dangerouslyAllowBrowser: true,
+      });
+      try {
+        response = await groq.chat.completions.create({
+          messages: model.messages,
+          model: model.subModel,
         });
-        try {
-          response = await groq.chat.completions.create({
-            messages: model.messages,
-            model: model.subModel,
-          });
-        } catch (error) {
-          console.error("Error in Groq ChatCompletion:", error);
-        }
+      } catch (error) {
+        handleError(model.model, model.subModel, JSON.stringify(error));
+      }
 
-        content = response?.choices[0]?.message?.content || "";
-        break;
+      content = response?.choices[0]?.message?.content || "";
+      break;
 
-      case "Mistral":
-        groq = new Groq({
-          apiKey: process.env.NEXT_PUBLIC_GROPQ_API_KEY,
-          dangerouslyAllowBrowser: true,
+    case "Mistral":
+      groq = new Groq({
+        // apiKey: process.env.NEXT_PUBLIC_GROPQ_API_KEY,
+        apiKey: testKey,
+        dangerouslyAllowBrowser: true,
+      });
+      try {
+        response = await groq.chat.completions.create({
+          messages: model.messages,
+          model: model.subModel,
         });
-        try {
-          response = await groq.chat.completions.create({
-            messages: model.messages,
-            model: model.subModel,
-          });
-        } catch (error) {
-          console.error("Error in Groq ChatCompletion:", error);
-        }
+      } catch (error) {
+        handleError(model.model, model.subModel, JSON.stringify(error));
+      }
 
-        content = response?.choices[0]?.message?.content || "";
-        break;
+      content = response?.choices[0]?.message?.content || "";
+      break;
 
-      // case "Claude":
-      //   const anthropic = new Anthropic({ apiKey: model.apiKey });
-      //   response = await anthropic.messages.create({
-      //     max_tokens: 1024,
-      //     messages: model.messages,
-      //     model: model.subModel,
-      //   });
-      //   // Extract the content from the response
-      //   content = response.content;
-      //   break;
-    }
-    console.log(response, response?.choices[0].message);
-    return response?.choices[0].message;
-  } catch (error) {
-    console.error("Model Error", error);
+    // case "Claude":
+    //   const anthropic = new Anthropic({ apiKey: model.apiKey });
+    //   response = await anthropic.messages.create({
+    //     max_tokens: 1024,
+    //     messages: model.messages,
+    //     model: model.subModel,
+    //   });
+    //   // Extract the content from the response
+    //   content = response.content;
+    //   break;
   }
+  return response?.choices[0].message;
 };
 
 // select model and return response from the model
@@ -281,26 +280,29 @@ export const go = async (props: goProps) => {
 
   const newModelData = await Promise.all(
     changedSysMessageData.map(async (colData) => {
-      colData.map(async (data) => {
-        if (!data.locked) {
-          // Create an empty model data object
-          const emptyData = {
-            ...data,
-            messages: [],
-          };
-          const createdNewModelData = await getNewModelData(
-            colData[0],
-            emptyData
-          );
-          // Return the empty data object
-          return createdNewModelData;
-        }
-        // If the data is locked, return it as is
-        return data;
-      });
-      return colData;
+      const processedData = await Promise.all(
+        colData.map(async (data) => {
+          if (!data.locked) {
+            // Create an empty model data object
+            const emptyData = {
+              ...data,
+              messages: [],
+            };
+            const createdNewModelData = await getNewModelData(
+              colData[0],
+              emptyData
+            );
+            // Return the empty data object
+            return createdNewModelData;
+          }
+          // If the data is locked, return it as is
+          return data;
+        })
+      );
+      return processedData;
     })
   );
+  console.log("Hi");
   return newModelData;
 };
 
@@ -400,10 +402,19 @@ export const insertUserPrompt = async (
 };
 
 // Define the error handling function
-function handleError(error: any, context: string) {
-  console.error(`Error in ${context}:`, error);
-  console.log("Error Code", error.code);
-  return error.code;
-  // Additional error handling logic can go here
-  // For example, sending error details to a monitoring service, showing a notification to the user, etc.
-}
+const handleError = (
+  model: string,
+  subModel: string,
+  error: string
+): ModelError => {
+  const code = JSON.parse(error).status;
+  const newErrorObject: ModelError = {
+    model: model,
+    subModel: subModel,
+    error: {
+      code: JSON.parse(error).status,
+      message: JSON.parse(error).error.message,
+    },
+  };
+  return newErrorObject;
+};
