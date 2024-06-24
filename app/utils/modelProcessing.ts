@@ -2,6 +2,7 @@ import {
   Message,
   ModelData,
   StringInterpolations,
+  ModelError,
   modelSDK,
 } from "./interfaces";
 import dotenv from "dotenv";
@@ -20,7 +21,7 @@ import { assert } from "console";
 import { user } from "@nextui-org/react";
 import { syncSharp } from "ionicons/icons";
 // import LlamaAI from "llamaai";
-
+const testKey = "0";
 type Model = {
   model: string;
   subModel: string;
@@ -33,16 +34,17 @@ type Response =
   | OpenAI.ChatCompletion
   | OpenAI.Chat.Completions.ChatCompletion
   // | Anthropic.Message
+  | ModelError
   | null;
 
 export const chatCompletion = async (model: any) => {
   let content: string | null | Anthropic.TextBlock[] = null;
   let response: Response = null;
   let groq: Groq;
+
   model = {
     ...model,
     messages: model.messages.map((message: any) => {
-      console.log("rôle", message.role)
       return {
         role: JSON.parse(JSON.stringify(message.role.toLowerCase())),
         content: message.content,
@@ -53,7 +55,8 @@ export const chatCompletion = async (model: any) => {
   switch (model.model) {
     case "OpenAI":
       const client = new OpenAI({
-        apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
+        // apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
+        apiKey: "0",
         dangerouslyAllowBrowser: true,
       });
       try {
@@ -62,7 +65,7 @@ export const chatCompletion = async (model: any) => {
           model: model.subModel,
         });
       } catch (error) {
-        console.error("Error in OpenAI ChatCompletion:", error);
+        handleError(model.model, model.subModel, JSON.stringify(error));
       }
       // Extract the content from the response
       content = response?.choices[0]?.message?.content || "";
@@ -79,7 +82,7 @@ export const chatCompletion = async (model: any) => {
           model: model.subModel,
         });
       } catch (error) {
-        console.error("Error in Groq ChatCompletion:", error);
+        handleError(model.model, model.subModel, JSON.stringify(error));
       }
 
       content = response?.choices[0]?.message?.content || "";
@@ -87,7 +90,8 @@ export const chatCompletion = async (model: any) => {
 
     case "Gemma":
       groq = new Groq({
-        apiKey: process.env.NEXT_PUBLIC_GROPQ_API_KEY,
+        // apiKey: process.env.NEXT_PUBLIC_GROPQ_API_KEY,
+        apiKey: testKey,
         dangerouslyAllowBrowser: true,
       });
       try {
@@ -96,7 +100,7 @@ export const chatCompletion = async (model: any) => {
           model: model.subModel,
         });
       } catch (error) {
-        console.error("Error in Groq ChatCompletion:", error);
+        handleError(model.model, model.subModel, JSON.stringify(error));
       }
 
       content = response?.choices[0]?.message?.content || "";
@@ -104,7 +108,8 @@ export const chatCompletion = async (model: any) => {
 
     case "Mistral":
       groq = new Groq({
-        apiKey: process.env.NEXT_PUBLIC_GROPQ_API_KEY,
+        // apiKey: process.env.NEXT_PUBLIC_GROPQ_API_KEY,
+        apiKey: testKey,
         dangerouslyAllowBrowser: true,
       });
       try {
@@ -113,7 +118,7 @@ export const chatCompletion = async (model: any) => {
           model: model.subModel,
         });
       } catch (error) {
-        console.error("Error in Groq ChatCompletion:", error);
+        handleError(model.model, model.subModel, JSON.stringify(error));
       }
 
       content = response?.choices[0]?.message?.content || "";
@@ -177,16 +182,16 @@ export const createCosineSimilarity: (
   response1: string | null,
   response2: string | null
 ) => {
-    // Embeddings
-    const embedding1: number[] = await createEmbedding(response1!);
-    const embedding2: number[] = await createEmbedding(response2!);
+  // Embeddings
+  const embedding1: number[] = await createEmbedding(response1!);
+  const embedding2: number[] = await createEmbedding(response2!);
 
-    const cosineSimilarity: NodeRequire = require("compute-cosine-similarity");
+  const cosineSimilarity: NodeRequire = require("compute-cosine-similarity");
 
-    const similarityScore = similarity(embedding1, embedding2);
-    // const roundedSimilarity = Number(similarityScore?.toFixed(7));
-    return similarityScore;
-  };
+  const similarityScore = similarity(embedding1, embedding2);
+  // const roundedSimilarity = Number(similarityScore?.toFixed(7));
+  return similarityScore;
+};
 
 // create new model data
 export const getNewModelData = async (
@@ -195,8 +200,6 @@ export const getNewModelData = async (
 ): Promise<ModelData> => {
   let newModelDataCopy: ModelData = JSON.parse(JSON.stringify(newModelData)); // create a copy of the newModelData
   let tempModelDataCopy: ModelData = JSON.parse(JSON.stringify(newModelData)); // only to use for chatcompletion
-  console.log("originalModelData", originalModelData);
-  console.log("newModelData", newModelData);
 
   const systemMessage = originalModelData.messages.find(
     (message) => message.role === "system"
@@ -277,26 +280,29 @@ export const go = async (props: goProps) => {
 
   const newModelData = await Promise.all(
     changedSysMessageData.map(async (colData) => {
-      colData.map(async (data) => {
-        if (!data.locked) {
-          // Create an empty model data object
-          const emptyData = {
-            ...data,
-            messages: [],
-          };
-          const createdNewModelData = await getNewModelData(
-            colData[0],
-            emptyData
-          );
-          // Return the empty data object
-          return createdNewModelData;
-        }
-        // If the data is locked, return it as is
-        return data;
-      });
-      return colData;
+      const processedData = await Promise.all(
+        colData.map(async (data) => {
+          if (!data.locked) {
+            // Create an empty model data object
+            const emptyData = {
+              ...data,
+              messages: [],
+            };
+            const createdNewModelData = await getNewModelData(
+              colData[0],
+              emptyData
+            );
+            // Return the empty data object
+            return createdNewModelData;
+          }
+          // If the data is locked, return it as is
+          return data;
+        })
+      );
+      return processedData;
     })
   );
+  console.log("Hi");
   return newModelData;
 };
 
@@ -342,19 +348,15 @@ export const insertUserPrompt = async (
                 ],
               };
               data = newData;
-              console.log("Data", data);
-              console.log("chatCompletion", chatCompletion(data));
               const newMessage = JSON.parse(
                 JSON.stringify(await chatCompletion(data))
               );
-              console.log("New Message", newMessage);
               baseModelDataMessage = newMessage!.content!;
 
               const assistantMessage: Message = {
                 role: newMessage!.role,
                 content: newMessage!.content!,
               };
-              console.log("Message", data.messages);
               return {
                 ...data,
                 messages: [...data.messages, assistantMessage],
@@ -399,15 +401,20 @@ export const insertUserPrompt = async (
   }
 };
 
-// modelData, userPrompt, systemMessage, stringInterpolations
-// obj = {
-//   modelData: {
-//     model: "OpenAI",
-//     subModel: "davinci",
-//     messages: [];
-//   locked: true;
-//   },
-//   userPrompt: "Hello",
-//   synctemMessage: "Hello",
-//   stringInterpolations: [give me your Array :)]
-// }
+// Define the error handling function
+const handleError = (
+  model: string,
+  subModel: string,
+  error: string
+): ModelError => {
+  const code = JSON.parse(error).status;
+  const newErrorObject: ModelError = {
+    model: model,
+    subModel: subModel,
+    error: {
+      code: JSON.parse(error).status,
+      message: JSON.parse(error).error.message,
+    },
+  };
+  return newErrorObject;
+};
