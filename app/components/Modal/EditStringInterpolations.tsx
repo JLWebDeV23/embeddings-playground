@@ -141,6 +141,7 @@ function InterpolationPage({
                     page={page}
                 />
             ))}
+            <div className="divider"></div>
             <p>New Entry</p>
             <InterpolationInput
                 index={interpolations.list.length}
