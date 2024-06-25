@@ -307,8 +307,9 @@ export default function ModelDataProvider({ children }: PropsWithChildren) {
             systemMessage: systemMessage,
             stringInterpolations: interpolations,
         }).then((response) => {
+            console.log(response);
             if (response) {
-                setApiModelData(response);
+                typeof response[0][0]?.error !== undefined ? console.log(response[0][0]?.error) : setApiModelData(response);
             }
             setIsLoading(false);
         });
