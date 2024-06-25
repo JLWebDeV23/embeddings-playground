@@ -2,7 +2,6 @@ import {
     Message,
     Model,
     ModelData,
-    StringInterpolation,
     StringInterpolations,
 } from "@/app/utils/interfaces";
 import {
@@ -12,6 +11,15 @@ import {
 } from "@/app/utils/modelProcessing";
 import { PropsWithChildren, createContext, useState } from "react";
 import useSystemMessage from "@/app/hooks/useSystemMessage";
+import {
+    Modal,
+    ModalContent,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
+    Button,
+    useDisclosure,
+} from "@nextui-org/react";
 
 type handleGoClickFunction = (args: { newSystemMessage: string }) => void;
 
@@ -51,6 +59,7 @@ export const Context = createContext<{
     handleGoClick: handleGoClickFunction;
     handleAddResponseClick: handleAddResponseClickFunction;
     handleModelsAction: ModelsActionsFunction;
+    openModal: (args: { title: string; message: string }) => void;
 } | null>(null);
 
 /* 
@@ -84,6 +93,22 @@ export default function ModelDataProvider({ children }: PropsWithChildren) {
     const [models, setModels] = useState<Model[]>([]);
 
     const { systemMessage } = useSystemMessage();
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const [modalMessage, setModalMessage] = useState({
+        title: "",
+        message: "",
+    });
+
+    const openModal = ({
+        title,
+        message,
+    }: {
+        title: string;
+        message: string;
+    }) => {
+        setModalMessage({ title, message });
+        onOpen();
+    };
 
     /* 
         function to handle model actions in the ModelAnswerGroup component 
@@ -279,6 +304,10 @@ export default function ModelDataProvider({ children }: PropsWithChildren) {
     const handleGoClick: handleGoClickFunction = ({ newSystemMessage }) => {
         if (models.length === 0) {
             console.error("No models selected");
+            openModal({
+                title: "Error",
+                message: "Please select a model",
+            });
             return;
         }
         setIsLoading(true);
@@ -286,11 +315,20 @@ export default function ModelDataProvider({ children }: PropsWithChildren) {
             modelData: modelData,
             systemMessage: newSystemMessage,
             stringInterpolations: interpolations,
-        }).then((response) => {
-            console.log("response GO", response);  
-            setApiModelData(response);
-            setIsLoading(false);
-        });
+        })
+            .then((response) => {
+                console.log(response);
+                setApiModelData(response);
+                setIsLoading(false);
+            })
+            .catch((error) => {
+                console.error(error);
+                openModal({
+                    title: "Error",
+                    message: "The system has encountered an error",
+                });
+                setIsLoading(false);
+            });
     };
 
     /* function to handle a click on the add button (in UserInput) */
@@ -329,9 +367,33 @@ export default function ModelDataProvider({ children }: PropsWithChildren) {
                 handleModelsAction,
                 isLoading,
                 isLastLoading /* whatever related to modelData */,
+                openModal,
             }}
         >
-            {children}
+            <>
+                <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+                    <ModalContent>
+                        {(onClose) => (
+                            <>
+                                <ModalHeader className="flex flex-col gap-1">
+                                    {modalMessage.title}
+                                </ModalHeader>
+                                <ModalBody>{modalMessage.message}</ModalBody>
+                                <ModalFooter>
+                                    <Button
+                                        color="danger"
+                                        variant="light"
+                                        onPress={onClose}
+                                    >
+                                        Close
+                                    </Button>
+                                </ModalFooter>
+                            </>
+                        )}
+                    </ModalContent>
+                </Modal>
+                {children}
+            </>
         </Context.Provider>
     );
 }
