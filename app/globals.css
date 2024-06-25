@@ -214,3 +214,8 @@ blockquote p {
 blockquote p::before {
     content: "" !important;
 }
+
+.markdown a {
+    color: #79b8ff;
+    text-decoration: underline;
+}

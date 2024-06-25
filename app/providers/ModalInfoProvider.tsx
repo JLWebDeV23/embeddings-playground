@@ -8,6 +8,7 @@ import {
     Button,
     useDisclosure,
 } from "@nextui-org/react";
+import Markdown from "react-markdown";
 
 export const Context = createContext<{
     openModalInfo: (args: { title: string; message: string }) => void;
@@ -31,6 +32,14 @@ export default function SystemMessageProvider({ children }: PropsWithChildren) {
         onOpen();
     };
 
+    const formatMessage = (message: string) => {
+        // urls to markdown links
+        return message.replace(
+            /https?:\/\/[^\s]+/g,
+            (url) => `[${url}](${url})`
+        );
+    };
+
     return (
         <Context.Provider value={{ openModalInfo }}>
             <>
@@ -41,7 +50,11 @@ export default function SystemMessageProvider({ children }: PropsWithChildren) {
                                 <ModalHeader className="flex flex-col gap-1">
                                     {modalMessage.title}
                                 </ModalHeader>
-                                <ModalBody>{modalMessage.message}</ModalBody>
+                                <ModalBody>
+                                    <Markdown className="markdown">
+                                        {formatMessage(modalMessage.message)}
+                                    </Markdown>
+                                </ModalBody>
                                 <ModalFooter>
                                     <Button
                                         color="danger"
