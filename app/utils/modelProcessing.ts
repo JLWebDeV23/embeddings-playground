@@ -15,7 +15,6 @@ import { ModelsData } from "../pages/ModelCompare/ModelCompare";
 import { upsertStringInterpolations } from "./functions";
 import Anthropic from "@anthropic-ai/sdk";
 
-const testKey = "0";
 type Model = {
   model: string;
   subModel: string;
@@ -48,8 +47,7 @@ export const chatCompletion = async (model: any) => {
   switch (model.model) {
     case "OpenAI":
       const client = new OpenAI({
-        // apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
-        apiKey: "0",
+        apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
         dangerouslyAllowBrowser: true,
       });
       try {
@@ -87,8 +85,7 @@ export const chatCompletion = async (model: any) => {
 
     case "Gemma":
       groq = new Groq({
-        // apiKey: process.env.NEXT_PUBLIC_GROPQ_API_KEY,
-        apiKey: testKey,
+        apiKey: process.env.NEXT_PUBLIC_GROPQ_API_KEY,
         dangerouslyAllowBrowser: true,
       });
       try {
@@ -107,8 +104,7 @@ export const chatCompletion = async (model: any) => {
 
     case "Mistral":
       groq = new Groq({
-        // apiKey: process.env.NEXT_PUBLIC_GROPQ_API_KEY,
-        apiKey: testKey,
+        apiKey: process.env.NEXT_PUBLIC_GROPQ_API_KEY,
         dangerouslyAllowBrowser: true,
       });
       try {
