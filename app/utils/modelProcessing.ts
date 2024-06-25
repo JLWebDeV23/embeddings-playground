@@ -9,18 +9,13 @@ import dotenv from "dotenv";
 dotenv.config();
 import OpenAI from "openai";
 import { QdrantClient } from "@qdrant/js-client-rest";
-import MistralClient, { ChatCompletionResponse } from "@mistralai/mistralai";
+import { ChatCompletionResponse } from "@mistralai/mistralai";
 import { Groq } from "groq-sdk";
-import Anthropic from "@anthropic-ai/sdk";
-import { ChatCompletion } from "openai/resources/index.mjs";
 import similarity from "compute-cosine-similarity";
 import { ModelsData } from "../pages/ModelCompare/ModelCompare";
-import { Mode } from "fs";
 import { upsertStringInterpolations } from "./functions";
-import { assert } from "console";
-import { user } from "@nextui-org/react";
-import { syncSharp } from "ionicons/icons";
-// import LlamaAI from "llamaai";
+import Anthropic from "@anthropic-ai/sdk";
+
 const testKey = "0";
 type Model = {
   model: string;
@@ -33,7 +28,7 @@ type Response =
   | ChatCompletionResponse
   | OpenAI.ChatCompletion
   | OpenAI.Chat.Completions.ChatCompletion
-  // | Anthropic.Message
+  | Anthropic.Message
   | ModelError
   | null;
 
@@ -65,7 +60,7 @@ export const chatCompletion = async (model: any) => {
           model: model.subModel,
         });
       } catch (error) {
-        handleError(model.model, model.subModel, JSON.stringify(error));
+        return handleError(model.model, model.subModel, JSON.stringify(error));
       }
       // Extract the content from the response
       content = response?.choices[0]?.message?.content || "";
@@ -82,7 +77,9 @@ export const chatCompletion = async (model: any) => {
           model: model.subModel,
         });
       } catch (error) {
-        handleError(model.model, model.subModel, JSON.stringify(error));
+        console.log(
+          handleError(model.model, model.subModel, JSON.stringify(error))
+        );
       }
 
       content = response?.choices[0]?.message?.content || "";
@@ -125,14 +122,24 @@ export const chatCompletion = async (model: any) => {
       break;
 
     // case "Claude":
-    //   const anthropic = new Anthropic({ apiKey: model.apiKey });
-    //   response = await anthropic.messages.create({
-    //     max_tokens: 1024,
-    //     messages: model.messages,
-    //     model: model.subModel,
+    //   const anthropic = new Anthropic({
+    //     apiKey: process.env.NEXT_PUBLIC_CLAUDE_API_KEY,
     //   });
-    //   // Extract the content from the response
-    //   content = response.content;
+    //   try {
+    //     response = await anthropic.messages.create({
+    //       model: model.subModel,
+    //       max_tokens: 1024,
+    //       messages: model.messages,
+    //     });
+    //   } catch (error) {
+    //     handleError(model.model, model.subModel, JSON.stringify(error));
+    //   }
+    //   const msg = await anthropic.messages.create({
+    //     model: "claude-3-5-sonnet-20240620",
+    //     max_tokens: 1024,
+    //     messages: [{ role: "user", content: "Hello, Claude" }],
+    //   });
+
     //   break;
   }
   return response?.choices[0].message;
@@ -351,6 +358,9 @@ export const insertUserPrompt = async (
               const newMessage = JSON.parse(
                 JSON.stringify(await chatCompletion(data))
               );
+              console.log(newMessage, "h");
+              if (typeof newMessage?.error !== undefined) return newMessage;
+
               baseModelDataMessage = newMessage!.content!;
 
               const assistantMessage: Message = {
@@ -370,9 +380,17 @@ export const insertUserPrompt = async (
                 ],
               };
               data = newData;
-              const newMessage = JSON.parse(
-                JSON.stringify(await chatCompletion(data))
-              );
+              let newMessage;
+
+              try {
+                newMessage = JSON.parse(
+                  JSON.stringify(await chatCompletion(data))
+                );
+              } catch (error) {
+                console.log(newMessage);
+              }
+
+              // Use newMessage as needed
 
               const assistantMessage: Message = {
                 role: newMessage!.role,

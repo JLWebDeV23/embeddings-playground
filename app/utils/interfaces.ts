@@ -43,6 +43,7 @@ export interface ModelData {
   subModel: string;
   messages: Message[];
   locked: boolean;
+  error?: ModelError;
 }
 
 export interface Model {
