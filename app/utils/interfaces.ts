@@ -66,3 +66,8 @@ export interface StringInterpolation {
 export interface StringInterpolations {
     list: StringInterpolation[];
 }
+
+export interface ApiKeyProps {
+    name: string;
+    apiKey: string;
+}

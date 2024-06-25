@@ -14,7 +14,7 @@ export const Context = createContext<{
     openModalInfo: (args: { title: string; message: string }) => void;
 } | null>(null);
 
-export default function SystemMessageProvider({ children }: PropsWithChildren) {
+export default function ModalInfoProvider({ children }: PropsWithChildren) {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const [modalMessage, setModalMessage] = useState({
         title: "",

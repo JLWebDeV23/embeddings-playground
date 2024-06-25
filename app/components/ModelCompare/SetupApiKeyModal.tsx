@@ -1,3 +1,4 @@
+import { useApiKeys } from "@/app/hooks/useApiKeys";
 import {
     Modal,
     ModalBody,
@@ -8,56 +9,63 @@ import {
     Button,
     Input,
 } from "@nextui-org/react";
-import { useState } from "react";
-import { addApiKey, getApiKey, getApiKeys } from "@/app/utils/functions";
+import { ChangeEventHandler, useState } from "react";
+
+const KeyInput = ({
+    name,
+    apiKey,
+    onChange,
+}: {
+    name: string;
+    apiKey: string;
+    onChange: ChangeEventHandler<HTMLInputElement>;
+}) => {
+    const [isVisible, setIsVisible] = useState(false);
+    return (
+        <Input
+            label={name}
+            value={apiKey}
+            type={isVisible ? "text" : "password"}
+            onChange={onChange}
+            onFocus={() => setIsVisible(true)}
+            onBlur={() => setIsVisible(false)}
+        />
+    );
+};
 
 export default function SetupApiKeyModal() {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-    const SavedApiKeys = getApiKeys();
+    const { apiKeys, setApiKeys } = useApiKeys();
+    const [localApiKeys, setLocalApiKeys] = useState([...apiKeys]);
 
-    const [apiKeys, setApiKeys] = useState([
-        {
-            name: "NEXT_PUBLIC_OPENAI_API_KEY",
-            value: getApiKey("NEXT_PUBLIC_OPENAI_API_KEY") || "",
-        },
-        {
-            name: "NEXT_PUBLIC_LLAMA_API_KEY",
-            value: getApiKey("NEXT_PUBLIC_LLAMA_API_KEY") || "",
-        },
-        {
-            name: "CLAUDE_API_KEY",
-            value: getApiKey("CLAUDE_API_KEY") || "",
-        },
-        {
-            name: "QDRANT_API_KEY",
-            value: getApiKey("QDRANT_API_KEY") || "",
-        },
-        {
-            name: "MISTRAL_API_KEY",
-            value: getApiKey("MISTRAL_API_KEY") || "",
-        },
-        {
-            name: "NEXT_PUBLIC_GROPQ_API_KEY",
-            value: getApiKey("NEXT_PUBLIC_GROPQ_API_KEY") || "",
-        },
-    ]);
+    /* function to update the local api state with the last userinput */
+    const handleChange = (value: string, index: number) => {
+        setLocalApiKeys((prev) => {
+            return prev.map((key, i) => {
+                if (i === index) {
+                    return { ...key, apiKey: value };
+                }
+                return key;
+            });
+        });
+    };
 
-    const needToSave = apiKeys.some((key) => {
-        const savedKey = SavedApiKeys.find((k) => k.name === key.name);
+    /* function to tell if there is a difference between the local apikeys state and the storage */
+    const needToSave = localApiKeys.some((key) => {
+        const savedKey = apiKeys.find((k) => k.name === key.name);
         if (savedKey) {
-            return savedKey.apiKey !== key.value;
+            return savedKey.apiKey !== key.apiKey;
         }
-        if (!savedKey && key.value !== "") {
+        if (!savedKey && key.apiKey !== "") {
             return true;
         }
         return false;
     });
 
+    /* function to save the api keys on storage */
     function saveApiKeys(onClose: () => void) {
-        apiKeys.forEach((key) => {
-            addApiKey({ name: key.name, apiKey: key.value });
-        });
+        setApiKeys(localApiKeys);
         onClose();
     }
 
@@ -72,22 +80,17 @@ export default function SetupApiKeyModal() {
                                 Setup API Keys
                             </ModalHeader>
                             <ModalBody>
-                                {apiKeys.map((key, index) => (
+                                {localApiKeys.map((key, index) => (
                                     <div key={index} className="flex gap-3">
-                                        <Input
-                                            label={key.name}
-                                            value={key.value}
-                                            type="password"
-                                            onChange={(e) => {
-                                                setApiKeys((prev) => {
-                                                    const newApiKeys = [
-                                                        ...prev,
-                                                    ];
-                                                    newApiKeys[index].value =
-                                                        e.target.value;
-                                                    return newApiKeys;
-                                                });
-                                            }}
+                                        <KeyInput
+                                            name={key.name}
+                                            apiKey={key.apiKey}
+                                            onChange={(e) =>
+                                                handleChange(
+                                                    e.target.value,
+                                                    index
+                                                )
+                                            }
                                         />
                                     </div>
                                 ))}
