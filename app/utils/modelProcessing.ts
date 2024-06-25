@@ -121,26 +121,20 @@ export const chatCompletion = async (model: any) => {
       content = response?.choices[0]?.message?.content || "";
       break;
 
-    // case "Claude":
-    //   const anthropic = new Anthropic({
-    //     apiKey: process.env.NEXT_PUBLIC_CLAUDE_API_KEY,
-    //   });
-    //   try {
-    //     response = await anthropic.messages.create({
-    //       model: model.subModel,
-    //       max_tokens: 1024,
-    //       messages: model.messages,
-    //     });
-    //   } catch (error) {
-    //     handleError(model.model, model.subModel, JSON.stringify(error));
-    //   }
-    //   const msg = await anthropic.messages.create({
-    //     model: "claude-3-5-sonnet-20240620",
-    //     max_tokens: 1024,
-    //     messages: [{ role: "user", content: "Hello, Claude" }],
-    //   });
-
-    //   break;
+    case "Claude":
+      const anthropic = new Anthropic({
+        apiKey: process.env.NEXT_PUBLIC_CLAUDE_API_KEY,
+      });
+      try {
+        response = await anthropic.messages.create({
+          model: model.subModel,
+          max_tokens: 1024,
+          messages: model.messages,
+        });
+      } catch (error) {
+        handleError(model.model, model.subModel, JSON.stringify(error));
+      }
+      return response?.content;
   }
   return response?.choices[0].message;
 };
@@ -189,16 +183,16 @@ export const createCosineSimilarity: (
   response1: string | null,
   response2: string | null
 ) => {
-    // Embeddings
-    const embedding1: number[] = await createEmbedding(response1!);
-    const embedding2: number[] = await createEmbedding(response2!);
+  // Embeddings
+  const embedding1: number[] = await createEmbedding(response1!);
+  const embedding2: number[] = await createEmbedding(response2!);
 
-    const cosineSimilarity: NodeRequire = require("compute-cosine-similarity");
+  const cosineSimilarity: NodeRequire = require("compute-cosine-similarity");
 
-    const similarityScore = similarity(embedding1, embedding2);
-    // const roundedSimilarity = Number(similarityScore?.toFixed(7));
-    return similarityScore;
-  };
+  const similarityScore = similarity(embedding1, embedding2);
+  // const roundedSimilarity = Number(similarityScore?.toFixed(7));
+  return similarityScore;
+};
 
 // create new model data
 export const getNewModelData = async (
