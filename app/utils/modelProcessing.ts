@@ -2,7 +2,6 @@ import {
   Message,
   ModelData,
   StringInterpolations,
-  ModelError,
   modelSDK,
 } from "./interfaces";
 import dotenv from "dotenv";
@@ -29,7 +28,6 @@ type Response =
   | OpenAI.ChatCompletion
   | OpenAI.Chat.Completions.ChatCompletion
   | Anthropic.Message
-  | ModelError
   | null;
 
 export const chatCompletion = async (model: any) => {
@@ -60,7 +58,9 @@ export const chatCompletion = async (model: any) => {
           model: model.subModel,
         });
       } catch (error) {
-        return handleError(model.model, model.subModel, JSON.stringify(error));
+        if (error instanceof Error) {
+          throw handleError(model.model, model.subModel, error);
+        }
       }
       // Extract the content from the response
       content = response?.choices[0]?.message?.content || "";
@@ -77,9 +77,9 @@ export const chatCompletion = async (model: any) => {
           model: model.subModel,
         });
       } catch (error) {
-        console.log(
-          handleError(model.model, model.subModel, JSON.stringify(error))
-        );
+        if (error instanceof Error) {
+          throw handleError(model.model, model.subModel, error);
+        }
       }
 
       content = response?.choices[0]?.message?.content || "";
@@ -97,7 +97,9 @@ export const chatCompletion = async (model: any) => {
           model: model.subModel,
         });
       } catch (error) {
-        handleError(model.model, model.subModel, JSON.stringify(error));
+        if (error instanceof Error) {
+          throw handleError(model.model, model.subModel, error);
+        }
       }
 
       content = response?.choices[0]?.message?.content || "";
@@ -115,7 +117,9 @@ export const chatCompletion = async (model: any) => {
           model: model.subModel,
         });
       } catch (error) {
-        handleError(model.model, model.subModel, JSON.stringify(error));
+        if (error instanceof Error) {
+          throw handleError(model.model, model.subModel, error);
+        }
       }
 
       content = response?.choices[0]?.message?.content || "";
@@ -132,7 +136,9 @@ export const chatCompletion = async (model: any) => {
           messages: model.messages,
         });
       } catch (error) {
-        handleError(model.model, model.subModel, JSON.stringify(error));
+        if (error instanceof Error) {
+          throw handleError(model.model, model.subModel, error);
+        }
       }
       return response?.content;
   }
@@ -279,32 +285,36 @@ export const go = async (props: goProps) => {
     stringInterpolations
   );
 
-  const newModelData = await Promise.all(
-    changedSysMessageData.map(async (colData) => {
-      const processedData = await Promise.all(
-        colData.map(async (data) => {
-          if (!data.locked) {
-            // Create an empty model data object
-            const emptyData = {
-              ...data,
-              messages: [],
-            };
-            const createdNewModelData = await getNewModelData(
-              colData[0],
-              emptyData
-            );
-            // Return the empty data object
-            return createdNewModelData;
-          }
-          // If the data is locked, return it as is
-          return data;
-        })
-      );
-      return processedData;
-    })
-  );
-  console.log("Hi");
-  return newModelData;
+  try {
+    const newModelData = await Promise.all(
+      changedSysMessageData.map(async (colData) => {
+        const processedData = await Promise.all(
+          colData.map(async (data) => {
+            if (!data.locked) {
+              // Create an empty model data object
+              const emptyData = {
+                ...data,
+                messages: [],
+              };
+              const createdNewModelData = await getNewModelData(
+                colData[0],
+                emptyData
+              );
+              // Return the empty data object
+              return createdNewModelData;
+            }
+            // If the data is locked, return it as is
+            return data;
+          })
+        );
+        return processedData;
+      })
+    );
+    return newModelData;
+  } catch (error) {
+    console.error("Error in go:", error);
+    throw error;
+  }
 };
 
 type InsertUserPromptProps = {
@@ -349,12 +359,13 @@ export const insertUserPrompt = async (
                 ],
               };
               data = newData;
-              const newMessage = JSON.parse(
-                JSON.stringify(await chatCompletion(data))
-              );
-              console.log(newMessage, "h");
-              if (typeof newMessage?.error !== undefined) return newMessage;
-
+              let newMessage;
+              try {
+                newMessage = await chatCompletion(data);
+              } catch (error) {
+                console.log(error);
+                throw error;
+              }
               baseModelDataMessage = newMessage!.content!;
 
               const assistantMessage: Message = {
@@ -409,24 +420,26 @@ export const insertUserPrompt = async (
     return newModelData;
   } catch (error) {
     console.error("Error in insertUserPrompt:", error);
-    return undefined;
+    throw error;
   }
 };
+
+class ModelError extends Error {
+  constructor(model: string, subModel: string, message: string) {
+    super(message);
+    this.name = "ModelError";
+    this.model = model;
+    this.subModel = subModel;
+  }
+  model: string;
+  subModel: string;
+}
 
 // Define the error handling function
 const handleError = (
   model: string,
   subModel: string,
-  error: string
+  error: Error
 ): ModelError => {
-  const code = JSON.parse(error).status;
-  const newErrorObject: ModelError = {
-    model: model,
-    subModel: subModel,
-    error: {
-      code: JSON.parse(error).status,
-      message: JSON.parse(error).error.message,
-    },
-  };
-  return newErrorObject;
+  return new ModelError(model, subModel, error.message);
 };

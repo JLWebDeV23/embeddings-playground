@@ -77,6 +77,7 @@ export default function SetupApiKeyModal() {
                                         <Input
                                             label={key.name}
                                             value={key.value}
+                                            type="password"
                                             onChange={(e) => {
                                                 setApiKeys((prev) => {
                                                     const newApiKeys = [
