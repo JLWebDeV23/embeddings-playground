@@ -1,13 +1,8 @@
 require("dotenv").config();
-import React, { useEffect, useState } from "react";
-import { IonIcon } from "@ionic/react";
-import { repeatOutline } from "ionicons/icons";
+import { useEffect, useState } from "react";
 import styles from "./ModelCompare.module.css";
 import ModelHeader from "@/app/components/ModelHeader/ModelHeader";
-import {
-    modelResponse,
-    createCosineSimilarity,
-} from "@/app/utils/modelProcessing";
+import { modelResponse } from "@/app/utils/modelProcessing";
 import InputBox from "@/app/components/InputBox/InputBox";
 import UserAssistantResult from "@/app/components/UserAssistantResult/UserAssistantResult";
 import Card from "@/app/components/Card/Card";
