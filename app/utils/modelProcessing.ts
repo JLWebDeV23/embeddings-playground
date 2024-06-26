@@ -14,6 +14,7 @@ import similarity from "compute-cosine-similarity";
 import { ModelsData } from "../pages/ModelCompare/ModelCompare";
 import { upsertStringInterpolations } from "./functions";
 import Anthropic from "@anthropic-ai/sdk";
+import axios from "axios";
 
 type Model = {
   model: string;
@@ -23,15 +24,14 @@ type Model = {
 };
 
 type Response =
-  | ChatCompletionResponse
-  | OpenAI.ChatCompletion
+  | Groq.Chat.Completions.ChatCompletion
   | OpenAI.Chat.Completions.ChatCompletion
-  | Anthropic.Message
+  | Anthropic.Messages.Message
   | null;
 
 export const chatCompletion = async (model: any) => {
-  let content: string | null | Anthropic.TextBlock[] = null;
   let response: Response = null;
+  let newMessage: Message;
   let groq: Groq;
 
   model = {
@@ -60,8 +60,6 @@ export const chatCompletion = async (model: any) => {
           throw handleError(model.model, model.subModel, error);
         }
       }
-      // Extract the content from the response
-      content = response?.choices[0]?.message?.content || "";
       break;
 
     case "LlaMA 3":
@@ -74,13 +72,12 @@ export const chatCompletion = async (model: any) => {
           messages: model.messages,
           model: model.subModel,
         });
+        console.log(response);
       } catch (error) {
         if (error instanceof Error) {
           throw handleError(model.model, model.subModel, error);
         }
       }
-
-      content = response?.choices[0]?.message?.content || "";
       break;
 
     case "Gemma":
@@ -98,8 +95,6 @@ export const chatCompletion = async (model: any) => {
           throw handleError(model.model, model.subModel, error);
         }
       }
-
-      content = response?.choices[0]?.message?.content || "";
       break;
 
     case "Mistral":
@@ -117,13 +112,12 @@ export const chatCompletion = async (model: any) => {
           throw handleError(model.model, model.subModel, error);
         }
       }
-
-      content = response?.choices[0]?.message?.content || "";
       break;
 
     case "Claude":
       const anthropic = new Anthropic({
         apiKey: process.env.NEXT_PUBLIC_CLAUDE_API_KEY,
+        // baseURL: "http://localhost:3001/api",
       });
       try {
         response = await anthropic.messages.create({
@@ -131,14 +125,36 @@ export const chatCompletion = async (model: any) => {
           max_tokens: 1024,
           messages: model.messages,
         });
+        console.log(response);
       } catch (error) {
         if (error instanceof Error) {
           throw handleError(model.model, model.subModel, error);
         }
       }
-      return response?.content;
   }
-  return response?.choices[0].message;
+
+  if (response instanceof Anthropic) {
+    newMessage = {
+      role: (response as Anthropic.Messages.Message).role || "",
+      content: (response as Anthropic.Messages.Message).content[0].text || "",
+    };
+  } else {
+    newMessage = {
+      role: (
+        response as
+          | Groq.Chat.Completions.ChatCompletion
+          | OpenAI.Chat.Completions.ChatCompletion
+      )?.choices[0].message.role,
+      content:
+        (
+          response as
+            | Groq.Chat.Completions.ChatCompletion
+            | OpenAI.Chat.Completions.ChatCompletion
+        )?.choices[0].message.content || "",
+    };
+  }
+  console.log(newMessage!);
+  return newMessage;
 };
 
 // select model and return response from the model
@@ -213,7 +229,6 @@ export const getNewModelData = async (
   }
   for (let index = 0; index < originalModelData.messages.length; index++) {
     const message = originalModelData.messages[index];
-    console.log(message.role);
     if (message.role.toLowerCase() === "user") {
       newModelDataCopy.messages.push(message);
       console.log(newModelDataCopy, "here");
@@ -232,7 +247,6 @@ export const getNewModelData = async (
       tempModelDataCopy.messages.push(message);
     }
   }
-  console.log("newModelDataCopy", newModelDataCopy);
   return newModelDataCopy;
 };
 
@@ -260,7 +274,6 @@ export const createNewModelData = async (
       return [...colData, await getNewModelData(colData[0], newModelData)];
     })
   );
-  console.log("updatedColData", updatedData);
 
   return updatedData;
 };
