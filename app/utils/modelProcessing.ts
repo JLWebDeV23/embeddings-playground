@@ -1,20 +1,12 @@
-import {
-    Message,
-    ModelData,
-    StringInterpolations,
-    modelSDK,
-} from "./interfaces";
-import dotenv from "dotenv";
-dotenv.config();
-import OpenAI from "openai";
-import { QdrantClient } from "@qdrant/js-client-rest";
-import { ChatCompletionResponse } from "@mistralai/mistralai";
-import { Groq } from "groq-sdk";
+import Anthropic from "@anthropic-ai/sdk";
 import similarity from "compute-cosine-similarity";
+import dotenv from "dotenv";
+import { Groq } from "groq-sdk";
+import OpenAI from "openai";
 import { ModelsData } from "../pages/ModelCompare/ModelCompare";
 import { upsertStringInterpolations } from "./functions";
-import Anthropic from "@anthropic-ai/sdk";
-import axios from "axios";
+import { Message, ModelData, StringInterpolations } from "./interfaces";
+dotenv.config();
 
 type Model = {
     model: string;
