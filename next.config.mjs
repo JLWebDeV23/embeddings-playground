@@ -1,13 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  async rewrites() {
-    return [
-      {
-        source: "/api/:path*",
-        destination: "https://api.anthropic.com/v1/:path*",
-      },
-    ];
-  },
+    rewrites: async () => [
+        {
+            source: "/anthropic/:path*",
+            destination: "https://api.anthropic.com/:path*",
+        },
+    ],
 };
 
 export default nextConfig;
