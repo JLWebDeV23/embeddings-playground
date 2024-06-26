@@ -43,6 +43,7 @@ export interface ModelData {
   subModel: string;
   messages: Message[];
   locked: boolean;
+  apiKey: ApiKey;
 }
 
 export interface Model {
@@ -51,11 +52,9 @@ export interface Model {
 }
 
 export interface ApiKey {
-  key: string;
   name: string;
   apiKey: string;
 }
-[];
 
 export interface StringInterpolation {
   key: number;
@@ -65,9 +64,4 @@ export interface StringInterpolation {
 
 export interface StringInterpolations {
   list: StringInterpolation[];
-}
-
-export interface ApiKeyProps {
-  name: string;
-  apiKey: string;
 }
