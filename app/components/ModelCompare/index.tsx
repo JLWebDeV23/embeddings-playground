@@ -6,6 +6,8 @@ import useModelData from "@/app/hooks/useModelData";
 import useSystemMessage from "@/app/hooks/useSystemMessage";
 import { Model } from "@/app/utils/interfaces";
 import SetupApiKeyModal from "./SetupApiKeyModal";
+import { Card, CardBody, CardHeader } from "@/app/components/Card";
+import { Divider } from "@nextui-org/react";
 
 /* 
     This component is used to select the initial model for the chat and set the system message.
@@ -20,8 +22,8 @@ export default function ModelCompare() {
     };
 
     return (
-        <div className="flex flex-col bg-card rounded-md">
-            <div className="flex flex-wrap justify-between items-center gap-3 p-3 border-b-2 border-surface">
+        <Card>
+            <CardHeader className="flex flex-wrap justify-between items-center gap-3 p-3">
                 <h1 className="font-bold text-xl whitespace-nowrap">
                     Model Compare
                 </h1>
@@ -29,8 +31,9 @@ export default function ModelCompare() {
                     <EditStringInterpoplations />
                     <SetupApiKeyModal />
                 </div>
-            </div>
-            <div className="flex flex-col p-3">
+            </CardHeader>
+            <Divider />
+            <CardBody>
                 <div className="flex flex-col gap-3 flex-wrap">
                     <ModelSelector
                         placeholder="Select the initial model"
@@ -61,7 +64,7 @@ export default function ModelCompare() {
                         GO
                     </button>
                 </div>
-            </div>
-        </div>
+            </CardBody>
+        </Card>
     );
 }

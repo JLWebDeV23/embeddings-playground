@@ -30,7 +30,6 @@
     padding: 0;
     box-sizing: border-box;
     scroll-behavior: smooth;
-    @apply text-foreground;
 }
 
 h1 {
@@ -42,7 +41,6 @@ html {
     flex-direction: column;
     height: 100vh;
     width: 100vw;
-    @apply text-foreground;
 }
 
 body {
@@ -55,10 +53,11 @@ body {
         "Helvetica Neue";
     /* Light background */
     font-family: "Roboto", sans-serif;
+    @apply bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-emerald-900/20 via-emerald-950/50 to-emerald-950/0;
 }
 
 main {
-    @apply flex flex-col h-screen overflow-y-auto;
+    @apply flex flex-col h-screen overflow-y-auto backdrop-blur-lg;
 }
 
 /* Header styles */

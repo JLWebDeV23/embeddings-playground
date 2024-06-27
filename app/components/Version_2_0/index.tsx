@@ -12,7 +12,7 @@ export default function Version_2_0() {
     const { models, modelData } = useModelData();
     return (
         <>
-            <div className="m-5 mb-0 gap-5 flex flex-col flex-1 ">
+            <div className="m-5 mb-0 gap-5 flex flex-col flex-1">
                 <ModelCompare />
                 {models.length > 0 ? (
                     modelData.map((obj, index) => (

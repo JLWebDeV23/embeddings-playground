@@ -41,7 +41,7 @@ function ModelAnswerHeader({
                 {isLast && (
                     <ModelSelector
                         placeholder="Compare with a new model"
-                        className="max-w-64"
+                        className="max-w-64 backdrop-blur-md"
                         aria-label="Add a new model"
                         size="sm"
                         onChange={(model) => onSelectItem(model)}
@@ -94,7 +94,7 @@ export default function ModelAnswer({
     return (
         <Card
             isBlurred
-            className={`flex flex-col min-w-[28rem] w-full items-center  ${
+            className={`flex flex-col min-w-[28rem] flex-1 items-center  ${
                 isLoading || (isLastLoading && isLast) ? "skeleton" : ""
             }`}
         >

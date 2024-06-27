@@ -1,5 +1,4 @@
 import {
-    ApiKey,
     Message,
     Model,
     ModelData,
@@ -10,10 +9,10 @@ import {
     insertUserPrompt,
     createNewModelData,
 } from "@/app/utils/modelProcessing";
-import { PropsWithChildren, createContext, use, useState } from "react";
+import { PropsWithChildren, createContext, useState } from "react";
 import useSystemMessage from "@/app/hooks/useSystemMessage";
 import useModalInfo from "@/app/hooks/useModalInfo";
-import { useApiKeys } from "../hooks/useApiKeys";
+import { useApiKeys } from "@/app/hooks/useApiKeys";
 
 type handleGoClickFunction = (args: { newSystemMessage: string }) => void;
 

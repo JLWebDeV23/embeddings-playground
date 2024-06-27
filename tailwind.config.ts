@@ -20,7 +20,6 @@ const config: Config = {
                 white: "#ffffff",
                 gray: "#1D232A",
                 lightGray: "#343740",
-                foreground: "#E8EAED",
                 card: "#252627",
                 surface: "#141414",
             },
@@ -43,12 +42,14 @@ const config: Config = {
                     colors: {
                         background: "#F9FAFB",
                         foreground: "#1D232A",
+                        primary: "#047857",
                     },
                 },
                 dark: {
                     colors: {
                         background: "#141414",
-                        foreground: "#252627",
+                        foreground: "#E8EAED",
+                        primary: "#047857",
                     },
                 },
             },

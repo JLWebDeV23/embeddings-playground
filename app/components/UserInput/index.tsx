@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import InputBox from "../InputBox/InputBox";
 import useModelData from "@/app/hooks/useModelData";
+import { Card, CardBody } from "../Card";
+import { CardProps } from "@nextui-org/react";
 
 export default function UserInput({
     isUserInputDisabled = false,
@@ -12,7 +14,7 @@ export default function UserInput({
     placeholder?: string;
     isUserInputDisabled?: boolean;
     systemMessage?: string;
-} & React.HTMLAttributes<HTMLDivElement>) {
+} & CardProps) {
     const [inputValue, setInputValue] = useState<string>("");
     const showAlert = false;
 
@@ -21,30 +23,29 @@ export default function UserInput({
     const isButtonDisabled = inputValue.length === 0;
 
     return (
-        <div
-            className={`flex flex-col bg-card p-3 rounded-xl ${className}`}
-            {...rest}
-        >
-            <InputBox
-                onSubmit={(value: string) => {
-                    handleAddResponseClick(value);
-                    setInputValue("");
-                    // chatcompletion and display to model one => add to modelsData
-                    // chatcompletion of value using selected models and push both value to user and the derived completion to the ModelsData
-                }}
-                value={inputValue}
-                handleInput={(e) => setInputValue(e.target.value)}
-                isButtonDisabled={isButtonDisabled}
-                btnName="Add"
-                inputText={placeholder}
-                isUserInputDisabled={isUserInputDisabled}
-                showAlert={showAlert}
-                btnStyle={
-                    isButtonDisabled
-                        ? "cursor-not-allowed rounded-none rounded-r-lg h-full translate-x-[15%]"
-                        : "text-lime-50 cursor-pointer bg-emerald-300 rounded-none rounded-r-lg h-full translate-x-[15%] "
-                }
-            />
-        </div>
+        <Card className={`flex ${className}`} {...rest}>
+            <CardBody>
+                <InputBox
+                    onSubmit={(value: string) => {
+                        handleAddResponseClick(value);
+                        setInputValue("");
+                        // chatcompletion and display to model one => add to modelsData
+                        // chatcompletion of value using selected models and push both value to user and the derived completion to the ModelsData
+                    }}
+                    value={inputValue}
+                    handleInput={(e) => setInputValue(e.target.value)}
+                    isButtonDisabled={isButtonDisabled}
+                    btnName="Add"
+                    inputText={placeholder}
+                    isUserInputDisabled={isUserInputDisabled}
+                    showAlert={showAlert}
+                    btnStyle={
+                        isButtonDisabled
+                            ? "cursor-not-allowed rounded-none rounded-r-lg h-full translate-x-[15%]"
+                            : "text-lime-50 cursor-pointer bg-emerald-300 rounded-none rounded-r-lg h-full translate-x-[15%] "
+                    }
+                />
+            </CardBody>
+        </Card>
     );
 }

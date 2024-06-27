@@ -15,6 +15,7 @@ export function ChatBubble({ text, role }: { text: string; role: string }) {
                 }`}
             >
                 <div className="markdown text-sm text-gray-500 w-full">
+                    {role}
                     <Markdown
                         remarkPlugins={[remarkGfm]}
                         rehypePlugins={[
