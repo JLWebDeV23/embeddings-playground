@@ -1,4 +1,5 @@
 import {
+    ApiKey,
     Message,
     Model,
     ModelData,
@@ -54,33 +55,6 @@ export const Context = createContext<{
     handleModelsAction: ModelsActionsFunction;
 } | null>(null);
 
-/* 
-    Function to build the modelData array from the api response but synchronised with the models array
-*/
-const resolveModelData = (
-    models: Model[],
-    modelData: ModelData[][],
-    numberOfInterpolations = 1
-) => {
-    return Array.from({ length: numberOfInterpolations }, (_, index) => {
-        return models.map((model, modelIndex) => {
-            return (
-                modelData[index]?.[modelIndex] ||
-                newModelData(model, modelIndex === 0)
-            );
-        });
-    });
-};
-
-const newModelData = (model: Model, locked = false) => {
-    return {
-        model: model.model,
-        subModel: model.subModel,
-        messages: [] as Message[],
-        locked: locked,
-    };
-};
-
 export default function ModelDataProvider({ children }: PropsWithChildren) {
     const [models, setModels] = useState<Model[]>([]);
 
@@ -89,6 +63,34 @@ export default function ModelDataProvider({ children }: PropsWithChildren) {
     const { openModalInfo } = useModalInfo();
 
     const { apiKeys } = useApiKeys();
+
+    /* 
+    Function to build the modelData array from the api response but synchronised with the models array
+*/
+    const resolveModelData = (
+        models: Model[],
+        modelData: ModelData[][],
+        numberOfInterpolations = 1
+    ) => {
+        return Array.from({ length: numberOfInterpolations }, (_, index) => {
+            return models.map((model, modelIndex) => {
+                return (
+                    modelData[index]?.[modelIndex] ||
+                    newModelData(model, modelIndex === 0)
+                );
+            });
+        });
+    };
+
+    const newModelData = (model: Model, locked = false) => {
+        return {
+            model: model.model,
+            subModel: model.subModel,
+            messages: [] as Message[],
+            locked: locked,
+            apiKey: apiKeys,
+        };
+    };
 
     /* 
         function to handle model actions in the ModelAnswerGroup component 

@@ -1,50 +1,32 @@
-import { useEffect, useState } from "react";
+"use client";
 import { ApiKey } from "../utils/interfaces";
+import { useLocalStorage } from "@uidotdev/usehooks";
 
 export const useApiKeys = () => {
-    /* Get the apiKeys from the storage */
-    function getKeyFromStorage(name: string) {
-        const API_KEYS = sessionStorage.getItem("API_KEYS");
-        if (API_KEYS) {
-            const keys = JSON.parse(API_KEYS);
-            const key = keys.find((k: ApiKey) => k.name === name);
-            if (key) {
-                return key.apiKey;
-            }
-        }
-        return "";
-    }
-
-    const [apiKeys, setApiKeysState] = useState<ApiKey[]>(() => [
+    const [apiKeys, setApiKeysState] = useLocalStorage<ApiKey[]>("API_KEYS", [
         {
             name: "OpenAI",
-            apiKey: getKeyFromStorage("NEXT_PUBLIC_OPENAI_API_KEY"),
+            apiKey: "",
+            modelsNames: ["OpenAI"],
         },
         {
             name: "Groq (Llama | Mistral | Gemma)",
-            apiKey: getKeyFromStorage("NEXT_PUBLIC_LLAMA_API_KEY"),
+            apiKey: "",
+            modelsNames: ["LlaMA 3", "Mistral", "Gemma"],
         },
         {
-            name: "Cladue",
-            apiKey: getKeyFromStorage("CLAUDE_API_KEY"),
+            name: "Claude",
+            apiKey: "",
+            modelsNames: ["Claude"],
         },
         {
             name: "QdrantDB",
-            apiKey: getKeyFromStorage("QDRANT_API_KEY"),
+            apiKey: "",
+            modelsNames: ["QdrantDB"],
         },
     ]);
 
-    /* Sync the apiKeys state changes with the storage */
-    useEffect(() => {
-        sessionStorage.setItem("API_KEYS", JSON.stringify(apiKeys));
-    }, [apiKeys]);
-
-    const setApiKeys = (
-        keys: Array<{
-            name: string;
-            apiKey: string;
-        }>
-    ) => {
+    const setApiKeys = (keys: ApiKey[]) => {
         setApiKeysState(keys);
     };
 
