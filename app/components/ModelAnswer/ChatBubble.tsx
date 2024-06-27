@@ -9,13 +9,14 @@ export function ChatBubble({ text, role }: { text: string; role: string }) {
     return (
         <>
             {/* <p className={` text-xs px-2 py-1 ${role === "user" ? "self-end" : ""}`}>{role}</p> */}
-            <div
-                className={`flex justify-start rounded-md w-full ${
-                    role === "user" ? "p-2 self-end bg-surface/50" : ""
-                }`}
-            >
-                <div className="markdown text-sm text-gray-500 w-full">
-                    {role}
+            <div className="flex flex-col justify-start rounded-md w-full">
+                <div
+                    className={`markdown text-sm text-gray-500 ${
+                        role === "user"
+                            ? "w-fit p-2 self-end bg-surface/50"
+                            : "w-full"
+                    }`}
+                >
                     <Markdown
                         remarkPlugins={[remarkGfm]}
                         rehypePlugins={[
