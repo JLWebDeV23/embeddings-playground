@@ -61,7 +61,7 @@ export function ScoreBubble({ score }: { score: number }) {
             variant="dot"
             size="sm"
             color={getScoreColor(score)}
-            className="m-3 mb-0"
+            className="mt-3 mb-0"
         >
             {score}
         </Chip>
