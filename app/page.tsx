@@ -1,7 +1,5 @@
 "use client";
-
 import Version_2_0 from "./components/Version_2_0";
-
 import { NextUIProvider } from "@nextui-org/react";
 import ModelDataProvider from "./providers/ModelDataProvider";
 import SystemMessageProvider from "@/app/providers/SystemMessageProvider";
