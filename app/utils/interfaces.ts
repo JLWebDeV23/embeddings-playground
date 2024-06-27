@@ -43,7 +43,7 @@ export interface ModelData {
   subModel: string;
   messages: Message[];
   locked: boolean;
-  apiKey: ApiKey;
+  apiKey: ApiKey[];
 }
 
 export interface Model {
