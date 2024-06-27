@@ -14,7 +14,7 @@ type CardProps = {
     onSwap?: (index: number) => void;
 };
 
-const Card: React.FC<CardProps> = ({ index, x, y, onInputChange }) => {
+const InputCard: React.FC<CardProps> = ({ index, x, y, onInputChange }) => {
     return (
         <div className="card shadow-md w-full border-r-0 border border-indigo-600 opacity-70 ">
             <div className="card-body">
@@ -33,4 +33,4 @@ const Card: React.FC<CardProps> = ({ index, x, y, onInputChange }) => {
     );
 };
 
-export default Card;
+export default InputCard;

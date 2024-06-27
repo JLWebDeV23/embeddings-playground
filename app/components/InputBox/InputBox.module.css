@@ -31,24 +31,24 @@
     color: #f1f5f9;
     padding: 0 5px;
     /* margin: 0 px; */
-    background-color: #1D232A;
     transition: 0.2 ease;
+    background-color: inherit;
 }
 
 .input:focus,
 .input:valid {
     color: #f1f5f9;
     /* border: 1px solid #6ee7b7; */
-    border: 1px solid var(--green)
+    border: 1px solid var(--green);
 }
 
 .input:focus + .labelLine,
-.input:valid + .labelLine{
+.input:valid + .labelLine {
     /* color: #6ee7b7; */
     color: var(--green);
     height: 27px;
     line-height: 50px;
     font-size: 1.1em;
-    transform: translate(0, -23px) scale(0.80);
+    transform: translate(0, -23px) scale(0.8);
     z-index: 11;
 }

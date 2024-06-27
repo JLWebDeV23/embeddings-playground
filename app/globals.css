@@ -15,7 +15,7 @@
     --dark-grey: #1a1a1c;
     --green: #78c3aadb;
     /* --primary: #6ee7b7 */
-    @apply bg-black;
+    @apply bg-surface;
 }
 
 @media (prefers-color-scheme: dark) {

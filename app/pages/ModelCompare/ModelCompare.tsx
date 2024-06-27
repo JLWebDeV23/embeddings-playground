@@ -5,7 +5,7 @@ import ModelHeader from "@/app/components/ModelHeader/ModelHeader";
 import { modelResponse } from "@/app/utils/modelProcessing";
 import InputBox from "@/app/components/InputBox/InputBox";
 import UserAssistantResult from "@/app/components/UserAssistantResult/UserAssistantResult";
-import Card from "@/app/components/Card/Card";
+import InputCard from "@/app/components/InputCard/InputCard";
 import { CardData } from "@/app/utils/interfaces";
 
 // future implementation
@@ -188,7 +188,7 @@ const ModelCompare = () => {
             <div className="flex flex-col mt-2 mb-2 ">
                 <div className="flex flex-row gap-4">
                     {cards.map((card, index) => (
-                        <Card
+                        <InputCard
                             key={index}
                             index={index}
                             x={card.x}
