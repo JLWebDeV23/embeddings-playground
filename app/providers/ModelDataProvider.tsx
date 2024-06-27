@@ -9,9 +9,10 @@ import {
     insertUserPrompt,
     createNewModelData,
 } from "@/app/utils/modelProcessing";
-import { PropsWithChildren, createContext, useState } from "react";
+import { PropsWithChildren, createContext, use, useState } from "react";
 import useSystemMessage from "@/app/hooks/useSystemMessage";
 import useModalInfo from "@/app/hooks/useModalInfo";
+import { useApiKeys } from "../hooks/useApiKeys";
 
 type handleGoClickFunction = (args: { newSystemMessage: string }) => void;
 
@@ -87,6 +88,8 @@ export default function ModelDataProvider({ children }: PropsWithChildren) {
 
     const { openModalInfo } = useModalInfo();
 
+    const { apiKeys } = useApiKeys();
+
     /* 
         function to handle model actions in the ModelAnswerGroup component 
         @param action: "set_initial" | "reset" | "add" | "pop" | "lock" - action to perform on the models array
@@ -122,6 +125,7 @@ export default function ModelDataProvider({ children }: PropsWithChildren) {
                         subModel: model.subModel,
                         messages: [],
                         locked: false,
+                        apiKey: apiKeys,
                     },
                     systemMessage: systemMessage,
                     stringInterpolations: interpolations,
