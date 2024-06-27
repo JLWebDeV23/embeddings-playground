@@ -47,9 +47,13 @@ export const chatCompletion = async (model: ModelData) => {
   };
 
   switch (model.model) {
-    case "OpenAI":
+    case "OpenAI": {
+      const apiKey = model.apiKey.find((key) => key.name === "OpenAI");
+      if (!apiKey) {
+        throw new Error("API Key not found");
+      }
       const client = new OpenAI({
-        apiKey: model.apiKey.apiKey,
+        apiKey: apiKey.apiKey,
         dangerouslyAllowBrowser: true,
       });
       try {
@@ -63,10 +67,18 @@ export const chatCompletion = async (model: ModelData) => {
         }
       }
       break;
+    }
 
-    case "LlaMA 3":
+    case "LlaMA 3": {
+      console.log(model.apiKey, model);
+      const apiKey = model.apiKey.find(
+        (key) => key.name === "Groq (Llama | Mistral | Gemma)"
+      );
+      if (!apiKey) {
+        throw new Error("API Key not found");
+      }
       groq = new Groq({
-        apiKey: model.apiKey.apiKey,
+        apiKey: apiKey.apiKey,
         dangerouslyAllowBrowser: true,
       });
       try {
@@ -81,10 +93,16 @@ export const chatCompletion = async (model: ModelData) => {
         }
       }
       break;
-
+    }
     case "Gemma":
+      const apiKey = model.apiKey.find(
+        (key) => key.name === "Groq (Llama | Mistral | Gemma)"
+      );
+      if (!apiKey) {
+        throw new Error("API Key not found");
+      }
       groq = new Groq({
-        apiKey: model.apiKey.apiKey,
+        apiKey: apiKey.apiKey,
         dangerouslyAllowBrowser: true,
       });
       try {
@@ -99,9 +117,15 @@ export const chatCompletion = async (model: ModelData) => {
       }
       break;
 
-    case "Mistral":
+    case "Mistral": {
+      const apiKey = model.apiKey.find(
+        (key) => key.name === "Groq (Llama | Mistral | Gemma)"
+      );
+      if (!apiKey) {
+        throw new Error("API Key not found");
+      }
       groq = new Groq({
-        apiKey: model.apiKey.apiKey,
+        apiKey: apiKey.apiKey,
         dangerouslyAllowBrowser: true,
       });
       try {
@@ -113,13 +137,18 @@ export const chatCompletion = async (model: ModelData) => {
         if (error instanceof Error) {
           throw handleError(model.model, model.subModel, error);
         }
+        break;
       }
-      break;
+    }
 
-    case "Claude":
+    case "Claude": {
+      const apiKey = model.apiKey.find((key) => key.name === "Cladue");
+      if (!apiKey) {
+        throw new Error("API Key not found");
+      }
       const domain = window?.location?.origin || "";
       const anthropic = new Anthropic({
-        apiKey: process.env.NEXT_PUBLIC_CLAUDE_API_KEY,
+        apiKey: apiKey.apiKey,
         baseURL: domain + "/anthropic/",
       });
       const [systemMessage, ...messages] = model.messages as (
@@ -141,6 +170,7 @@ export const chatCompletion = async (model: ModelData) => {
           throw handleError(model.model, model.subModel, error);
         }
       }
+    }
   }
   if (model.model === "Claude" && response) {
     newMessage = {
