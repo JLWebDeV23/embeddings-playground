@@ -2,7 +2,7 @@ require("dotenv").config();
 import { useEffect, useState } from "react";
 import styles from "./ModelCompare.module.css";
 import ModelHeader from "@/app/components/ModelHeader/ModelHeader";
-import { modelResponse } from "@/app/utils/modelProcessing";
+// import { modelResponse } from "@/app/utils/modelProcessing";
 import InputBox from "@/app/components/InputBox/InputBox";
 import UserAssistantResult from "@/app/components/UserAssistantResult/UserAssistantResult";
 import InputCard from "@/app/components/InputCard/InputCard";
@@ -35,18 +35,18 @@ const ModelCompare = () => {
         setCards([...cards, { x: "", y: "" }]);
     };
 
-    useEffect(() => {
-        const fetchData = async () => {
-            if (modelsData !== null && messageUpdated) {
-                const response = await modelResponse(modelsData);
-                // handle the response
-                setModelsData(response);
-                setMessageUpdated(false); // Reset the messageUpdated flag
-            }
-        };
+    // useEffect(() => {
+    //     const fetchData = async () => {
+    //         if (modelsData !== null && messageUpdated) {
+    //             const response = await modelResponse(modelsData);
+    //             // handle the response
+    //             setModelsData(response);
+    //             setMessageUpdated(false); // Reset the messageUpdated flag
+    //         }
+    //     };
 
-        fetchData();
-    }, [messageUpdated, modelsData]); // Depend only on messageUpdated
+    //     fetchData();
+    // }, [messageUpdated, modelsData]); // Depend only on messageUpdated
 
     const generateModelsData = async (value: string) => {
         const message = { role: "user", content: value };
