@@ -134,6 +134,15 @@ function InterpolationPage({
                     Delete Page
                 </Button>
             )}
+            {modelData.length > 0 &&
+                modelData[0].length > 0 &&
+                !(modelData[0][0].messages.length < 2) && (
+                    <div className="mb-3 bg-warning-50/50 border-2 border-warning-50 rounded-lg p-3 text-sm font-light">
+                        You can&apos;t add or delete pages because you have
+                        already starded the conversation. Please start a new
+                        conversation to add or delete pages.
+                    </div>
+                )}
             {interpolations.list.map((_, index) => (
                 <InterpolationInput
                     key={index}
