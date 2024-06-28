@@ -3,7 +3,8 @@ import similarity from "compute-cosine-similarity";
 import dotenv from "dotenv";
 import { Groq } from "groq-sdk";
 import OpenAI from "openai";
-import { createEmbedding, upsertStringInterpolations } from "./functions";
+import { ModelsData } from "../pages/ModelCompare/ModelCompare";
+import { upsertStringInterpolations } from "./functions";
 import { Message, ModelData, StringInterpolations } from "./interfaces";
 dotenv.config();
 
@@ -89,7 +90,6 @@ export const chatCompletion = async (model: ModelData) => {
         console.log(response);
       } catch (error) {
         if (error instanceof Error) {
-          console.log("hi");
           throw handleError(model.model, model.subModel, error);
         }
       }
@@ -212,6 +212,24 @@ export const chatCompletion = async (model: ModelData) => {
 
 //   return modelsData;
 // };
+
+export const createEmbedding = async (input: string | []) => {
+  let embedding: number[] = [];
+  try {
+    embedding = (
+      await new OpenAI({
+        apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
+        dangerouslyAllowBrowser: true,
+      }).embeddings.create({
+        model: "text-embedding-3-small",
+        input: input,
+      })
+    ).data[0].embedding;
+  } catch (error) {
+    console.error("Error in Create OpenAI Embeddings:", error);
+  }
+  return embedding;
+};
 
 // compare cosine similarity between two model response
 // TODO: function takes input for now, will need to look into taking as []

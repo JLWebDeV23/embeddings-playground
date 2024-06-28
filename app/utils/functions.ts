@@ -4,7 +4,7 @@ import { Groq } from "groq-sdk";
 import { QdrantClient } from "@qdrant/js-client-rest";
 import OpenAI from "openai";
 import MistralClient from "@mistralai/mistralai";
-import Anthropic from "@anthropic-ai/sdk";
+import { createEmbedding } from "./modelProcessing";
 import {
   ModelData,
   StringInterpolation,
@@ -22,17 +22,6 @@ export const openai = new OpenAI({
 });
 
 export const mistral = new MistralClient(process.env.MISTRAL_API_KEY);
-
-export const createEmbedding = async (input: string | []) => {
-  const embedding = (
-    await openai.embeddings.create({
-      model: "text-embedding-3-small",
-      input: input,
-    })
-  ).data[0].embedding;
-
-  return embedding;
-};
 
 export const createChatCompletion = async (
   input: string
