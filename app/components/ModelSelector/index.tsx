@@ -9,7 +9,7 @@ import modelsData from "@/public/assets/data/ModelData.json";
 import { useEffect } from "react";
 import { useApiKeys } from "@/app/hooks/useApiKeys";
 
-export type ModelSelectorProps = {
+type ModelSelectorProps = {
     models?: typeof modelsData;
     onChange: (model: Model) => void;
     selectedModels?: Model[];

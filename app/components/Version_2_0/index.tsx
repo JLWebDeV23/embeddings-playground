@@ -24,7 +24,12 @@ export default function Version_2_0() {
                     </div>
                 )}
             </div>
-            <UserInput className="sticky bottom-0 flex flex-col self-center w-full backdrop-blur-md rounded-b-none max-w-screen-lg mx-5 mt-5" />
+            <div className="sticky bottom-0 p-5 gap-3 flex flex-col  backdrop-blur-md">
+                <UserInput
+                    className="pt-4 w-full"
+                    isUserInputDisabled={models.length === 0}
+                />
+            </div>
         </>
     );
 }

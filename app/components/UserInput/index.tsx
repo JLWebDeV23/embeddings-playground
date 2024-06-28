@@ -1,17 +1,11 @@
-import ModelSelector from "@/app/components/ModelSelector";
-import useModelData from "@/app/hooks/useModelData";
-import { Model } from "@/app/utils/interfaces";
-import {
-    Button,
-    CardFooter,
-    CardProps,
-    Spacer,
-    Textarea,
-} from "@nextui-org/react";
 import React, { useState } from "react";
+import InputBox from "../InputBox/InputBox";
+import useModelData from "@/app/hooks/useModelData";
 import { Card, CardBody } from "../Card";
+import { CardProps } from "@nextui-org/react";
 
 export default function UserInput({
+    isUserInputDisabled = false,
     className,
     placeholder = "User Message",
     systemMessage = "",
@@ -22,79 +16,36 @@ export default function UserInput({
     systemMessage?: string;
 } & CardProps) {
     const [inputValue, setInputValue] = useState<string>("");
-
-    const { models, handleModelsAction, isLastLoading, isLoading } =
-        useModelData();
+    const showAlert = false;
 
     const { handleAddResponseClick } = useModelData();
 
-    const handleModelSelection = (model: Model) => {
-        handleModelsAction({ action: "set_initial", model: model });
-    };
+    const isButtonDisabled = inputValue.length === 0;
 
     return (
-        <Card isBlurred className={`flex ${className}`} {...rest}>
-            <CardBody className="flex flex-row gap-3 items-end pb-1">
-                {models.length > 0 ? (
-                    <>
-                        <Textarea
-                            value={inputValue}
-                            onKeyDown={(e) => {
-                                if (e.key === "Enter" && !e.shiftKey) {
-                                    e.preventDefault();
-                                    handleAddResponseClick(inputValue);
-                                    setInputValue("");
-                                }
-                            }}
-                            onChange={(e) => {
-                                setInputValue(e.target.value);
-                            }}
-                            maxRows={5}
-                            minRows={1}
-                            size="lg"
-                            variant="underlined"
-                            placeholder={placeholder}
-                        ></Textarea>
-                        <Button
-                            onClick={() => {
-                                handleAddResponseClick(inputValue);
-                                setInputValue("");
-                            }}
-                            size="lg"
-                            isLoading={isLoading || isLastLoading}
-                            isDisabled={inputValue.length === 0}
-                        >
-                            Add
-                        </Button>
-                    </>
-                ) : (
-                    <ModelSelector
-                        placeholder="Select the initial model"
-                        aria-label="initial model"
-                        selectedModels={models}
-                        onChange={handleModelSelection}
-                        className="w-full"
-                        radius="sm"
-                        size="lg"
-                        variant="flat"
-                    />
-                )}
+        <Card className={`flex ${className}`} {...rest}>
+            <CardBody>
+                <InputBox
+                    onSubmit={(value: string) => {
+                        handleAddResponseClick(value);
+                        setInputValue("");
+                        // chatcompletion and display to model one => add to modelsData
+                        // chatcompletion of value using selected models and push both value to user and the derived completion to the ModelsData
+                    }}
+                    value={inputValue}
+                    handleInput={(e) => setInputValue(e.target.value)}
+                    isButtonDisabled={isButtonDisabled}
+                    btnName="Add"
+                    inputText={placeholder}
+                    isUserInputDisabled={isUserInputDisabled}
+                    showAlert={showAlert}
+                    btnStyle={
+                        isButtonDisabled
+                            ? "cursor-not-allowed rounded-none rounded-r-lg h-full translate-x-[15%]"
+                            : "text-lime-50 cursor-pointer bg-emerald-300 rounded-none rounded-r-lg h-full translate-x-[15%] "
+                    }
+                />
             </CardBody>
-            {models.length > 0 ? (
-                <CardFooter className="gap-3">
-                    <ModelSelector
-                        placeholder="Select the initial model"
-                        aria-label="initial model"
-                        selectedModels={models}
-                        onChange={handleModelSelection}
-                        className="w-full max-w-64"
-                        size="sm"
-                        variant="flat"
-                    />
-                </CardFooter>
-            ) : (
-                <Spacer />
-            )}
         </Card>
     );
 }

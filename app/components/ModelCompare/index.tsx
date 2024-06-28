@@ -1,7 +1,10 @@
 import InputBox from "@/app/components/InputBox/InputBox";
+import ModelSelector from "@/app/components/ModelSelector";
+
 import { EditStringInterpoplations } from "@/app/components/Modal/EditStringInterpolations";
 import useModelData from "@/app/hooks/useModelData";
 import useSystemMessage from "@/app/hooks/useSystemMessage";
+import { Model } from "@/app/utils/interfaces";
 import SetupApiKeyModal from "./SetupApiKeyModal";
 import { Card, CardBody, CardHeader } from "@/app/components/Card";
 import { Divider } from "@nextui-org/react";
@@ -12,7 +15,11 @@ import { Divider } from "@nextui-org/react";
 export default function ModelCompare() {
     const { systemMessage, handleSystemMessage } = useSystemMessage();
 
-    const { handleGoClick } = useModelData();
+    const { handleGoClick, models, handleModelsAction } = useModelData();
+
+    const handleModelSelection = (model: Model) => {
+        handleModelsAction({ action: "set_initial", model: model });
+    };
 
     return (
         <Card>
@@ -27,6 +34,15 @@ export default function ModelCompare() {
             </CardHeader>
             <Divider />
             <CardBody>
+                <div className="flex flex-col gap-3 flex-wrap">
+                    <ModelSelector
+                        placeholder="Select the initial model"
+                        label="Initial model"
+                        selectedModels={models}
+                        onChange={handleModelSelection}
+                        className="w-full max-w-64"
+                    />
+                </div>
                 <div className="flex gap-3 pt-3 items-end">
                     <InputBox
                         inputText={"System Message"}
