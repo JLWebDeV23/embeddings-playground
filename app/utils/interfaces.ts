@@ -32,6 +32,12 @@ export interface CardData {
     y: string;
 }
 
+export interface Point {
+  id: string;
+  vector: number[];
+  payload: { input: string };
+}
+
 export interface Message {
     role: string;
     content: string;

@@ -10,11 +10,14 @@ const Header = () => {
                 <Logo />
             </Link>
             <div className="hidden sm:flex gap-4 items-center">
-                <Link color="foreground" href="/main">
-                    Version 1.0
+                <Link color="foreground" href="/rag">
+                    RAG
+                </Link>
+                <Link color="forground" href="/">
+                    Tokenizer
                 </Link>
                 <Link color="foreground" href="/" aria-current="page">
-                    Version 2.0
+                    Chatnado
                 </Link>
                 <BuyMeACoffee />
             </div>

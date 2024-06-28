@@ -119,6 +119,7 @@ export default function ModelDataProvider({ children }: PropsWithChildren) {
                 if (!model) throw new Error("Model is required");
                 setModels([...models, model]);
                 setIsLastLoading(true);
+                console.log(apiKeys)
                 createNewModelData({
                     modelData: modelData,
                     newModelData: {
