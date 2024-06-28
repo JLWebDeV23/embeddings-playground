@@ -11,7 +11,7 @@ const Footer = () => {
 
             <div className="flex flex-col items-end justify-end gap-2">
                 <nav>
-                    <div className="grid grid-flow-col gap-4">
+                    <div className="grid grid-flow-col gap-4 hidden">
                         <a>
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
