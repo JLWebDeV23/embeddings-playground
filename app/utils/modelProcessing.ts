@@ -89,6 +89,7 @@ export const chatCompletion = async (model: ModelData) => {
         console.log(response);
       } catch (error) {
         if (error instanceof Error) {
+          console.log("hi");
           throw handleError(model.model, model.subModel, error);
         }
       }
