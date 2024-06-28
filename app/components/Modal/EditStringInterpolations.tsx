@@ -2,7 +2,6 @@ import useModelData from "@/app/hooks/useModelData";
 import { StringInterpolations } from "@/app/utils/interfaces";
 import {
     Button,
-    ButtonProps,
     Input,
     Modal,
     ModalBody,
@@ -14,7 +13,7 @@ import {
 import { Tab, Tabs } from "@nextui-org/tabs";
 import { useState } from "react";
 
-export function EditStringInterpoplations(props: ButtonProps) {
+export function EditStringInterpoplations() {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const [selectedPage, setSelectedPage] = useState<string>("0");
 
@@ -23,7 +22,7 @@ export function EditStringInterpoplations(props: ButtonProps) {
 
     return (
         <>
-            <Button className="w-full sm:w-fit" onPress={onOpen} {...props}>
+            <Button className="w-full sm:w-fit" onPress={onOpen}>
                 Set Interpolations variables
             </Button>
             <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="2xl">
@@ -134,15 +133,6 @@ function InterpolationPage({
                     Delete Page
                 </Button>
             )}
-            {modelData.length > 0 &&
-                modelData[0].length > 0 &&
-                !(modelData[0][0].messages.length < 2) && (
-                    <div className="mb-3 bg-warning-50/50 border-2 border-warning-50 rounded-lg p-3 text-sm font-light">
-                        You can&apos;t add or delete pages because you have
-                        already starded the conversation. Please start a new
-                        conversation to add or delete pages.
-                    </div>
-                )}
             {interpolations.list.map((_, index) => (
                 <InterpolationInput
                     key={index}

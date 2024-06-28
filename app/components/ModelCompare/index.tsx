@@ -1,7 +1,10 @@
 import InputBox from "@/app/components/InputBox/InputBox";
+import ModelSelector from "@/app/components/ModelSelector";
+
 import { EditStringInterpoplations } from "@/app/components/Modal/EditStringInterpolations";
 import useModelData from "@/app/hooks/useModelData";
 import useSystemMessage from "@/app/hooks/useSystemMessage";
+import { Model } from "@/app/utils/interfaces";
 import SetupApiKeyModal from "./SetupApiKeyModal";
 import { Card, CardBody, CardHeader } from "@/app/components/Card";
 import { Button, Divider } from "@nextui-org/react";
