@@ -4,7 +4,7 @@ import useModelData from "@/app/hooks/useModelData";
 import useSystemMessage from "@/app/hooks/useSystemMessage";
 import SetupApiKeyModal from "./SetupApiKeyModal";
 import { Card, CardBody, CardHeader } from "@/app/components/Card";
-import { Divider } from "@nextui-org/react";
+import { Button, Divider } from "@nextui-org/react";
 
 /* 
     This component is used to select the initial model for the chat and set the system message.
@@ -12,7 +12,7 @@ import { Divider } from "@nextui-org/react";
 export default function ModelCompare() {
     const { systemMessage, handleSystemMessage } = useSystemMessage();
 
-    const { handleGoClick } = useModelData();
+    const { handleGoClick, models } = useModelData();
 
     return (
         <Card>
@@ -37,8 +37,9 @@ export default function ModelCompare() {
                         }}
                         onSubmit={handleSystemMessage}
                     />
-                    <button
-                        className="btn btn-lg"
+                    <Button
+                        className="h-16"
+                        isDisabled={!systemMessage || models.length < 1}
                         onClick={() =>
                             handleGoClick({
                                 newSystemMessage: systemMessage,
@@ -46,7 +47,7 @@ export default function ModelCompare() {
                         }
                     >
                         GO
-                    </button>
+                    </Button>
                 </div>
             </CardBody>
         </Card>

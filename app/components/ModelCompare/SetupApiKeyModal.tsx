@@ -22,14 +22,16 @@ const KeyInput = ({
 }) => {
     const [isVisible, setIsVisible] = useState(false);
     return (
-        <Input
-            label={name}
-            value={apiKey}
-            type={isVisible ? "text" : "password"}
-            onChange={onChange}
-            onFocus={() => setIsVisible(true)}
-            onBlur={() => setIsVisible(false)}
-        />
+        <>
+            <Input
+                label={name}
+                value={apiKey}
+                type={isVisible ? "text" : "password"}
+                onChange={onChange}
+                onFocus={() => setIsVisible(true)}
+                onBlur={() => setIsVisible(false)}
+            />
+        </>
     );
 };
 

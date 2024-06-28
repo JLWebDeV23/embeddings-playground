@@ -12,8 +12,10 @@ export default function Version_2_0() {
     const { models, modelData } = useModelData();
     return (
         <>
-            <div className="m-5 mb-0 gap-5 flex flex-col flex-1">
-                <ModelCompare />
+            <div className="mb-0 gap-5 flex flex-col flex-1">
+                <div className="px-5">
+                    <ModelCompare />
+                </div>
                 {models.length > 0 ? (
                     modelData.map((obj, index) => (
                         <ModelAnswerGroup key={index} answers={obj} />

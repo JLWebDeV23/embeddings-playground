@@ -33,7 +33,7 @@ export default function UserInput({
     };
 
     return (
-        <Card isBlurred className={`flex ${className}`} {...rest}>
+        <Card isBlurred className={`flex ${className} `} {...rest}>
             <CardBody className="flex flex-row gap-3 items-end pb-1">
                 {models.length > 0 ? (
                     <>
@@ -91,6 +91,16 @@ export default function UserInput({
                         size="sm"
                         variant="flat"
                     />
+                    <Button
+                        size="sm"
+                        onPress={() => {
+                            handleModelsAction({ action: "reset" });
+                        }}
+                        className="hover:bg-danger"
+                        variant="flat"
+                    >
+                        Reset
+                    </Button>
                 </CardFooter>
             ) : (
                 <Spacer />

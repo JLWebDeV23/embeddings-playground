@@ -108,8 +108,7 @@ export default function ModelAnswer({
             </CardHeader>
             <Divider />
             <CardBody>
-                {/* max-w-[800px] */}
-                <div className="flex flex-col p-2 w-full gap-5">
+                <div className="flex flex-col p-2 w-full gap-1">
                     {answer.messages.length < 1 && !isLoading ? (
                         <div className="min-h-10 flex h-full items-center">
                             <p className="opacity-50 w-full text-center">

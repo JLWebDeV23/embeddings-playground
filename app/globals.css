@@ -15,13 +15,7 @@
     --dark-grey: #1a1a1c;
     --green: #78c3aadb;
     /* --primary: #6ee7b7 */
-    @apply bg-surface;
-}
-
-@media (prefers-color-scheme: dark) {
-    :root {
-        --foreground-rgb: 255, 255, 255;
-    }
+    @apply bg-gradient-to-br from-background to-primary/10;
 }
 
 /* Global styles */
@@ -53,7 +47,6 @@ body {
         "Helvetica Neue";
     /* Light background */
     font-family: "Roboto", sans-serif;
-    @apply bg-gradient-to-bl from-slate-900/20 to-slate-700/20;
     /*     background-image: linear-gradient(
         45deg,
         hsl(0deg 0% 8%) 0%,
@@ -93,7 +86,7 @@ footer {
 pre {
     font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
         monospace;
-    @apply bg-background rounded-md p-2 my-3;
+    @apply bg-background rounded-md p-2 my-3 border-secondary/30 border;
 }
 
 pre > * {

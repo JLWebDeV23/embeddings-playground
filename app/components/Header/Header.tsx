@@ -1,7 +1,9 @@
+"use client";
 import React from "react";
 import Link from "next/link";
 import Logo from "../Logo/Logo";
 import BuyMeACoffee from "./BuyMeACoffee/BuyMeACoffee";
+import { ThemeSwitcher } from "../ThemeSwitcher";
 
 const Header = () => {
     return (
@@ -16,6 +18,7 @@ const Header = () => {
                 <Link color="foreground" href="/" aria-current="page">
                     Version 2.0
                 </Link>
+                <ThemeSwitcher />
                 <BuyMeACoffee />
             </div>
         </header>
