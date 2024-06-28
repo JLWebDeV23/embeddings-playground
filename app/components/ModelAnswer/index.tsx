@@ -118,12 +118,18 @@ export default function ModelAnswer({
                     ) : (
                         answer.messages.map((message, index) => (
                             <div className="flex flex-col p-2" key={index}>
-                                <ChatBubble
-                                    role={message.role}
-                                    text={message.content}
-                                />
-                                {message.score && (
-                                    <ScoreBubble score={message.score} />
+                                {message.content.length > 0 && (
+                                    <>
+                                        <ChatBubble
+                                            role={message.role}
+                                            text={message.content}
+                                        />
+                                        {message.score && (
+                                            <ScoreBubble
+                                                score={message.score}
+                                            />
+                                        )}
+                                    </>
                                 )}
                             </div>
                         ))
