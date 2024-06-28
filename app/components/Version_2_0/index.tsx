@@ -26,11 +26,8 @@ export default function Version_2_0() {
                     </div>
                 )}
             </div>
-            <div className="sticky bottom-0 p-5 gap-3 flex flex-col  backdrop-blur-md">
-                <UserInput
-                    className="pt-4 w-full"
-                    isUserInputDisabled={models.length === 0}
-                />
+            <div className="flex justify-center w-full sticky bottom-0 px-5 pt-5">
+                <UserInput className="flex flex-col w-full max-w-screen-lg backdrop-blur-md rounded-b-none " />
             </div>
         </>
     );

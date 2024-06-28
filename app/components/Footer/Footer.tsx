@@ -2,7 +2,7 @@
 
 const Footer = () => {
     return (
-        <footer className="flex justify-between p-5 bg-content1 text-base-content gap-2">
+        <footer className="flex justify-between p-5 bg-content1 box-border gap-2">
             <div className="flex flex-col items-start gap-2">
                 <h2>Author: Joey Liou</h2>
                 <h2>UI: Mathias ROSA</h2>

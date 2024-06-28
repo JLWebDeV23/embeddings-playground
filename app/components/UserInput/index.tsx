@@ -1,11 +1,17 @@
-import React, { useState } from "react";
-import InputBox from "../InputBox/InputBox";
+import ModelSelector from "@/app/components/ModelSelector";
 import useModelData from "@/app/hooks/useModelData";
+import { Model } from "@/app/utils/interfaces";
+import {
+    Button,
+    CardFooter,
+    CardProps,
+    Spacer,
+    Textarea,
+} from "@nextui-org/react";
+import React, { useState } from "react";
 import { Card, CardBody } from "../Card";
-import { CardProps } from "@nextui-org/react";
 
 export default function UserInput({
-    isUserInputDisabled = false,
     className,
     placeholder = "User Message",
     systemMessage = "",
@@ -16,11 +22,15 @@ export default function UserInput({
     systemMessage?: string;
 } & CardProps) {
     const [inputValue, setInputValue] = useState<string>("");
-    const showAlert = false;
+
+    const { models, handleModelsAction, isLastLoading, isLoading } =
+        useModelData();
 
     const { handleAddResponseClick } = useModelData();
 
-    const isButtonDisabled = inputValue.length === 0;
+    const handleModelSelection = (model: Model) => {
+        handleModelsAction({ action: "set_initial", model: model });
+    };
 
     return (
         <Card isBlurred className={`flex ${className} `} {...rest}>

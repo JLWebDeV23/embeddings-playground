@@ -33,20 +33,20 @@ h1 {
 html {
     display: flex;
     flex-direction: column;
-    height: 100vh;
-    width: 100vw;
+    box-sizing: border-box;
 }
 
 body {
     display: flex;
     flex-direction: column;
-    /* overflow-y: scroll; */
+    box-sizing: border-box;
+    flex: 1;
+    width: 100%;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
         "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
         "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji",
         "Helvetica Neue";
     /* Light background */
-    font-family: "Roboto", sans-serif;
     /*     background-image: linear-gradient(
         45deg,
         hsl(0deg 0% 8%) 0%,
@@ -63,18 +63,12 @@ body {
 }
 
 main {
-    @apply flex flex-col h-screen overflow-y-auto backdrop-blur-lg;
+    @apply flex flex-col h-screen box-border overflow-y-auto backdrop-blur-lg;
 }
 
 /* Header styles */
 header {
     max-height: 13vh;
-}
-
-/* Footer styles */
-footer {
-    padding: 1rem 0;
-    text-align: center;
 }
 
 /* Utility classes */
