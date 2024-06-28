@@ -54,6 +54,19 @@ body {
     /* Light background */
     font-family: "Roboto", sans-serif;
     @apply bg-gradient-to-bl from-slate-900/20 to-slate-700/20;
+    /*     background-image: linear-gradient(
+        45deg,
+        hsl(0deg 0% 8%) 0%,
+        hsl(249deg 40% 12%) 23%,
+        hsl(250deg 54% 15%) 45%,
+        hsl(251deg 62% 17%) 65%,
+        hsl(252deg 69% 19%) 80%,
+        hsl(253deg 74% 20%) 89%,
+        hsl(254deg 78% 22%) 93%,
+        hsl(255deg 83% 23%) 96%,
+        hsl(256deg 87% 24%) 98%,
+        hsl(257deg 94% 24%) 100%
+    ); */
 }
 
 main {

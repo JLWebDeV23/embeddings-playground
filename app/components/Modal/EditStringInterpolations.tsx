@@ -2,6 +2,7 @@ import useModelData from "@/app/hooks/useModelData";
 import { StringInterpolations } from "@/app/utils/interfaces";
 import {
     Button,
+    ButtonProps,
     Input,
     Modal,
     ModalBody,
@@ -13,7 +14,7 @@ import {
 import { Tab, Tabs } from "@nextui-org/tabs";
 import { useState } from "react";
 
-export function EditStringInterpoplations() {
+export function EditStringInterpoplations(props: ButtonProps) {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const [selectedPage, setSelectedPage] = useState<string>("0");
 
@@ -22,7 +23,7 @@ export function EditStringInterpoplations() {
 
     return (
         <>
-            <Button className="w-full sm:w-fit" onPress={onOpen}>
+            <Button className="w-full sm:w-fit" onPress={onOpen} {...props}>
                 Set Interpolations variables
             </Button>
             <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="2xl">
