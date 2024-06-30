@@ -122,20 +122,21 @@ ${(await getCollectionsList()).map((collection) => collection.name).join("\n")}
   }
   // Emberd the user input
   const embedding = await createEmbedding(userPrompt);
-  let result: any;
+  let results;
   // Search for similar chunk that match the input
   try {
-    result = await client.search(collectionName, {
-      vector: embedding,
-      limit: 5,
-      score_threshold: 0.4,
-    });
+    console.log(
+      (results = await client.search(collectionName, {
+        vector: embedding,
+        limit: 5,
+        score_threshold: 0.4,
+      }))
+    );
   } catch (error) {
     console.error("Error searching for similarities:", error);
   }
-  console.log(result);
   // Stringify the retrieved chunk
-  const retrievedChunk = result
+  const retrievedChunk = results!
     .map(
       (result) =>
         `-> ${JSON.stringify(
