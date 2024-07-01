@@ -10,6 +10,7 @@ import {
 } from "@nextui-org/react";
 import React, { useState } from "react";
 import { Card, CardBody } from "../Card";
+import IonIcon from "@reacticons/ionicons";
 
 export default function UserInput({
     className,
@@ -60,11 +61,16 @@ export default function UserInput({
                                 handleAddResponseClick(inputValue);
                                 setInputValue("");
                             }}
-                            size="lg"
+                            variant="flat"
+                            size="md"
                             isLoading={isLoading || isLastLoading}
                             isDisabled={inputValue.length === 0}
                         >
-                            Add
+                            <IonIcon
+                                name="send"
+                                className="text-lg"
+                                aria-label="send"
+                            />
                         </Button>
                     </>
                 ) : (

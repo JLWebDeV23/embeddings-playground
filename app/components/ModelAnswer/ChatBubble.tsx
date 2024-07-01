@@ -1,11 +1,60 @@
-import { Card, Chip } from "@nextui-org/react";
+import { Card, Chip, Skeleton } from "@nextui-org/react";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypePrism from "rehype-prism-plus";
 import rehypeSlug from "rehype-slug";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { PropsWithChildren } from "react";
 
-export function ChatBubble({ text, role }: { text: string; role: string }) {
+type MessageContainerProps = {
+    isLoading: boolean;
+    role: string;
+} & PropsWithChildren;
+
+function MessageContainer({
+    role,
+    isLoading,
+    children,
+}: MessageContainerProps) {
+    if (role === "system") {
+        return null;
+    }
+    if (isLoading && role === "user") {
+        return (
+            <Skeleton className="markdown rounded-md text-sm text-gray-500 w-fit p-2 self-end">
+                {children}
+            </Skeleton>
+        );
+    } else if (role === "user") {
+        return (
+            <Card className="markdown text-sm text-gray-500 w-fit p-2 self-end">
+                {children}
+            </Card>
+        );
+    } else if (isLoading) {
+        return (
+            <Skeleton className="markdown rounded-md text-sm text-gray-500 w-fit">
+                {children}
+            </Skeleton>
+        );
+    } else {
+        return (
+            <div className="markdown text-sm text-gray-500 w-full">
+                {children}
+            </div>
+        );
+    }
+}
+
+export function ChatBubble({
+    text,
+    role,
+    isLoading = false,
+}: {
+    text: string;
+    role: string;
+    isLoading?: boolean;
+}) {
     const Message = (
         <Markdown
             remarkPlugins={[remarkGfm]}
@@ -30,18 +79,13 @@ export function ChatBubble({ text, role }: { text: string; role: string }) {
             {text}
         </Markdown>
     );
+
     return (
         <>
             <div className="flex flex-col justify-start w-full">
-                {role === "user" || role === "system" ? (
-                    <Card className="markdown text-sm text-gray-500 w-fit p-2 self-end">
-                        {Message}
-                    </Card>
-                ) : (
-                    <div className="markdown text-sm text-gray-500 w-full">
-                        {Message}
-                    </div>
-                )}
+                <MessageContainer isLoading={isLoading} role={role}>
+                    {Message}
+                </MessageContainer>
             </div>
         </>
     );

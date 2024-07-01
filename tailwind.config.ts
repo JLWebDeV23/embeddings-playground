@@ -76,7 +76,7 @@ const config: Config = {
                         background: "#020303",
                         foreground: "#eaf1ef",
                         primary: {
-                            foreground: "#eaf1ef",
+                            foreground: "#020303",
                             50: "#effef9",
                             100: "#c9feef",
                             200: "#88fbdb",
