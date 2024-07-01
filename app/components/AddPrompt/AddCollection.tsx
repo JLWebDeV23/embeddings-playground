@@ -16,77 +16,9 @@ type AddCollectionProps = {
 const AddCollection: React.FC<AddCollectionProps> = () => {
   const [inputValue, setInputValue] = useState("");
 
-  // const createCollection = async (collectionName: string) => {
-  //   try {
-  //     const result = await client.createCollection(collectionName, {
-  //       vectors: { size: 1536, distance: "Cosine" },
-  //     });
-  //   } catch (error) {
-  //     console.error("Error creating collection:", error);
-  //   }
-  // };
-
-  // const addPoints = async (collectionName: string, points: Point[]) => {
-  //   try {
-  //     await client.upsert(collectionName, { points });
-  //   } catch (error) {
-  //     console.error("Error creating points:", error);
-  //   }
-  // };
-
-  // const newAddPoints = async (collectionName: string) => {
-  //   let embeddings = await Promise.all(
-  //     chunkPrompt(inputValue).map(async (chunk) => {
-  //       return {
-  //         vector: createEmbedding(chunk),
-  //         input: chunk,
-  //       };
-  //     })
-  //   );
-  //   console.log("Embeddings:", embeddings);
-  //   // create point for each embedding and add to points in Qdrant
-  //   const points: Point[] = [];
-  //   embeddings.forEach((embedding, index) => {
-  //     const point: Point = {
-  //       id: uuidv4(),
-  //       vector: embedding.vector,
-  //       payload: { input: embedding.input },
-  //     };
-  //     points.push(point);
-  //   });
-  //   console.log("Points:", points);
-  //   await addPoints(collectionName!, points);
-  // };
-
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInputValue(e.target.value);
   };
-
-  // Create a list of chunks from the input
-  // const chunkPrompt = (input: string): string[] => {
-  //   const chunks: string[] = [];
-  //   let currentChunk = "";
-  //   let word = 0;
-  //   for (let i = 0; i < input.length; i++) {
-  //     const char = input[i];
-  //     currentChunk += char;
-  //     if (char === " ") word++;
-  //     if (word >= 500) {
-  //       chunks.push(currentChunk.trim());
-  //       currentChunk = "";
-  //       word = 0;
-  //     }
-  //   }
-  //   if (currentChunk.trim().length > 0) {
-  //     chunks.push(currentChunk.trim());
-  //   }
-  //   return chunks;
-  // };
-
-  //   const getCollectionsList = async () => {
-  //     const collections = await client.getCollections();
-  //     return collections.collections;
-  //   };
 
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
