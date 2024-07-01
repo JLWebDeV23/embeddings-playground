@@ -94,9 +94,7 @@ export default function ModelAnswer({
     return (
         <Card
             isBlurred
-            className={`flex flex-col min-w-[28rem] flex-1 items-center  ${
-                isLoading || (isLastLoading && isLast) ? "skeleton" : ""
-            }`}
+            className="flex flex-col min-w-[28rem] flex-1 items-center"
         >
             <CardHeader className="w-full">
                 <ModelAnswerHeader
@@ -121,6 +119,10 @@ export default function ModelAnswer({
                                 {message.content.length > 0 && (
                                     <>
                                         <ChatBubble
+                                            isLoading={
+                                                isLoading ||
+                                                (isLast && isLastLoading)
+                                            }
                                             role={message.role}
                                             text={message.content}
                                         />

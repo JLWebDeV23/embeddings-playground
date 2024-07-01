@@ -119,8 +119,49 @@ export default function ModelDataProvider({ children }: PropsWithChildren) {
                 if (!model) throw new Error("Model is required");
                 setModels([...models, model]);
                 setIsLastLoading(true);
+                const tempModelData = modelData.map((interpolationAnswer) =>
+                    interpolationAnswer.map((modelData) => {
+                        return {
+                            ...modelData,
+                        };
+                    })
+                );
+
+                // add the model to the end of the apiModelData matrix with the same data as the first model but replace every message by random messages
+
+                setApiModelData(
+                    modelData.map((interpolationAnswer) => [
+                        ...interpolationAnswer,
+                        {
+                            ...newModelData(model),
+                            messages: modelData[0][0].messages.map(
+                                (message) => {
+                                    if (
+                                        message.role === "user" ||
+                                        message.role === "system"
+                                    ) {
+                                        return message;
+                                    }
+                                    return {
+                                        ...message,
+                                        content: message.content.replaceAll(
+                                            /./g,
+                                            () =>
+                                                String.fromCharCode(
+                                                    Math.floor(
+                                                        Math.random() * 93
+                                                    ) + 33
+                                                )
+                                        ),
+                                    };
+                                }
+                            ),
+                        },
+                    ])
+                );
+
                 createNewModelData({
-                    modelData: modelData,
+                    modelData: tempModelData,
                     newModelData: {
                         model: model.model,
                         subModel: model.subModel,
@@ -130,10 +171,21 @@ export default function ModelDataProvider({ children }: PropsWithChildren) {
                     },
                     systemMessage: systemMessage,
                     stringInterpolations: interpolations,
-                }).then((response) => {
-                    setApiModelData(() => response);
-                    setIsLastLoading(false);
-                });
+                })
+                    .then((response) => {
+                        setApiModelData(response);
+                        setIsLastLoading(false);
+                        setIsLoading(false);
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                        openModalInfo({
+                            title: error.name,
+                            message: error.message,
+                        });
+                        setIsLastLoading(false);
+                        setIsLoading(false);
+                    });
 
                 break;
             case "pop":
@@ -320,9 +372,34 @@ export default function ModelDataProvider({ children }: PropsWithChildren) {
             return;
         }
 
+        const tempModelData = modelData.map((interpolationAnswer) =>
+            interpolationAnswer.map((modelData) => {
+                return {
+                    ...modelData,
+                };
+            })
+        );
+
+        setApiModelData(
+            modelData.map((interpolationAnswer) => [
+                ...interpolationAnswer.map((modelData) => {
+                    return {
+                        ...modelData,
+                        messages: [
+                            ...modelData.messages,
+                            {
+                                content: value,
+                                role: "user",
+                            },
+                        ],
+                    };
+                }),
+            ])
+        );
+
         setIsLoading(true);
         insertUserPrompt({
-            modelData: modelData,
+            modelData: tempModelData,
             userPrompt: value,
             systemMessage: systemMessage,
             stringInterpolations: interpolations,
