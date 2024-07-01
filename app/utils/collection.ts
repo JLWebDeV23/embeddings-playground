@@ -54,7 +54,7 @@ export const upsertPoints = async (
   let embeddings = await Promise.all(
     chunkPrompt(userInput).map(async (chunk) => {
       return {
-        vector: createEmbedding(chunk),
+        vector: await createEmbedding(chunk),
         input: chunk,
       };
     })
@@ -125,13 +125,11 @@ ${(await getCollectionsList()).map((collection) => collection.name).join("\n")}
   let results;
   // Search for similar chunk that match the input
   try {
-    console.log(
-      (results = await client.search(collectionName, {
-        vector: embedding,
-        limit: 5,
-        score_threshold: 0.4,
-      }))
-    );
+    results = await client.search(collectionName, {
+      vector: embedding,
+      limit: 5,
+      score_threshold: 0.4,
+    });
   } catch (error) {
     console.error("Error searching for similarities:", error);
   }
@@ -163,15 +161,32 @@ Answer:
 
   // Get the response from the model
   let modelResponse: string = query;
-  const openai = new OpenAI({
-    apiKey: process.env.NEXT_PUBLIC_OPENAI_API,
-  });
-  const completion = await openai.chat.completions.create({
-    messages: [{ role: "assistant", content: "You are a helpful assistant." }],
-    model: "gpt-4o",
-  });
-  modelResponse += completion;
+  try {
+    const openai = new OpenAI({
+      apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
+      dangerouslyAllowBrowser: true,
+    });
+    const completion = await openai.chat.completions.create({
+      messages: [
+        {
+          role: "system",
+          content:
+            "Given the context information and not prior knowledge, answer the query of user prompt.",
+        },
+        {
+          role: "user",
+          content: query,
+        },
+      ],
+      model: "gpt-4o",
+    });
+    const chatResponse = completion.choices[0].message.content;
+    console.log(chatResponse);
+    modelResponse += chatResponse;
 
-  console.log(modelResponse);
+    console.log(modelResponse);
+  } catch (err) {
+    console.error("Error in OpenAI Chat Completions:", err);
+  }
   return modelResponse;
 };
