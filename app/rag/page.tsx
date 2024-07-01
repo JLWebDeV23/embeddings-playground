@@ -12,28 +12,6 @@ import LogProb from "../components/LogProb/LogProb";
 import ModelCompare from "@/app/pages/ModelCompare/ModelCompare";
 
 const Main = () => {
-  const client = new QdrantClient({
-    url: "http://localhost:6333",
-  });
-
-  const mistral = new MistralClient("my_api_key");
-
-  const openai = new OpenAI({
-    apiKey: "sk-proj-tXhN6GB3ajD2iSQ1ivdxT3BlbkFJSiWSp1nXwuUXhG0p1XGD",
-    dangerouslyAllowBrowser: true,
-  });
-
-  const createEmbedding = async (input: string | []) => {
-    const embedding = (
-      await openai.embeddings.create({
-        model: "text-embedding-3-small",
-        input: input,
-      })
-    ).data[0].embedding;
-
-    return embedding;
-  };
-
   return (
     //w-full h-full p-10 flex justify-between
     <main className={styles.main}>
@@ -41,17 +19,12 @@ const Main = () => {
 
       <div className={styles.row}>
         <div className={styles.col}>
-          <AddCollection client={client} createEmbedding={createEmbedding} />
+          <AddCollection />
           <InsertItem />
-          <Delete client={client} />
+          <Delete />
         </div>
         <hr className={styles.verticalLine} />
-        <MessageModel
-          client={client}
-          createEmbedding={createEmbedding}
-          openai={openai}
-          mistral={mistral}
-        />
+        <MessageModel />
       </div>
       <hr className={styles.verticalLine} />
       <h1 id={styles.h1}>LogProb</h1>
