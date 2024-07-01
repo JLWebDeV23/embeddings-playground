@@ -5,6 +5,7 @@ import rehypeSlug from "rehype-slug";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { PropsWithChildren } from "react";
+import IonIcon from "@reacticons/ionicons";
 
 type MessageContainerProps = {
     isLoading: boolean;
@@ -21,26 +22,38 @@ function MessageContainer({
     }
     if (isLoading && role === "user") {
         return (
-            <Skeleton className="markdown rounded-md text-sm text-gray-500 w-fit p-2 self-end">
-                {children}
-            </Skeleton>
+            <div className="flex gap-3 self-end">
+                <Skeleton className="markdown rounded-md text-sm text-gray-500 w-fit p-2">
+                    {children}
+                </Skeleton>
+                <IonIcon name="person-outline" className="text-2xl pt-2" />
+            </div>
         );
     } else if (role === "user") {
         return (
-            <Card className="markdown text-sm text-gray-500 w-fit p-2 self-end">
-                {children}
-            </Card>
+            <div className="flex gap-3 self-end">
+                <Card className="markdown text-sm text-gray-500 w-fit p-2 ">
+                    {children}
+                </Card>
+                <IonIcon name="person-outline" className="text-2xl pt-2" />
+            </div>
         );
     } else if (isLoading) {
         return (
-            <Skeleton className="markdown rounded-md text-sm text-gray-500 w-fit">
-                {children}
-            </Skeleton>
+            <div className="flex gap-3">
+                <IonIcon name="sparkles-outline" className="text-2xl pt-2" />
+                <Skeleton className="markdown rounded-md text-sm text-gray-500 w-fit">
+                    {children}
+                </Skeleton>
+            </div>
         );
     } else {
         return (
-            <div className="markdown text-sm text-gray-500 w-full">
-                {children}
+            <div className="flex gap-3">
+                <IonIcon name="sparkles-outline" className="text-2xl pt-2" />
+                <div className="markdown text-sm text-gray-500 w-full">
+                    {children}
+                </div>
             </div>
         );
     }
