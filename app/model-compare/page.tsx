@@ -2,13 +2,13 @@
 
 import React from "react";
 
-import ModelCompare from "../ModelCompare";
-import UserInput from "../UserInput";
-import ModelAnswerGroup from "../ModelAnswer/ModelAnswerGroup";
+import ModelCompare from "../components/ModelCompare";
+import UserInput from "../components/UserInput";
+import ModelAnswerGroup from "../components/ModelAnswer/ModelAnswerGroup";
 
-import useModelData from "../../hooks/useModelData";
+import useModelData from "../hooks/useModelData";
 
-export default function Version_2_0() {
+export default function Page() {
     const { models, modelData } = useModelData();
     return (
         <>

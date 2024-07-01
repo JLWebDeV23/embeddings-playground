@@ -15,11 +15,14 @@ const Header = () => {
                 <Link color="foreground" href="/rag">
                     RAG
                 </Link>
-                <Link color="forground" href="/">
+                <Link color="foreground" href="/rag2">
+                    RAG2
+                </Link>
+                <Link color="foreground" href="/">
                     Tokenizer
                 </Link>
-                <Link color="foreground" href="/" aria-current="page">
-                    Chatnado
+                <Link color="foreground" href="/model-compare">
+                    Model Compare
                 </Link>
                 <ThemeSwitcher />
                 <BuyMeACoffee />
