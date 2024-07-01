@@ -4,7 +4,6 @@ import { Groq } from "groq-sdk";
 import { QdrantClient } from "@qdrant/js-client-rest";
 import OpenAI from "openai";
 import MistralClient from "@mistralai/mistralai";
-import { createEmbedding } from "./modelProcessing";
 import {
   ModelData,
   StringInterpolation,
