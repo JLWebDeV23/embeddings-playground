@@ -2,7 +2,7 @@
 
 import React from "react";
 
-import ModelCompare from "../components/ModelCompare";
+import ModelCompare from "../components/SystemMessageBox";
 import UserInput from "../components/UserInput";
 import ModelAnswerGroup from "../components/ModelAnswer/ModelAnswerGroup";
 

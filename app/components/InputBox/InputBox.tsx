@@ -28,7 +28,9 @@ const InputBox = ({
 
     return (
         <div className={styles.container}>
-            <div className={`bg-content1 rounded-lg ${styles.entryArea}`}>
+            <div
+                className={`bg-content1 text-sm rounded-lg ${styles.entryArea}`}
+            >
                 <input
                     className={`overflow-hidden ${styles.input} ${
                         props.isUserInputDisabled ? "opacity-25" : ""

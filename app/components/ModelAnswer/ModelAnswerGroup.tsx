@@ -1,28 +1,28 @@
+import { ScrollShadow } from "@nextui-org/scroll-shadow";
 import ModelAnswer from ".";
 import { ModelData } from "@/app/utils/interfaces";
 
 export default function ModelAnswerGroup({
     answers,
+    groupNumber,
 }: {
     answers: ModelData[];
+    groupNumber: number;
 }) {
     return (
-        <div className="flex flex-col gap-3">
-            {answers.length > 0 && (
-                <>
-                    <h1 className="px-5 text-xl">Responses</h1>
-                    <div className="flex flex-row gap-4 w-full overflow-x-auto py-5 px-5">
-                        {answers.map((answer, index) => (
-                            <ModelAnswer
-                                key={index}
-                                modelNumber={index}
-                                answer={answer}
-                                isLast={index === answers.length - 1}
-                            />
-                        ))}
-                    </div>
-                </>
-            )}
-        </div>
+        <>
+            <p className="px-5 ">Page {groupNumber + 1}</p>
+            <ScrollShadow className="flex gap-4 px-5 py-5 orientation-horizontal w-full">
+                {answers.length > 0 &&
+                    answers.map((answer, index) => (
+                        <ModelAnswer
+                            key={index}
+                            modelNumber={index}
+                            answer={answer}
+                            isLast={index === answers.length - 1}
+                        />
+                    ))}
+            </ScrollShadow>
+        </>
     );
 }

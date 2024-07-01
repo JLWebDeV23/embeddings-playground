@@ -1,11 +1,8 @@
 import InputBox from "@/app/components/InputBox/InputBox";
-import ModelSelector from "@/app/components/ModelSelector";
 
 import { EditStringInterpoplations } from "@/app/components/Modal/EditStringInterpolations";
 import useModelData from "@/app/hooks/useModelData";
 import useSystemMessage from "@/app/hooks/useSystemMessage";
-import { Model } from "@/app/utils/interfaces";
-import SetupApiKeyModal from "./SetupApiKeyModal";
 import { Card, CardBody, CardHeader } from "@/app/components/Card";
 import { Button, Divider } from "@nextui-org/react";
 
@@ -19,18 +16,8 @@ export default function ModelCompare() {
 
     return (
         <Card>
-            <CardHeader className="flex flex-wrap justify-between items-center gap-3 p-3">
-                <h1 className="font-bold text-xl whitespace-nowrap">
-                    Model Compare
-                </h1>
-                <div className="flex gap-3 ">
-                    <EditStringInterpoplations />
-                    <SetupApiKeyModal />
-                </div>
-            </CardHeader>
-            <Divider />
             <CardBody>
-                <div className="flex gap-3 pt-3 items-end">
+                <div className="flex gap-3 p-1 items-end">
                     <InputBox
                         inputText={"System Message"}
                         isButtonVisabled
@@ -40,8 +27,14 @@ export default function ModelCompare() {
                         }}
                         onSubmit={handleSystemMessage}
                     />
+                    <EditStringInterpoplations
+                        size="lg"
+                        radius="sm"
+                        variant="light"
+                    />
                     <Button
-                        className="h-16"
+                        size="lg"
+                        radius="sm"
                         isDisabled={!systemMessage || models.length < 1}
                         onClick={() =>
                             handleGoClick({

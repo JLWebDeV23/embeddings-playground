@@ -8,6 +8,7 @@ import {
     useDisclosure,
     Button,
     Input,
+    ButtonProps,
 } from "@nextui-org/react";
 import { ChangeEventHandler, useState } from "react";
 
@@ -35,7 +36,7 @@ const KeyInput = ({
     );
 };
 
-export default function SetupApiKeyModal() {
+export default function SetupApiKeyModal(props: ButtonProps) {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
     const { apiKeys, setApiKeys } = useApiKeys();
@@ -73,7 +74,9 @@ export default function SetupApiKeyModal() {
 
     return (
         <>
-            <Button onPress={onOpen}>Setup API Keys</Button>
+            <Button onPress={onOpen} {...props}>
+                Setup API Keys
+            </Button>
             <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="xl">
                 <ModalContent>
                     {(onClose) => (

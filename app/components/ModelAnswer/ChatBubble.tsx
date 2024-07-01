@@ -32,7 +32,7 @@ function MessageContainer({
     } else if (role === "user") {
         return (
             <div className="flex gap-3 self-end">
-                <Card className="markdown text-sm text-gray-500 w-fit p-2 ">
+                <Card className="markdown text-sm text-gray-500 w-fit py-2 px-4 ">
                     {children}
                 </Card>
                 <IonIcon name="person-outline" className="text-2xl pt-2" />
