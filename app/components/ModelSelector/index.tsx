@@ -13,12 +13,14 @@ type ModelSelectorProps = {
     models?: typeof modelsData;
     onChange: (model: Model) => void;
     selectedModels?: Model[];
+    multipleModels?: boolean;
 } & Omit<SelectProps, "children" | "onChange" | "id">;
 
 export default function ModelSelector({
     models = modelsData,
     onChange,
     selectedModels,
+    multipleModels = true,
     ...props
 }: ModelSelectorProps) {
     const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -56,6 +58,7 @@ export default function ModelSelector({
             onChange={(e) => handleChange(e)}
             selectedKeys={selectedModels?.map((model) => JSON.stringify(model))}
             disabledKeys={disabledSubmodels}
+            multiple={multipleModels}
             {...props}
         >
             {models.map((model) => (

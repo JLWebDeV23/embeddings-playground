@@ -4,6 +4,7 @@ import React from "react";
 
 import ModelCompare from "../components/SystemMessageBox";
 import UserInput from "../components/UserInput";
+import ModelCompareInputFooter from "../components/UserInput/ModelCompareInputFooter";
 import ModelAnswerGroup from "../components/ModelAnswer/ModelAnswerGroup";
 
 import useModelData from "../hooks/useModelData";
@@ -16,24 +17,26 @@ export default function Page() {
                 <div className="px-5">
                     <ModelCompare />
                 </div>
-                <div className="pt-2">
-                    {models.length > 0 ? (
-                        modelData.map((obj, index) => (
+                {models.length > 0 ? (
+                    <div className="pt-2">
+                        {modelData.map((obj, index) => (
                             <ModelAnswerGroup
                                 key={index}
                                 groupNumber={index}
                                 answers={obj}
                             />
-                        ))
-                    ) : (
-                        <div className="flex justify-center items-center opacity-50 min-h-20 h-full rounded-md">
-                            Select a model to start
-                        </div>
-                    )}
-                </div>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="flex justify-center items-center opacity-50 min-h-20 h-full rounded-md">
+                        Select a model below to start
+                    </div>
+                )}
             </div>
             <div className="flex justify-center w-full sticky bottom-0 px-5 pt-5 bg-gradient-to-t from-background/90 to-transparent">
-                <UserInput className="flex flex-col w-full max-w-screen-lg backdrop-blur-md rounded-b-none " />
+                <UserInput className="flex flex-col w-full max-w-screen-lg backdrop-blur-md rounded-b-none ">
+                    <ModelCompareInputFooter />
+                </UserInput>
             </div>
         </>
     );

@@ -15,12 +15,17 @@ import IonIcon from "@reacticons/ionicons";
 export default function UserInput({
     className,
     placeholder = "User Message",
+    modelSelectorPlaceholder = "Select the initial model",
     systemMessage = "",
+    multipleModels = true,
+    children,
     ...rest
 }: {
     placeholder?: string;
+    modelSelectorPlaceholder?: string;
     isUserInputDisabled?: boolean;
     systemMessage?: string;
+    multipleModels?: boolean;
 } & CardProps) {
     const [inputValue, setInputValue] = useState<string>("");
 
@@ -75,7 +80,7 @@ export default function UserInput({
                     </>
                 ) : (
                     <ModelSelector
-                        placeholder="Select the initial model"
+                        placeholder={modelSelectorPlaceholder}
                         aria-label="initial model"
                         selectedModels={models}
                         onChange={handleModelSelection}
@@ -83,31 +88,12 @@ export default function UserInput({
                         radius="sm"
                         size="lg"
                         variant="flat"
+                        multipleModels={multipleModels}
                     />
                 )}
             </CardBody>
             {models.length > 0 ? (
-                <CardFooter className="gap-3">
-                    <ModelSelector
-                        placeholder="Select the initial model"
-                        aria-label="initial model"
-                        selectedModels={models}
-                        onChange={handleModelSelection}
-                        className="w-full max-w-64"
-                        size="sm"
-                        variant="flat"
-                    />
-                    <Button
-                        size="sm"
-                        onPress={() => {
-                            handleModelsAction({ action: "reset" });
-                        }}
-                        className="hover:bg-danger"
-                        variant="flat"
-                    >
-                        Reset
-                    </Button>
-                </CardFooter>
+                <CardFooter className="gap-3">{children}</CardFooter>
             ) : (
                 <Spacer />
             )}
