@@ -2,7 +2,9 @@ import { QdrantClient } from "@qdrant/js-client-rest";
 import { Point } from "./interfaces";
 import OpenAI from "openai";
 import { v4 as uuidv4 } from "uuid";
-
+import { ApiKey } from "./interfaces";
+import Groq from "groq-sdk";
+import { handleError } from "./modelProcessing";
 const client = new QdrantClient({
   url: "http://localhost:6333",
   apiKey: process.env.NEXT_PUBLIC_QDRANT_API_KEY,
@@ -32,6 +34,18 @@ export const createEmbedding = async (input: string | []) => {
   }
   console.log(embedding);
   return embedding;
+};
+
+export const scrollPoints = async (collectionName: string) => {
+  try {
+    const points = await client.scroll(collectionName);
+    console.log("hi");
+    console.log(points);
+    return points;
+  } catch (error) {
+    console.error("Error scrolling points:", error);
+    return error;
+  }
 };
 
 /**
@@ -180,73 +194,144 @@ ${(await getCollectionsList()).map((collection) => collection.name).join("\n")}
   if (collectionName === null) {
     return;
   }
-  // Embed the user input
-  const embedding = await createEmbedding(userPrompt);
+
   let results;
   // Search for similar chunk that match the input
   try {
     results = await client.search(collectionName, {
-      vector: embedding,
+      vector: await createEmbedding(userPrompt),
       limit: 5,
-      score_threshold: 0.4,
+      score_threshold: 0.3,
     });
   } catch (error) {
-    console.error("Error searching for similarities:", error);
+    console.error("Error searching for similarities in Qdrant:", error);
   }
-  // Stringify the retrieved chunk
+
   const retrievedChunk = results!
     .map(
       (result) =>
-        `-> ${JSON.stringify(
+        `** ${JSON.stringify(
           (result.payload?.input as string)
             .replace(/"/g, "")
             .replace(/\n/g, " ")
         )}`
     )
     .join("\n");
-  console.log(retrievedChunk);
+  return retrievedChunk;
+};
+
+export const rag = async (
+  model: data,
+  userPrompt: string,
+  systemMessage: string,
+  retrievedChunk: string,
+  setChatResponse: (text: string) => void
+) => {
   // Query to be sent to the model
-  const query = `Context information is below.
+  const chatSystemMessage = `Context information is below.
 -----------------------
 ${retrievedChunk}
 -----------------------
-Use your prior knowledge to best describe the context of the query.
-Query: ${userPrompt}
-Answer: 
+Given the context information and not prior knowledge, answer the query of user prompt.
+Additional requirement of system message: ${systemMessage}
+
   `;
-  // Message
-  //Given the context information and not prior knowledge, answer the query
+  // create a newMessage
+  const newMessage: OpenAI.ChatCompletionMessageParam[] = [
+    {
+      role: "system",
+      content: chatSystemMessage,
+    },
+    {
+      role: "user",
+      content: userPrompt,
+    },
+  ];
 
-  // const query: string = `${retrievedChunk} \n\n---\n\nYour Message: ${userPrompt}`;
+  // try {
+  //   const openai = new OpenAI({
+  //     apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
+  //     dangerouslyAllowBrowser: true,
+  //   });
+  //   const stream = await openai.chat.completions.create({
+  //     messages: newMessage,
+  //     model: "gpt-4o",
+  //     stream: true,
+  //   });
 
-  // Get the response from the model
-  let modelResponse: string = query;
-  try {
+  //   let text = "";
+  //   for await (const chunck of stream) {
+  //     console.log(chunck.choices[0]?.delta.content);
+  //     text += chunck.choices[0]?.delta.content || "";
+  //     setChatResponse(text);
+  //   }
+  // } catch (err) {
+  //   console.error("Error in OpenAI Chat Completions:", err);
+  // }
+
+  selectModel(model, newMessage, setChatResponse);
+};
+
+type data = {
+  model: string;
+  subModel: string;
+  apiKey: ApiKey[];
+};
+
+const selectModel = async (
+  model: data,
+  messages: any[],
+  setChatResponse: any
+) => {
+  let stream: any;
+
+  if (model.model === "OpenAI") {
+    const apiKey = model.apiKey.find((key) => key.name === "OpenAI");
+    if (!apiKey) {
+      throw new Error("API Key not found");
+    }
     const openai = new OpenAI({
-      apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
+      apiKey: apiKey.apiKey,
       dangerouslyAllowBrowser: true,
     });
-    const completion = await openai.chat.completions.create({
-      messages: [
-        {
-          role: "system",
-          content:
-            "Given the context information and not prior knowledge, answer the query of user prompt.",
-        },
-        {
-          role: "user",
-          content: query,
-        },
-      ],
-      model: "gpt-4o",
+    try {
+      stream = await openai.chat.completions.create({
+        messages: messages,
+        model: model.subModel,
+        stream: true,
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        throw handleError(model.model, model.subModel, error);
+      }
+    }
+  } else {
+    const apiKey = model.apiKey.find(
+      (key) => key.name === "Groq (Llama | Mistral | Gemma)"
+    );
+    if (!apiKey) {
+      throw new Error("API Key not found");
+    }
+    const groq = new Groq({
+      apiKey: apiKey.apiKey,
+      dangerouslyAllowBrowser: true,
     });
-    const chatResponse = completion.choices[0].message.content;
-    console.log(chatResponse);
-    modelResponse += chatResponse;
-
-    console.log(modelResponse);
-  } catch (err) {
-    console.error("Error in OpenAI Chat Completions:", err);
+    try {
+      stream = await groq.chat.completions.create({
+        messages: messages,
+        model: model.subModel,
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        throw handleError(model.model, model.subModel, error);
+      }
+    }
   }
-  return modelResponse;
+
+  let text = "";
+  for await (const chunck of stream) {
+    console.log(chunck.choices[0]?.delta.content);
+    text += chunck.choices[0]?.delta.content || "";
+    setChatResponse(text);
+  }
 };
