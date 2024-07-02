@@ -56,6 +56,7 @@ export default function Page() {
             </div>
             <div className="flex justify-center w-full sticky bottom-0 px-5 pt-5 bg-gradient-to-t from-background/90 to-transparent">
                 <UserInput
+                    handleSendMessage={() => alert("to be implemented")}
                     className="flex flex-col w-full max-w-screen-lg backdrop-blur-md rounded-b-none"
                     modelSelectorPlaceholder="Select a model to start"
                 >

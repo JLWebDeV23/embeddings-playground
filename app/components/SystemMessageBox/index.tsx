@@ -9,7 +9,7 @@ import { Button, Divider } from "@nextui-org/react";
 /* 
     This component is used to select the initial model for the chat and set the system message.
 */
-export default function ModelCompare() {
+export default function SystemMessageBox() {
     const { systemMessage, handleSystemMessage } = useSystemMessage();
 
     const { handleGoClick, models } = useModelData();

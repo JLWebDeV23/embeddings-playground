@@ -13,6 +13,7 @@ import { Card, CardBody } from "../Card";
 import IonIcon from "@reacticons/ionicons";
 
 export default function UserInput({
+    handleSendMessage,
     className,
     placeholder = "User Message",
     modelSelectorPlaceholder = "Select the initial model",
@@ -21,6 +22,7 @@ export default function UserInput({
     children,
     ...rest
 }: {
+    handleSendMessage: (message: string) => void;
     placeholder?: string;
     modelSelectorPlaceholder?: string;
     isUserInputDisabled?: boolean;
@@ -31,8 +33,6 @@ export default function UserInput({
 
     const { models, handleModelsAction, isLastLoading, isLoading } =
         useModelData();
-
-    const { handleAddResponseClick } = useModelData();
 
     const handleModelSelection = (model: Model) => {
         handleModelsAction({ action: "set_initial", model: model });
@@ -48,7 +48,7 @@ export default function UserInput({
                             onKeyDown={(e) => {
                                 if (e.key === "Enter" && !e.shiftKey) {
                                     e.preventDefault();
-                                    handleAddResponseClick(inputValue);
+                                    handleSendMessage(inputValue);
                                     setInputValue("");
                                 }
                             }}
@@ -63,7 +63,7 @@ export default function UserInput({
                         ></Textarea>
                         <Button
                             onClick={() => {
-                                handleAddResponseClick(inputValue);
+                                handleSendMessage(inputValue);
                                 setInputValue("");
                             }}
                             variant="flat"

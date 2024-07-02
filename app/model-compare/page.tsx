@@ -10,7 +10,7 @@ import ModelAnswerGroup from "../components/ModelAnswer/ModelAnswerGroup";
 import useModelData from "../hooks/useModelData";
 
 export default function Page() {
-    const { models, modelData } = useModelData();
+    const { models, modelData, handleAddResponseClick } = useModelData();
     return (
         <>
             <div className="mb-0 gap-3 flex flex-col flex-1">
@@ -34,7 +34,10 @@ export default function Page() {
                 )}
             </div>
             <div className="flex justify-center w-full sticky bottom-0 px-5 pt-5 bg-gradient-to-t from-background/90 to-transparent">
-                <UserInput className="flex flex-col w-full max-w-screen-lg backdrop-blur-md rounded-b-none ">
+                <UserInput
+                    handleSendMessage={handleAddResponseClick}
+                    className="flex flex-col w-full max-w-screen-lg backdrop-blur-md rounded-b-none "
+                >
                     <ModelCompareInputFooter />
                 </UserInput>
             </div>
