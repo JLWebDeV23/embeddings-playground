@@ -4,7 +4,8 @@ import styles from "./MessageModel.module.css";
 import { QdrantClient } from "@qdrant/js-client-rest";
 import SelectModel from "../SelectModel/SelectModel";
 import TextBox from "../TextBox/TextBox";
-import { getCollectionsList, searchSimilarities } from "@/app/utils/collection";
+import { getCollectionsList, searchSimilarities, rag, scrollPoints } from "@/app/utils/collection";
+import { button } from "@nextui-org/react";
 
 type MessageModelProps = {
   
@@ -28,7 +29,7 @@ const MessageModel: React.FC<MessageModelProps> = ({
   const [searchCollections, setSearchCollections] = useState<SearchResult[]>(
     []
   );
-  const [chatResponse, setChatResponse] = useState<string>("");
+  const [chatResponse, setChatResponse] = useState<string>();
 
   const handleModelChange = useCallback((newModel: string) => {
     console.log(newModel);
@@ -41,13 +42,25 @@ const MessageModel: React.FC<MessageModelProps> = ({
 
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const response = await searchSimilarities(inputValue);
-    setChatResponse(response || "");
+    const result = await searchSimilarities(inputValue);
+    console.log(result);
+    const model = {
+      model: "openai",
+      subModel: "gpt-3.5-turbo",
+      apiKeys: []
+    };
     setInputValue("");
   };
 
+  const handleScroll = () => {
+    console.log("scrolling")
+    const points = scrollPoints("dog")
+    console.log(points)
+  }
+
   return (
     <section className="w-full">
+      <button onClick={() => handleScroll}>scrollPoints</button>
       <TextBox
         placeholder="Message ChatGPT"
         nameBtn="Submit"

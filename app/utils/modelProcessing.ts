@@ -48,7 +48,6 @@ export const chatCompletion = async (model: ModelData) => {
 
   switch (model.model) {
     case "OpenAI": {
-      console.log(model, model.apiKey);
       const apiKey = model.apiKey.find((key) => key.name === "OpenAI");
       if (!apiKey) {
         throw new Error("API Key not found");
@@ -71,7 +70,6 @@ export const chatCompletion = async (model: ModelData) => {
     }
 
     case "LlaMA 3": {
-      console.log(model.apiKey, model);
       const apiKey = model.apiKey.find(
         (key) => key.name === "Groq (Llama | Mistral | Gemma)"
       );
@@ -484,7 +482,7 @@ class ModelError extends Error {
 }
 
 // Define the error handling function
-const handleError = (
+export const handleError = (
   model: string,
   subModel: string,
   error: Error
