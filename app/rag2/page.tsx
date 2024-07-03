@@ -24,6 +24,7 @@ import {
     createCollection,
     deleteCollection,
     getCollectionsList,
+    scrollPoints,
     upsertPoints,
 } from "../utils/collection";
 import useModalInfo from "../hooks/useModalInfo";
@@ -38,7 +39,7 @@ function AddSourceTab({
     const [name, setName] = useState<string>("");
     const [source, setSource] = useState("");
     return (
-        <>
+        <div className="flex flex-col gap-4 w-full h-80">
             <Input
                 placeholder="Name"
                 value={name}
@@ -46,9 +47,9 @@ function AddSourceTab({
             />
             <Textarea
                 placeholder="Enter the source"
-                className="w-full"
-                minRows={7}
-                maxRows={7}
+                className="w-full "
+                minRows={9}
+                maxRows={9}
                 value={source}
                 onValueChange={(value) => setSource(value)}
             />
@@ -63,15 +64,79 @@ function AddSourceTab({
             >
                 Add
             </Button>
-        </>
+        </div>
     );
 }
 
-function SourcesModal() {
+function SourcesTab({
+    collection,
+    isLoading,
+    onClose,
+    handleDeleteCollection,
+    handleSelectCollection,
+}: {
+    collection: string;
+    isLoading: boolean;
+    onClose: () => void;
+    handleDeleteCollection: (collection: string) => void;
+    handleSelectCollection: (collection: string) => void;
+}) {
+    const [collectionContent, setCollectionContent] = useState<string>("");
+
+    const fetchCollectionContent = async (name: string) => {
+        type ScrollPoints = {
+            payload: string;
+        };
+        try {
+            const content = (await scrollPoints(name)) as ScrollPoints[];
+            setCollectionContent(
+                content.map((item) => item.payload).join("\n")
+            );
+        } catch (e) {
+            console.log(e);
+        }
+    };
+
+    fetchCollectionContent(collection);
+
+    return (
+        <div className="flex flex-col gap-4 w-full h-80">
+            <ScrollShadow className="h-full">{collectionContent}</ScrollShadow>
+            <div className="flex self-end gap-3">
+                <Button
+                    className="w-fit"
+                    color="danger"
+                    variant="light"
+                    isLoading={isLoading}
+                    onPress={() => handleDeleteCollection(collection)}
+                >
+                    Delete
+                </Button>
+                <Button
+                    className="w-fit"
+                    color="primary"
+                    onPress={() => {
+                        handleSelectCollection(collection);
+                        onClose();
+                    }}
+                >
+                    Select
+                </Button>
+            </div>
+        </div>
+    );
+}
+
+function SourcesModal({
+    handleSelectCollection,
+    selectedCollection,
+}: {
+    handleSelectCollection: (collection: string) => void;
+    selectedCollection: string;
+}) {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const [collectionList, setCollectionList] = useState<string[]>([]);
     const [isLoading, setIsLoading] = useState(false);
-
     const { openModalInfo } = useModalInfo();
 
     const handleAddSource = async (name: string, source: string) => {
@@ -120,6 +185,8 @@ function SourcesModal() {
         setIsLoading(false);
     };
 
+    const isSmallScreen = window.innerWidth < 640;
+
     return (
         <>
             <Button
@@ -134,17 +201,20 @@ function SourcesModal() {
                 }}
                 variant="flat"
             >
-                Sources
+                Sources{" "}
+                {selectedCollection && `("${selectedCollection}" selected)`}
             </Button>
             <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="2xl">
                 <ModalContent>
                     {(onClose) => (
                         <>
-                            <ModalHeader className="flex flex-col gap-1">
-                                Sources
-                            </ModalHeader>
+                            <ModalHeader>Sources</ModalHeader>
                             <ModalBody className="w-full">
-                                <Tabs aria-label="Options" isVertical>
+                                <Tabs
+                                    aria-label="Options"
+                                    isVertical={!isSmallScreen}
+                                    className="w-full sm:w-fit h-full flex flex-col gap-4"
+                                >
                                     <Tab
                                         title="Add a new source"
                                         key={0}
@@ -161,31 +231,17 @@ function SourcesModal() {
                                             key={index + 1}
                                             className="flex flex-col w-full gap-4"
                                         >
-                                            <ScrollShadow className="h-40">
-                                                {collection}
-                                            </ScrollShadow>
-                                            <div className="flex self-end gap-3">
-                                                <Button
-                                                    className="w-fit"
-                                                    color="danger"
-                                                    variant="light"
-                                                    isLoading={isLoading}
-                                                    onPress={() =>
-                                                        handleDeleteCollection(
-                                                            collection
-                                                        )
-                                                    }
-                                                >
-                                                    Delete
-                                                </Button>
-                                                <Button
-                                                    className="w-fit"
-                                                    color="primary"
-                                                    onPress={onClose}
-                                                >
-                                                    Select
-                                                </Button>
-                                            </div>
+                                            <SourcesTab
+                                                collection={collection}
+                                                handleDeleteCollection={
+                                                    handleDeleteCollection
+                                                }
+                                                handleSelectCollection={
+                                                    handleSelectCollection
+                                                }
+                                                isLoading={isLoading}
+                                                onClose={onClose}
+                                            />
                                         </Tab>
                                     ))}
                                 </Tabs>
@@ -199,7 +255,13 @@ function SourcesModal() {
     );
 }
 
-function RagInputFooter() {
+function RagInputFooter({
+    selectedCollection,
+    handleSelectCollection,
+}: {
+    selectedCollection: string;
+    handleSelectCollection: (collection: string) => void;
+}) {
     const { models, handleModelsAction } = useModelData();
 
     const handleModelSelection = (model: Model) => {
@@ -217,12 +279,16 @@ function RagInputFooter() {
                 variant="flat"
             />
 
-            <SourcesModal />
+            <SourcesModal
+                selectedCollection={selectedCollection}
+                handleSelectCollection={handleSelectCollection}
+            />
         </>
     );
 }
 
 export default function Page() {
+    const [selectedCollection, setSelectedCollection] = useState<string>("");
     return (
         <div className="gap-3 flex flex-col flex-1 justify-between">
             <div className="px-5 flex-1">
@@ -237,7 +303,12 @@ export default function Page() {
                     className="flex flex-col w-full max-w-screen-lg backdrop-blur-md rounded-b-none"
                     modelSelectorPlaceholder="Select a model to start"
                 >
-                    <RagInputFooter />
+                    <RagInputFooter
+                        handleSelectCollection={(collection) =>
+                            setSelectedCollection(collection)
+                        }
+                        selectedCollection={selectedCollection}
+                    />
                 </UserInput>
             </div>
         </div>
