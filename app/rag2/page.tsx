@@ -22,14 +22,18 @@ import { useState } from "react";
 import {
     collectionExists,
     createCollection,
+    deleteCollection,
     getCollectionsList,
     upsertPoints,
 } from "../utils/collection";
+import useModalInfo from "../hooks/useModalInfo";
 
 function AddSourceTab({
-    onAddSource,
+    onAddCollection,
+    isLoading = false,
 }: {
-    onAddSource: (name: string, source: string) => void;
+    onAddCollection: (name: string, source: string) => void;
+    isLoading?: boolean;
 }) {
     const [name, setName] = useState<string>("");
     const [source, setSource] = useState("");
@@ -52,8 +56,9 @@ function AddSourceTab({
                 variant="flat"
                 className="w-fit self-end"
                 isDisabled={!name || !source}
+                isLoading={isLoading}
                 onPress={() => {
-                    onAddSource(name, source);
+                    onAddCollection(name, source);
                 }}
             >
                 Add
@@ -65,14 +70,70 @@ function AddSourceTab({
 function SourcesModal() {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const [collectionList, setCollectionList] = useState<string[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
 
-    getCollectionsList().then((collections) => {
-        setCollectionList(collections.map((collection) => collection.name));
-    });
+    const { openModalInfo } = useModalInfo();
+
+    const handleAddSource = async (name: string, source: string) => {
+        setIsLoading(true);
+        const exist = await collectionExists(name);
+        if (exist) {
+            setIsLoading(false);
+            openModalInfo({
+                title: "Error",
+                message: "Collection already exists",
+            });
+            return;
+        }
+        try {
+            await createCollection(name);
+        } catch (e) {
+            setIsLoading(false);
+            openModalInfo({
+                title: "Error",
+                message: "Failed to create collection",
+            });
+            return;
+        }
+        await upsertPoints(name, source);
+        await getCollectionsList().then((collections) => {
+            setCollectionList(collections.map((collection) => collection.name));
+        });
+        setIsLoading(false);
+    };
+
+    const handleDeleteCollection = async (name: string) => {
+        setIsLoading(true);
+        try {
+            await deleteCollection(name);
+        } catch (e) {
+            openModalInfo({
+                title: "Error",
+                message: "Failed to delete collection",
+            });
+            setIsLoading(false);
+            return;
+        }
+        await getCollectionsList().then((collections) => {
+            setCollectionList(collections.map((collection) => collection.name));
+        });
+        setIsLoading(false);
+    };
 
     return (
         <>
-            <Button size="sm" onPress={onOpen} variant="flat">
+            <Button
+                size="sm"
+                onPress={() => {
+                    onOpen();
+                    getCollectionsList().then((collections) => {
+                        setCollectionList(
+                            collections.map((collection) => collection.name)
+                        );
+                    });
+                }}
+                variant="flat"
+            >
                 Sources
             </Button>
             <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="2xl">
@@ -90,27 +151,8 @@ function SourcesModal() {
                                         className="flex flex-col w-full gap-4"
                                     >
                                         <AddSourceTab
-                                            onAddSource={async (
-                                                name: string,
-                                                source: string
-                                            ) => {
-                                                const exist =
-                                                    await collectionExists(
-                                                        name
-                                                    );
-
-                                                if (exist) {
-                                                    console.log(
-                                                        "erase old data"
-                                                    );
-                                                }
-                                                createCollection(name);
-                                                upsertPoints(name, source);
-                                                setCollectionList([
-                                                    ...collectionList,
-                                                    name,
-                                                ]);
-                                            }}
+                                            isLoading={isLoading}
+                                            onAddCollection={handleAddSource}
                                         />
                                     </Tab>
                                     {collectionList.map((collection, index) => (
@@ -122,13 +164,28 @@ function SourcesModal() {
                                             <ScrollShadow className="h-40">
                                                 {collection}
                                             </ScrollShadow>
-                                            <Button
-                                                className="w-fit self-end"
-                                                color="primary"
-                                                onPress={onClose}
-                                            >
-                                                Select
-                                            </Button>
+                                            <div className="flex self-end gap-3">
+                                                <Button
+                                                    className="w-fit"
+                                                    color="danger"
+                                                    variant="light"
+                                                    isLoading={isLoading}
+                                                    onPress={() =>
+                                                        handleDeleteCollection(
+                                                            collection
+                                                        )
+                                                    }
+                                                >
+                                                    Delete
+                                                </Button>
+                                                <Button
+                                                    className="w-fit"
+                                                    color="primary"
+                                                    onPress={onClose}
+                                                >
+                                                    Select
+                                                </Button>
+                                            </div>
                                         </Tab>
                                     ))}
                                 </Tabs>
