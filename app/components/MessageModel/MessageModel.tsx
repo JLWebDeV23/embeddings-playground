@@ -52,15 +52,9 @@ const MessageModel: React.FC<MessageModelProps> = ({
     setInputValue("");
   };
 
-  const handleScroll = () => {
-    console.log("scrolling")
-    const points = scrollPoints("dog")
-    console.log(points)
-  }
 
   return (
     <section className="w-full">
-      <button onClick={() => handleScroll}>scrollPoints</button>
       <TextBox
         placeholder="Message ChatGPT"
         nameBtn="Submit"

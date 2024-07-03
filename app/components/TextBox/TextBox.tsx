@@ -1,6 +1,5 @@
 import React from "react";
 import styles from "./TextBox.module.css";
-import { platform } from "os";
 
 type TextBoxProps = {
   placeholder: string;
