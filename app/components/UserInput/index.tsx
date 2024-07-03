@@ -16,6 +16,7 @@ export default function UserInput({
     handleSendMessage,
     className,
     placeholder = "User Message",
+    isUserInputDisabled = false,
     modelSelectorPlaceholder = "Select the initial model",
     systemMessage = "",
     multipleModels = true,
@@ -45,6 +46,7 @@ export default function UserInput({
                     <>
                         <Textarea
                             value={inputValue}
+                            isDisabled={isUserInputDisabled}
                             onKeyDown={(e) => {
                                 if (e.key === "Enter" && !e.shiftKey) {
                                     e.preventDefault();

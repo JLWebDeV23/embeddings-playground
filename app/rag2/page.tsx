@@ -191,6 +191,7 @@ function SourcesModal({
         <>
             <Button
                 size="sm"
+                color={selectedCollection ? "success" : "default"}
                 onPress={() => {
                     onOpen();
                     getCollectionsList().then((collections) => {
@@ -292,7 +293,7 @@ export default function Page() {
     return (
         <div className="gap-3 flex flex-col flex-1 justify-between">
             <div className="px-5 flex-1">
-                <SystemMessageBox />
+                <SystemMessageBox hideInterpolations hideGoButton />
                 <div className="flex justify-center items-center opacity-50 min-h-20 h-full rounded-md">
                     Select a model below to start
                 </div>
@@ -302,6 +303,12 @@ export default function Page() {
                     handleSendMessage={() => alert("to be implemented")}
                     className="flex flex-col w-full max-w-screen-lg backdrop-blur-md rounded-b-none"
                     modelSelectorPlaceholder="Select a model to start"
+                    isUserInputDisabled={selectedCollection === ""}
+                    placeholder={
+                        selectedCollection
+                            ? "Type your message"
+                            : "Please select a source to start"
+                    }
                 >
                     <RagInputFooter
                         handleSelectCollection={(collection) =>

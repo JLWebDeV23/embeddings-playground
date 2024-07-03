@@ -9,7 +9,13 @@ import { Button, Divider } from "@nextui-org/react";
 /* 
     This component is used to select the initial model for the chat and set the system message.
 */
-export default function SystemMessageBox() {
+export default function SystemMessageBox({
+    hideInterpolations = false,
+    hideGoButton = false,
+}: {
+    hideInterpolations?: boolean;
+    hideGoButton?: boolean;
+}) {
     const { systemMessage, handleSystemMessage } = useSystemMessage();
 
     const { handleGoClick, models } = useModelData();
@@ -27,23 +33,27 @@ export default function SystemMessageBox() {
                         }}
                         onSubmit={handleSystemMessage}
                     />
-                    <EditStringInterpoplations
-                        size="lg"
-                        radius="sm"
-                        variant="light"
-                    />
-                    <Button
-                        size="lg"
-                        radius="sm"
-                        isDisabled={!systemMessage || models.length < 1}
-                        onClick={() =>
-                            handleGoClick({
-                                newSystemMessage: systemMessage,
-                            })
-                        }
-                    >
-                        GO
-                    </Button>
+                    {!hideInterpolations && (
+                        <EditStringInterpoplations
+                            size="lg"
+                            radius="sm"
+                            variant="light"
+                        />
+                    )}
+                    {!hideGoButton && (
+                        <Button
+                            size="lg"
+                            radius="sm"
+                            isDisabled={!systemMessage || models.length < 1}
+                            onClick={() =>
+                                handleGoClick({
+                                    newSystemMessage: systemMessage,
+                                })
+                            }
+                        >
+                            GO
+                        </Button>
+                    )}
                 </div>
             </CardBody>
         </Card>
