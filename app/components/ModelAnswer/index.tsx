@@ -82,11 +82,11 @@ function ModelAnswerHeader({
 
 export default function ModelAnswer({
     answer,
-    modelNumber,
+    modelNumber = 0,
     isLast,
 }: {
     answer: ModelData;
-    modelNumber: number;
+    modelNumber?: number;
     isLast?: boolean;
 }) {
     const { isLoading, isLastLoading } = useModelData();

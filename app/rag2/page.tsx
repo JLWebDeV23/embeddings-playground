@@ -3,7 +3,7 @@ import UserInput from "../components/UserInput";
 import SystemMessageBox from "../components/SystemMessageBox";
 import ModelSelector from "../components/ModelSelector";
 import useModelData from "../hooks/useModelData";
-import { Model } from "../utils/interfaces";
+import { Message, Model } from "../utils/interfaces";
 import {
     Modal,
     ModalContent,
@@ -18,16 +18,20 @@ import {
     Input,
     ScrollShadow,
 } from "@nextui-org/react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
     collectionExists,
     createCollection,
     deleteCollection,
     getCollectionsList,
+    rag,
     scrollPoints,
+    searchSimilarities,
     upsertPoints,
 } from "../utils/collection";
 import useModalInfo from "../hooks/useModalInfo";
+import { useApiKeys } from "../hooks/useApiKeys";
+import ModelAnswer from "../components/ModelAnswer";
 
 function AddSourceTab({
     onAddCollection,
@@ -290,17 +294,66 @@ function RagInputFooter({
 
 export default function Page() {
     const [selectedCollection, setSelectedCollection] = useState<string>("");
+    const { models } = useModelData();
+
+    const [messages, setMessages] = useState<Message[]>([]);
+
+    const resultDivRef = useRef<HTMLDivElement>(null);
+
+    const updateMessages = (response: string) => {
+        setMessages((prev) => {
+            console.log(prev);
+            const [lastMessage, ...oldMessages] = prev.slice().reverse();
+            if (lastMessage.role !== "assistant") {
+                return [...prev, { role: "assistant", content: response }];
+            }
+            return [
+                ...oldMessages.reverse(),
+                { role: "assistant", content: response },
+            ];
+        });
+    };
+
+    const { apiKeys } = useApiKeys();
+
+    const handleSendMessage = async (inputValue: string) => {
+        // use result to display similarities
+        const result = await searchSimilarities(inputValue, selectedCollection);
+        const model = {
+            model: models[0].model,
+            subModel: models[0].subModel,
+            apiKey: apiKeys,
+        };
+        setMessages((prev) => [...prev, { role: "user", content: inputValue }]);
+        // and call rag to and it will set the streamResponse to your component
+        await rag(model, inputValue, "", result!, updateMessages);
+    };
+
     return (
         <div className="gap-3 flex flex-col flex-1 justify-between">
-            <div className="px-5 flex-1">
+            <div ref={resultDivRef} className="flex flex-col px-5 flex-1 gap-5">
                 <SystemMessageBox hideInterpolations hideGoButton />
-                <div className="flex justify-center items-center opacity-50 min-h-20 h-full rounded-md">
-                    Select a model below to start
-                </div>
+                {models.length === 0 ? (
+                    <div className="flex justify-center items-center opacity-50 min-h-20 h-full rounded-md">
+                        Select a model below to start
+                    </div>
+                ) : (
+                    <div className="h-fit">
+                        <ModelAnswer
+                            answer={{
+                                model: models[0].model,
+                                subModel: models[0].subModel,
+                                messages: messages,
+                                locked: true,
+                                apiKey: apiKeys,
+                            }}
+                        />
+                    </div>
+                )}
             </div>
             <div className="flex justify-center w-full sticky bottom-0 px-5 pt-5 bg-gradient-to-t from-background/90 to-transparent">
                 <UserInput
-                    handleSendMessage={() => alert("to be implemented")}
+                    handleSendMessage={handleSendMessage}
                     className="flex flex-col w-full max-w-screen-lg backdrop-blur-md rounded-b-none"
                     modelSelectorPlaceholder="Select a model to start"
                     isUserInputDisabled={selectedCollection === ""}
