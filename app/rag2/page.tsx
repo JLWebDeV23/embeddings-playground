@@ -32,6 +32,7 @@ import {
 import useModalInfo from "../hooks/useModalInfo";
 import { useApiKeys } from "../hooks/useApiKeys";
 import ModelAnswer from "../components/ModelAnswer";
+import useSystemMessage from "../hooks/useSystemMessage";
 
 function AddSourceTab({
     onAddCollection,
@@ -315,6 +316,7 @@ export default function Page() {
     };
 
     const { apiKeys } = useApiKeys();
+    const { systemMessage } = useSystemMessage();
 
     const handleSendMessage = async (inputValue: string) => {
         // use result to display similarities
@@ -326,7 +328,14 @@ export default function Page() {
         };
         setMessages((prev) => [...prev, { role: "user", content: inputValue }]);
         // and call rag to and it will set the streamResponse to your component
-        await rag(model, inputValue, "", result!, updateMessages);
+        await rag(
+            model,
+            inputValue,
+            systemMessage,
+            messages,
+            result!,
+            updateMessages
+        );
     };
 
     return (

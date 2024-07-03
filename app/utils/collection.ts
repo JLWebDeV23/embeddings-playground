@@ -1,5 +1,5 @@
 import { QdrantClient } from "@qdrant/js-client-rest";
-import { Point } from "./interfaces";
+import { Message, Point } from "./interfaces";
 import OpenAI from "openai";
 import { v4 as uuidv4 } from "uuid";
 import { ApiKey } from "./interfaces";
@@ -289,6 +289,7 @@ export const rag = async (
     model: data,
     userPrompt: string,
     systemMessage: string,
+    history: Message[],
     retrievedChunk: string,
     setChatResponse: (text: string) => void
 ) => {
@@ -307,6 +308,12 @@ Additional requirement of system message: ${systemMessage}
             role: "system",
             content: chatSystemMessage,
         },
+        ...history.map((message) => {
+            return {
+                role: message.role,
+                content: message.content,
+            } as OpenAI.ChatCompletionMessageParam;
+        }),
         {
             role: "user",
             content: userPrompt,
