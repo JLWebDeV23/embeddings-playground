@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import { ApiKey } from "./interfaces";
 import Groq from "groq-sdk";
 import { handleError } from "./modelProcessing";
+import { errorMonitor } from "events";
 const client = new QdrantClient({
   url: "http://localhost:6333",
   apiKey: process.env.NEXT_PUBLIC_QDRANT_API_KEY,
@@ -28,22 +29,20 @@ export const createEmbedding = async (input: string | []) => {
         model: "text-embedding-3-small",
         input: input,
       })
-    ).data[0].embedding;
+    ).data[0].embedding as number[]; // Specify the type of embedding as number[]
+    return embedding;
   } catch (error) {
     console.error("Error in Create OpenAI Embeddings:", error);
+    return error;
   }
-  console.log(embedding);
-  return embedding;
 };
 
 export const scrollPoints = async (collectionName: string) => {
   try {
     const points = await client.scroll(collectionName);
-    console.log("hi");
-    console.log(points);
     return points;
   } catch (error) {
-    console.error("Error scrolling points:", error);
+    console.error("Error retriving points:", error);
     return error;
   }
 };
@@ -63,6 +62,7 @@ export const createCollection = async (collectionName: string) => {
     });
   } catch (error) {
     console.error("Error creating collection:", error);
+    return error;
   }
 };
 
@@ -79,6 +79,7 @@ const addPoints = async (collectionName: string, points: Point[]) => {
     await client.upsert(collectionName, { points });
   } catch (error) {
     console.error("Error creating points:", error);
+    return error;
   }
 };
 
@@ -103,19 +104,22 @@ export const upsertPoints = async (
       };
     })
   );
-  console.log("Embeddings:", embeddings);
   // create point for each embedding and add to points in Qdrant
   const points: Point[] = [];
-  embeddings.forEach((embedding) => {
-    const point: Point = {
-      id: uuidv4(),
-      vector: JSON.parse(JSON.stringify(embedding.vector)),
-      payload: { input: embedding.input },
-    };
-    points.push(point);
-  });
-  console.log("Points:", points);
-  await addPoints(collectionName!, points);
+  try {
+    embeddings.forEach((embedding) => {
+      const point: Point = {
+        id: uuidv4(),
+        vector: JSON.parse(JSON.stringify(embedding.vector)),
+        payload: { input: embedding.input },
+      };
+      points.push(point);
+    });
+    await addPoints(collectionName!, points);
+  } catch (err) {
+    console.error("Error upserting points:", err);
+    return err;
+  }
 };
 
 /**
@@ -127,20 +131,25 @@ const chunkPrompt = (input: string): string[] => {
   const chunks: string[] = [];
   let currentChunk = "";
   let word = 0;
-  for (let i = 0; i < input.length; i++) {
-    const char = input[i];
-    currentChunk += char;
-    if (char === " ") word++;
-    if (word >= 500) {
-      chunks.push(currentChunk.trim());
-      currentChunk = "";
-      word = 0;
+  try {
+    for (let i = 0; i < input.length; i++) {
+      const char = input[i];
+      currentChunk += char;
+      if (char === " ") word++;
+      if (word >= 500) {
+        chunks.push(currentChunk.trim());
+        currentChunk = "";
+        word = 0;
+      }
     }
+    if (currentChunk.trim().length > 0) {
+      chunks.push(currentChunk.trim());
+    }
+    return chunks;
+  } catch (error) {
+    console.error("Error chunking input:", error);
+    return [input];
   }
-  if (currentChunk.trim().length > 0) {
-    chunks.push(currentChunk.trim());
-  }
-  return chunks;
 };
 
 /**
@@ -162,7 +171,12 @@ export const getCollectionsList = async () => {
 export const collectionExists = async (
   collectionName: string
 ): Promise<boolean> => {
-  return (await client.collectionExists(collectionName)).exists;
+  try {
+    return (await client.collectionExists(collectionName)).exists;
+  } catch (err) {
+    console.error("Error checking collection existence:", err);
+    return false;
+  }
 };
 
 /**
@@ -174,7 +188,12 @@ export const collectionExists = async (
 export const deleteCollection = async (
   collectionName: string
 ): Promise<boolean> => {
-  return await client.deleteCollection(collectionName);
+  try {
+    return await client.deleteCollection(collectionName);
+  } catch (err) {
+    console.log(err);
+    return false;
+  }
 };
 
 /**
@@ -199,7 +218,7 @@ ${(await getCollectionsList()).map((collection) => collection.name).join("\n")}
   // Search for similar chunk that match the input
   try {
     results = await client.search(collectionName, {
-      vector: await createEmbedding(userPrompt),
+      vector: (await createEmbedding(userPrompt)) || [],
       limit: 5,
       score_threshold: 0.3,
     });
