@@ -28,7 +28,6 @@ ${(await getCollectionsList()).map((collection) => collection.name).join("\n")}
 - - -
     `);
     const collection = await collectionExists(collectionName!);
-    console.log("Collection exists:", collectionExists);
     if (collectionName === null) {
       return;
       // check if the collection exists,
@@ -40,7 +39,6 @@ ${(await getCollectionsList()).map((collection) => collection.name).join("\n")}
         )
       ) {
         // create points and add to the existing collection
-        console.log(inputValue);
         upsertPoints(collectionName!, inputValue);
         alert(`Points added to the ${collectionName}`);
       } else {
