@@ -1,7 +1,5 @@
 "use client";
 import React, { cloneElement, useState } from "react";
-import styles from "./AddCollection.module.css";
-import { QdrantClient } from "@qdrant/js-client-rest";
 import TextBox from "../TextBox/TextBox";
 import {
   createCollection,

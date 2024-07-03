@@ -42,15 +42,21 @@ const MessageModel: React.FC<MessageModelProps> = ({
 
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    // use result to display similarities 
     const result = await searchSimilarities(inputValue);
-    console.log(result);
     const model = {
       model: "openai",
       subModel: "gpt-3.5-turbo",
       apiKeys: []
     };
+    // and call rag to and it will set the streamResponse to your component
+    await rag(model, inputValue, "", result!, setChatResponse);
+    //
+
     setInputValue("");
   };
+
 
 
   return (
