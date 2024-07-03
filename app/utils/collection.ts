@@ -17,9 +17,10 @@ const client = new QdrantClient({
  * @param input - A string or an array of strings to generate embeddings for.
  * @returns A promise that resolves to the embedding as an array of numbers.
  */
-export const createEmbedding = async (input: string | []) => {
+export const createEmbedding = async (
+  input: string | []
+): Promise<number[]> => {
   let embedding: number[] = [];
-  console.log(input);
   try {
     embedding = (
       await new OpenAI({
@@ -33,14 +34,27 @@ export const createEmbedding = async (input: string | []) => {
     return embedding;
   } catch (error) {
     console.error("Error in Create OpenAI Embeddings:", error);
-    return error;
+    return [];
   }
 };
 
+/**
+ * Asynchronously retrieves a list of points from a specified collection.
+ * This function uses the client's `scroll` method to retrieve points from a specified collection.
+ * In case of an error during the retrieval process, the error is logged to the console.
+ *
+ * @param collectionName - The name of the collection from which to retrieve points.
+ * @returns A promise that resolves to an array of points.
+ */
 export const scrollPoints = async (collectionName: string) => {
   try {
     const points = await client.scroll(collectionName);
-    return points;
+    const results = points.points.map((point) => {
+      return {
+        payload: point.payload!.input,
+      };
+    });
+    return results;
   } catch (error) {
     console.error("Error retriving points:", error);
     return error;
@@ -218,7 +232,7 @@ ${(await getCollectionsList()).map((collection) => collection.name).join("\n")}
   // Search for similar chunk that match the input
   try {
     results = await client.search(collectionName, {
-      vector: (await createEmbedding(userPrompt)) || [],
+      vector: await createEmbedding(userPrompt),
       limit: 5,
       score_threshold: 0.3,
     });

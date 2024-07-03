@@ -1,7 +1,5 @@
 "use client";
 import React, { cloneElement, useState } from "react";
-import styles from "./AddCollection.module.css";
-import { QdrantClient } from "@qdrant/js-client-rest";
 import TextBox from "../TextBox/TextBox";
 import {
   createCollection,
@@ -28,7 +26,6 @@ ${(await getCollectionsList()).map((collection) => collection.name).join("\n")}
 - - -
     `);
     const collection = await collectionExists(collectionName!);
-    console.log("Collection exists:", collectionExists);
     if (collectionName === null) {
       return;
       // check if the collection exists,
@@ -40,7 +37,6 @@ ${(await getCollectionsList()).map((collection) => collection.name).join("\n")}
         )
       ) {
         // create points and add to the existing collection
-        console.log(inputValue);
         upsertPoints(collectionName!, inputValue);
         alert(`Points added to the ${collectionName}`);
       } else {
