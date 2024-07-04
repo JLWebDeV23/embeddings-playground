@@ -25,7 +25,7 @@ const Header = () => {
                 <Button
                     variant="light"
                     as={Link}
-                    href="/rag2"
+                    href="/logprob"
                     className="px-2 w-fit min-w-0"
                 >
                     RAG2
@@ -33,7 +33,7 @@ const Header = () => {
                 <Button
                     variant="light"
                     as={Link}
-                    href="/"
+                    href="/logprob"
                     className="px-2 w-fit min-w-0"
                 >
                     Tokenizer

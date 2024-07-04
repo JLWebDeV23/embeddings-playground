@@ -1,21 +1,34 @@
 "use client";
 import React from "react";
-
+import { v4 as uuidv4 } from "uuid";
 type NodeProps = {
   history: string[];
   token: string;
   children?: NodeProps[];
 };
-const Node = ({ history, token, children }: NodeProps) => {
 
-    const [childrenTokens, setChildrenTokens] = React.useState<NodeProps[]>([]);
+type NodeElement = {
+  history: string[];
+  token: string;
+  children: NodeElement[];
+};
 
-    const handleClick = () => {
-        alert(history.join("") + token);
-        setChildrenTokens((prev, index) => {
-            return [...prev, <Node key={index} history={history.concat(token)} token="A good day"></Node>];
-        })
-    }
+const Node = ({ history, token, children }: NodeProps): NodeElement => {
+  const [childrenTokens, setChildrenTokens] = React.useState<NodeProps[]>([]);
+
+  const handleClick = () => {
+    alert(history.join("") + token);
+    setChildrenTokens((prev) => {
+      return [
+        ...prev,
+        <Node
+          key={uuidv4()}
+          history={history.concat(token)}
+          token="A good day"
+        ></Node>,
+      ];
+    });
+  };
 
   return (
     <div>
