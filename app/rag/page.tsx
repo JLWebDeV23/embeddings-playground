@@ -10,6 +10,7 @@ import Delete from "../components/DeleteCollection/Delete";
 import InsertItem from "../components/InsertItem/InsertItem";
 import LogProb from "../components/LogProb/LogProb";
 import ModelCompare from "@/app/pages/ModelCompare/ModelCompare";
+import LogProb2 from "../components/LogProb/LogProb";
 
 const Main = () => {
   return (
@@ -28,7 +29,7 @@ const Main = () => {
       </div>
       <hr className={styles.verticalLine} />
       <h1 id={styles.h1}>LogProb</h1>
-      <LogProb />
+      <LogProb2 />
       <hr className={styles.verticalLine} />
       <div className={styles.modelCompareLogo}>
         <h1 id={styles.h1}>Model Compare</h1>

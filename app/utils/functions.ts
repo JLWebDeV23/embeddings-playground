@@ -42,6 +42,7 @@ export const createChatCompletion = async (
   return completion!.choices[0];
 };
 
+//Todo unused function DELTETE
 export const createTest = async (
   input: string
 ): Promise<OpenAI.ChatCompletion.Choice> => {
@@ -70,6 +71,7 @@ export const createTest = async (
   return completion.choices[0];
 };
 
+//Todo unused function DELTETE
 export const createTest1 = async (
   input: string
 ): Promise<OpenAI.ChatCompletion.Choice> => {

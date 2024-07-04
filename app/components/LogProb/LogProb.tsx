@@ -9,7 +9,7 @@ import Tree from "../Tree/Tree";
 import { Sentence } from "@/app/utils/newTreeNode";
 import { LogProbTreeNode } from "@/app/utils/interfaces";
 import NewLogProb from "../NewLogProb/NewLogProb";
-
+import { Lobster } from "next/font/google";
 
 export interface TreeNode {
   id: number;
@@ -121,6 +121,108 @@ const nodes: TreeNode[] = [];
 
 // export default LogProb;
 
+type TokenNode = {
+  id: string; // unique identifier, e.g., "0.3"
+  token: any;
+  children: TokenNode[];
+  // completion?: string; // chat completion result
+};
+
+type TokenTree = TokenNode[];
+
+const LogProb2 = () => {
+  const [showComponent, setShowComponent] = useState(false);
+  const [tree, setTree] = useState<TokenTree>([]);
+
+  // const findNode = (node: TokenNode, tree: TokenTree) => {
+  //   if (node.children.length === 0) {
+  //     return tree;
+  //   }
+  //   for (const child of node.children) {
+  //     return findNode(child, tree);
+  //   }
+  // }
+
+  const handleOnClick = async () => {
+    const sentence =
+      "Many words map to one token, but some don't: indivisible.";
+    console.log(await (createChatCompletionLogProb(sentence)))
+    const logprobs: TokenTree =
+      (await createChatCompletionLogProb(sentence)).logprobs?.content?.map(
+        (logprob, index) => {
+          return {
+            id: `0.${index}`, // unique identifier, e.g., "0.3"
+            token: logprob,
+            children: [],
+          } as TokenNode;
+        }
+      ) || [];
+    setTree(logprobs);
+    console.log(logprobs);
+
+    setShowComponent(true);
+  };
+
+  const handleWordClick = (node: TokenNode) => {
+    console.log(node);
+    console.log("word clicked");
+  };
+
+  return (
+    <div>
+      <button
+        className="bg-slate-100 rounded-md p-4 m-2 text-black"
+        onClick={handleOnClick}
+      >
+        Click Me
+      </button>
+      {/* {showComponent && (
+        <>
+          {tree.map((node) => (
+            <TreeNode
+              parentHistory={{
+                
+              }}
+              key={node.id}
+              node={node}
+              handleWordClick={handleWordClick}
+            />
+          ))}
+        </>
+      )} */}
+    </div>
+  );
+};
+type SimpleTreeNode = {
+  id: string;
+  token: string;
+};
+
+type TreeNodeProps = {
+  parentHistory: SimpleTreeNode[];
+  node: TokenNode;
+  handleWordClick: (node: TokenNode) => void;
+};
+function TreeNode({ parentHistory, node, handleWordClick }: TreeNodeProps) {
+
+  const [history, setHistory] = useState<SimpleTreeNode[]>([
+    ...parentHistory,
+    { id: node.id, token: node.token.token },
+  ]);
+
+
+
+  return (
+    <span
+      key={node.id}
+      style={{ cursor: "pointer" }}
+      onClick={() => handleWordClick(node)}
+    >
+      {node.token.token}
+    </span>
+  );
+}
+
 const LogProb = () => {
   const [inputValue, setInputValue] = useState<string>("");
   const [nodes, setNodes] = useState<TreeNode[]>([]);
@@ -132,7 +234,6 @@ const LogProb = () => {
 
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     const completion: OpenAI.ChatCompletion.Choice =
       await createChatCompletionLogProb(inputValue);
 
@@ -212,4 +313,4 @@ const LogProb = () => {
   );
 };
 
-export default LogProb;
+export default LogProb2;

@@ -1,5 +1,5 @@
 import { QdrantClient } from "@qdrant/js-client-rest";
-import { Point } from "./interfaces";
+import { Point, Message } from "./interfaces";
 import OpenAI from "openai";
 import { v4 as uuidv4 } from "uuid";
 import { ApiKey } from "./interfaces";
@@ -257,6 +257,7 @@ export const rag = async (
   model: data,
   userPrompt: string,
   systemMessage: string,
+  history: Message[],
   retrievedChunk: string,
   setChatResponse: (text: string) => void
 ) => {
