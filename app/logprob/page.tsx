@@ -34,20 +34,17 @@ const Node = ({
         if (askForSibling) {
             askForSibling();
         } else {
-            /* the initial node can't ask his parents to have a sibling */
-            setChildrenAttributes((prev) => {
-                return [
-                    ...prev,
-                    {
-                        history: [...history, token],
-                        token: token + 1,
-                    },
-                ];
-            });
+            /* the initial node can't ask his parents to have a sibling so we generate a child instead */
+            handleAskForSibling();
         }
     };
 
+    /* 
+      handleAskForSibling is the function that is called when a child asks for a sibling (when the user clicks on a child's button)
+      It creates a new child node with chat completion logprobs.
+    */
     const handleAskForSibling = async () => {
+        // Get the logprobs from the API
         const response = (
             await createChatCompletionLogProb(history.join("") + token)
         ).logprobs?.content;
@@ -57,6 +54,7 @@ const Node = ({
             const firstChild = {
                 history: [...history],
                 token: first.token,
+                /* Tells the child which childen he should generate next */
                 pendingChildrenAttributes: next.map((child) => {
                     return {
                         history: [...history, token, first.token],
@@ -64,9 +62,12 @@ const Node = ({
                     };
                 }),
             };
+            // Add the first child to the childrenAttributes state so it will be rendered
             setChildrenAttributes((prev) => {
                 return [...prev, firstChild];
             });
+        } else {
+            console.error("No response");
         }
     };
 
