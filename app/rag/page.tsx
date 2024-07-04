@@ -29,7 +29,7 @@ const Main = () => {
       </div>
       <hr className={styles.verticalLine} />
       <h1 id={styles.h1}>LogProb</h1>
-      <LogProb2 />
+<LogProb2 />
       <hr className={styles.verticalLine} />
       <div className={styles.modelCompareLogo}>
         <h1 id={styles.h1}>Model Compare</h1>

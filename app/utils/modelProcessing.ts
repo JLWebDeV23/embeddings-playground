@@ -85,7 +85,6 @@ export const chatCompletion = async (model: ModelData) => {
           messages: JSON.parse(JSON.stringify(model.messages)),
           model: model.subModel,
         });
-        console.log(response);
       } catch (error) {
         if (error instanceof Error) {
           throw handleError(model.model, model.subModel, error);
