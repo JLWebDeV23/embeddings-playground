@@ -1,7 +1,9 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { createChatCompletionLogProb } from "../utils/functions";
+import { Textarea } from "@nextui-org/input";
+import { Button } from "@nextui-org/react";
 
 type NodeAttributes = {
     history: string[];
@@ -108,15 +110,39 @@ const Node = ({
 };
 
 const Page = () => {
+    const [value, setValue] = useState("");
+    const [base, setBase] = useState<string>("");
+
     const nodes = (
-        <Node history={[]} token="Plop">
+        <Node history={[]} token={base}>
             {/* <Node history={["A"]} token="&nbsp;good">
                 <Node history={["A", "&nbsp;good"]} token="&nbsp;day"></Node>
             </Node> */}
         </Node>
     );
 
-    return <div>{nodes}</div>;
+    const handleSubmit = async () => {
+        const message = (await createChatCompletionLogProb(value)).message
+            .content;
+        if (message) setBase(message);
+    };
+
+    return (
+        <div>
+            <div className="w-full flex flex-col gap-2 max-w-[240px]">
+                <Textarea
+                    variant="underlined"
+                    label="Description"
+                    labelPlacement="outside"
+                    placeholder="Enter your description"
+                    value={value}
+                    onValueChange={setValue}
+                />
+                <Button onPress={handleSubmit}>Submit</Button>
+            </div>
+            <div>{nodes}</div>
+        </div>
+    );
 };
 
 export default Page;
