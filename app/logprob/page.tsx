@@ -111,10 +111,10 @@ const Node = ({
 
 const Page = () => {
     const [value, setValue] = useState("");
-    const [base, setBase] = useState<string>("");
+    const [base, setBase] = useState<NodeAttributes[]>([]);
 
     const nodes = (
-        <Node history={[]} token={base}>
+        <Node history={[]} token={""} pendingChildrenAttributes={base}>
             {/* <Node history={["A"]} token="&nbsp;good">
                 <Node history={["A", "&nbsp;good"]} token="&nbsp;day"></Node>
             </Node> */}
@@ -122,9 +122,16 @@ const Page = () => {
     );
 
     const handleSubmit = async () => {
-        const message = (await createChatCompletionLogProb(value)).message
-            .content;
-        if (message) setBase(message);
+        const messages = (await createChatCompletionLogProb(value)).logprobs
+            ?.content;
+        console.log(messages);
+        if (messages)
+            setBase(
+                messages.map((message) => ({
+                    token: message.token,
+                    history: [],
+                }))
+            );
     };
 
     return (
@@ -137,6 +144,11 @@ const Page = () => {
                     placeholder="Enter your description"
                     value={value}
                     onValueChange={setValue}
+                    onKeyDown={(key) => {
+                        if (key.key === "Enter" && !key.shiftKey) {
+                            handleSubmit();
+                        }
+                    }}
                 />
                 <Button onPress={handleSubmit}>Submit</Button>
             </div>
