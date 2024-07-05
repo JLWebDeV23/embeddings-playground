@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { createChatCompletionLogProb } from "../utils/functions";
 import { Textarea } from "@nextui-org/input";
@@ -12,7 +12,7 @@ type NodeAttributes = {
     askForSibling?: () => void;
 };
 
-type NodeProps = NodeAttributes & React.PropsWithChildren<{}>;
+type NodeProps = NodeAttributes;
 
 /* 
   Node component is a recursive component that creates a tree structure.
@@ -20,7 +20,6 @@ type NodeProps = NodeAttributes & React.PropsWithChildren<{}>;
 const Node = ({
     history,
     token,
-    children,
     pendingChildrenAttributes,
     askForSibling,
 }: NodeProps) => {
@@ -29,23 +28,10 @@ const Node = ({
     >([]);
 
     /* 
-      handleClick is the function that is called the user clicks on the button.
-      It tells the parent to create a new child node with chat completion logprobs.
-    */
-    const handleClick = () => {
-        if (askForSibling) {
-            askForSibling();
-        } else {
-            /* the initial node can't ask his parents to have a sibling so we generate a child instead */
-            handleAskForSibling();
-        }
-    };
-
-    /* 
       handleAskForSibling is the function that is called when a child asks for a sibling (when the user clicks on a child's button)
       It creates a new child node with chat completion logprobs.
     */
-    const handleAskForSibling = async () => {
+    const handleAskForSibling = useCallback(async () => {
         // Get the logprobs from the API
         const response = (
             await createChatCompletionLogProb(history.join("") + token)
@@ -66,46 +52,66 @@ const Node = ({
             };
             // Add the first child to the childrenAttributes state so it will be rendered
             setChildrenAttributes((prev) => {
+                console.log({ prev, firstChild });
                 return [...prev, firstChild];
             });
         } else {
             console.error("No response");
         }
-    };
+    }, [history, token]);
+
+    const handleClick = useCallback(() => {
+        if (askForSibling) {
+            askForSibling();
+        } else {
+            /* the initial node can't ask his parents to have a sibling so we generate a child instead */
+            handleAskForSibling();
+        }
+    }, [askForSibling, handleAskForSibling]);
 
     const [nextChild, ...rest] = pendingChildrenAttributes || [];
 
-    return (
-        <div className="flex">
-            <button className="whitespace-pre" onClick={handleClick}>
-                {token}
-            </button>
-            <div className="flex flex-col">
-                {children}
-                {nextChild && (
-                    <Node
-                        key={uuidv4()}
-                        history={[...history, token]}
-                        token={nextChild.token}
-                        pendingChildrenAttributes={rest}
-                        askForSibling={handleAskForSibling}
-                    ></Node>
-                )}
-                {childrenAttributes.map((childrenAttribute, index) => {
-                    return (
+    return useMemo(
+        () => (
+            <div className="flex">
+                <button className="whitespace-pre" onClick={handleClick}>
+                    {token}
+                </button>
+                <div className="flex flex-col">
+                    {nextChild && (
                         <Node
                             key={uuidv4()}
                             history={[...history, token]}
-                            token={childrenAttribute.token}
-                            pendingChildrenAttributes={
-                                childrenAttribute.pendingChildrenAttributes
-                            }
+                            token={nextChild.token}
+                            pendingChildrenAttributes={rest}
                             askForSibling={handleAskForSibling}
                         ></Node>
-                    );
-                })}
+                    )}
+                    {childrenAttributes.map((childrenAttribute, index) => {
+                        return (
+                            <Node
+                                key={uuidv4()}
+                                history={[...history, token]}
+                                token={childrenAttribute.token}
+                                pendingChildrenAttributes={
+                                    childrenAttribute.pendingChildrenAttributes
+                                }
+                                askForSibling={handleAskForSibling}
+                            ></Node>
+                        );
+                    })}
+                </div>
             </div>
-        </div>
+        ),
+        [
+            token,
+            nextChild,
+            history,
+            rest,
+            childrenAttributes,
+            handleAskForSibling,
+            handleClick,
+        ]
     );
 };
 
@@ -144,11 +150,6 @@ const Page = () => {
                     placeholder="Enter your description"
                     value={value}
                     onValueChange={setValue}
-                    onKeyDown={(key) => {
-                        if (key.key === "Enter" && !key.shiftKey) {
-                            handleSubmit();
-                        }
-                    }}
                 />
                 <Button onPress={handleSubmit}>Submit</Button>
             </div>

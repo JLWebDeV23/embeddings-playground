@@ -111,6 +111,7 @@ export const createChatCompletionLogProb = async (
         model: "gpt-3.5-turbo",
         logprobs: true,
         top_logprobs: 2,
+        max_tokens: 50,
     });
     return completion.choices[0];
 };
