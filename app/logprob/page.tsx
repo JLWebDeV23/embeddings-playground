@@ -19,7 +19,6 @@ type NodeProps = NodeAttributes & React.PropsWithChildren<{}>;
 */
 const Node = ({
   history,
-  logprobs,
   token,
   children,
   pendingChildrenAttributes,
