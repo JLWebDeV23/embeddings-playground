@@ -69,26 +69,7 @@ const Node = ({
         }
     }, [askForSibling, handleAskForSibling]);
 
-      const [first, ...next] = response;
-      const firstChild = {
-        history: [...history],
-        token: first.token,
-        /* Tells the child which childen he should generate next */
-        pendingChildrenAttributes: next.map((child) => {
-          return {
-            history: [...history, token, first.token],
-            token: child.token,
-          };
-        }),
-      };
-      // Add the first child to the childrenAttributes state so it will be rendered
-      setChildrenAttributes((prev) => {
-        return [...prev, firstChild];
-      });
-    } else {
-      console.error("No response");
-    }
-  };
+    const [nextChild, ...rest] = pendingChildrenAttributes || [];
 
     return useMemo(
         () => (
