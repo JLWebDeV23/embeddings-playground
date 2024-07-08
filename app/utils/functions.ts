@@ -42,6 +42,7 @@ export const createChatCompletion = async (
   return completion!.choices[0];
 };
 
+//Todo unused function DELTETE
 export const createTest = async (
   input: string
 ): Promise<OpenAI.ChatCompletion.Choice> => {
@@ -70,6 +71,7 @@ export const createTest = async (
   return completion.choices[0];
 };
 
+//Todo unused function DELTETE
 export const createTest1 = async (
   input: string
 ): Promise<OpenAI.ChatCompletion.Choice> => {
@@ -102,12 +104,21 @@ export const createTest1 = async (
 export const createChatCompletionLogProb = async (
   input: string
 ): Promise<OpenAI.ChatCompletion.Choice> => {
+  console.log(input);
+  const systemMessage = `
+    Generate a chat completion for the following user input: 
+    you should summarise the your understanding of the user input and provide a response that is relevant to the user input in a complete sentence, limited by the max_tokens given, 
+
+    ___
+
+    User Input: ${input}
+    `;
   const completion = await openai.chat.completions.create({
     messages: [{ role: "user", content: input }],
     model: "gpt-3.5-turbo",
     logprobs: true,
-    top_logprobs: 2,
-    temperature: 0.0,
+    top_logprobs: 3,
+    max_tokens: 50,
   });
   return completion.choices[0];
 };
