@@ -53,7 +53,7 @@ const MessageModel: React.FC<MessageModelProps> = ({}) => {
             apiKeys: [],
         };
         // and call rag to and it will set the streamResponse to your component
-        await rag(model, inputValue, "", result!, setChatResponse);
+        // await rag(model, inputValue, "", result!, setChatResponse);
         //
 
         setInputValue("");
