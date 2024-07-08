@@ -20,7 +20,7 @@ const Header = () => {
                     href="/rag"
                     className="px-2 w-fit min-w-0"
                 >
-                    RAG
+                    Legacy
                 </Button>
                 <Button
                     variant="light"
@@ -28,7 +28,7 @@ const Header = () => {
                     href="/rag2"
                     className="px-2 w-fit min-w-0"
                 >
-                    RAG2
+                    RAG
                 </Button>
                 <Button
                     variant="light"
