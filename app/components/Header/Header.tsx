@@ -28,14 +28,6 @@ const Header = () => {
                     href="/logprob"
                     className="px-2 w-fit min-w-0"
                 >
-                    RAG2
-                </Button>
-                <Button
-                    variant="light"
-                    as={Link}
-                    href="/logprob"
-                    className="px-2 w-fit min-w-0"
-                >
                     Tokenizer
                 </Button>
                 <Button

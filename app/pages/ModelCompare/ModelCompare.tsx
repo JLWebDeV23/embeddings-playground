@@ -106,7 +106,7 @@ const ModelCompare = () => {
 
     const collectCardData = () => {
         // Here you can do whatever you need with the card data
-        console.log(cards);
+        // console.log(cards);
     };
 
     const handleOnSubModelChange = (model: string, subModel: string) => {

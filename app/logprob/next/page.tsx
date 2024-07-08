@@ -2,9 +2,14 @@
 import { useCallback, useMemo } from "react";
 import { useImmer } from "use-immer";
 import { v4 as uuidv4 } from "uuid";
+import OpenAI from "openai";
+import { createChatCompletionLogProb } from "@/app/utils/functions";
+import { last } from "lodash";
+
+type Token = OpenAI.ChatCompletionTokenLogprob;
 
 type NodeAttributes = {
-    content: string;
+    token?: Token;
     id: string;
     parent?: NodeAttributes;
     children: NodeAttributes[];
@@ -27,30 +32,36 @@ const recursiveFind = (
     return null;
 };
 
-function Node({
-    parent,
-    children,
-    content,
-    askForSibling,
-    id,
-}: NodeAttributes) {
+/* Function to get the token history of a node */
+const getHistory = (node: NodeAttributes): Token[] => {
+    if (!node.token) {
+        return [];
+    }
+    return node.parent?.token ? [...getHistory(node.parent), node.token] : [];
+};
+
+function Node({ children, token, askForSibling, id }: NodeAttributes) {
     const handleAskForSibling = useMemo(() => {
         return () => {
-            console.log(`asking for sibling of ${parent?.id || id}`);
-            askForSibling(parent?.id || id);
+            askForSibling(id);
         };
-    }, [parent?.id, id, askForSibling]);
+    }, [id, askForSibling]);
     return useMemo(
         () => (
             <div className="flex">
-                <button onClick={handleAskForSibling}>{content}</button>
+                <button
+                    className="whitespace-pre"
+                    onClick={handleAskForSibling}
+                >
+                    {token?.token}
+                </button>
                 <div className="flex flex-col">
                     {children.map((child) => (
                         <Node
                             id={child.id}
                             key={child.id}
                             parent={child}
-                            content={child.content}
+                            token={child.token}
                             askForSibling={askForSibling}
                         >
                             {child.children}
@@ -59,18 +70,38 @@ function Node({
                 </div>
             </div>
         ),
-        [content, children, askForSibling, handleAskForSibling]
+        [token, children, askForSibling, handleAskForSibling]
     );
 }
 
 export default function Page() {
     const [data, setData] = useImmer<NodeAttributes>({
-        content: "",
         id: uuidv4(),
         children: [
             {
                 id: uuidv4(),
-                content: "parent",
+                token: {
+                    token: "Hello",
+                    top_logprobs: [
+                        {
+                            token: "Hello",
+                            bytes: [],
+                            logprob: -0.1,
+                        },
+                        {
+                            token: "Hi",
+                            bytes: [],
+                            logprob: -0.2,
+                        },
+                        {
+                            token: "Hey",
+                            logprob: -0.3,
+                            bytes: [],
+                        },
+                    ],
+                    bytes: [],
+                    logprob: 0,
+                },
                 children: [],
                 askForSibling: () => {},
             },
@@ -79,28 +110,76 @@ export default function Page() {
     });
 
     const handleAskForSibling = useCallback(
-        (parentId?: string) => {
-            setData((draft) => {
-                const newChild = {
-                    id: uuidv4(),
-                    content: "child",
-                    children: [],
-                    askForSibling: () => {},
-                };
-                if (parentId) {
-                    const parentDraft = recursiveFind(parentId, draft);
-                    if (parentDraft) {
-                        parentDraft.children.push(newChild);
-                    } else {
-                        console.log("parent not found", draft.children);
-                        draft.children.push(newChild);
-                    }
-                } else {
-                    draft.children.push(newChild);
+        async (id: string) => {
+            const elem = recursiveFind(id, data);
+            if (!elem) {
+                throw new Error("Element not found");
+            }
+            if (!elem.token) {
+                throw new Error("Element has no token");
+            }
+            const { token, top_logprobs, ...rest } = elem.token;
+            const newToken =
+                token.toLowerCase() !== top_logprobs[1].token.toLowerCase()
+                    ? top_logprobs[1].token
+                    : top_logprobs[2].token;
+            const generateToken: OpenAI.ChatCompletionTokenLogprob = {
+                token: newToken,
+                top_logprobs: top_logprobs,
+                ...rest,
+            };
+            const logProbInput =
+                getHistory(elem)
+                    .map((parentToken) => {
+                        return parentToken.token;
+                    })
+                    .join("") + generateToken.token;
+            console.log(elem, data, id);
+            const res = await createChatCompletionLogProb(logProbInput);
+            const response = res.logprobs?.content;
+            if (!response) {
+                throw new Error("No response");
+            }
+            const newResponse: typeof response = [generateToken, ...response];
+
+            const reccursiveGenerateChildren = (
+                newResponse: Token[],
+                elem: NodeAttributes
+            ): NodeAttributes[] => {
+                const [first, ...next] = newResponse;
+                if (!first) {
+                    return [];
                 }
+                return [
+                    {
+                        token: first,
+                        id: uuidv4(),
+                        parent: elem,
+                        children: reccursiveGenerateChildren(next, elem),
+                        askForSibling: () => {},
+                    },
+                ];
+            };
+
+            setData((draft) => {
+                const draftParent = recursiveFind(elem.parent?.id || id, draft);
+                if (!draftParent) {
+                    throw new Error("Parent not found");
+                }
+                if (draftParent) {
+                    draftParent.children.push(
+                        reccursiveGenerateChildren(newResponse, draftParent)[0]
+                    );
+                    return;
+                }
+                console.log(
+                    "coucou",
+                    reccursiveGenerateChildren(newResponse, draft)
+                );
+                draft.children = reccursiveGenerateChildren(newResponse, draft);
             });
         },
-        [setData]
+        [data, setData]
     );
 
     return useMemo(() => {
@@ -109,7 +188,7 @@ export default function Page() {
                 <Node
                     key={node.id}
                     id={node.id}
-                    content={node.content}
+                    token={node.token}
                     parent={node}
                     askForSibling={handleAskForSibling}
                 >

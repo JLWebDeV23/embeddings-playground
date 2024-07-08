@@ -24,7 +24,7 @@ const Tree: React.FC<TreeProps> = ({ nodes, addChildNode }) => {
         node: TreeNode,
         token: { tokenId: number; token: string }
     ) {
-        console.log(node.id);
+        //console.log(node.id);
 
         const newSplitString: string = splitString(token.token, node);
         const chatCompletion = await createChatCompletionLogProb(
@@ -48,7 +48,7 @@ const Tree: React.FC<TreeProps> = ({ nodes, addChildNode }) => {
             logProbs: logProbs,
             children: [],
         };
-        console.log(childNode);
+        //console.log(childNode);
         addChildNode(node.id, childNode);
     }
 
