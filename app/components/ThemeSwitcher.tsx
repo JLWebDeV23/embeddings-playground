@@ -1,8 +1,8 @@
-import { Button } from "@nextui-org/react";
+import { Button, ButtonProps } from "@nextui-org/react";
 import IonIcon from "@reacticons/ionicons";
 import { useTheme } from "next-themes";
 
-export const ThemeSwitcher = () => {
+export const ThemeSwitcher = (props: ButtonProps) => {
     const { theme, setTheme } = useTheme();
 
     const switchTheme = () => {
@@ -11,11 +11,11 @@ export const ThemeSwitcher = () => {
 
     return (
         <div>
-            <Button onClick={switchTheme} variant="light" isIconOnly size="lg">
+            <Button onClick={switchTheme} {...props} isIconOnly size="lg">
                 {theme === "light" ? (
-                    <IonIcon name="moon" />
+                    <IonIcon name="moon-outline" />
                 ) : (
-                    <IonIcon name="sunny" />
+                    <IonIcon name="sunny-outline" />
                 )}
             </Button>
         </div>

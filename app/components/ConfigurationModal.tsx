@@ -10,6 +10,7 @@ import {
     Input,
     ButtonProps,
 } from "@nextui-org/react";
+import IonIcon from "@reacticons/ionicons";
 import { ChangeEventHandler, useState } from "react";
 
 const KeyInput = ({
@@ -36,11 +37,14 @@ const KeyInput = ({
     );
 };
 
-export default function SetupApiKeyModal(props: ButtonProps) {
+export default function ConfigurationModal(props: ButtonProps) {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-    const { apiKeys, setApiKeys } = useApiKeys();
+    const { apiKeys, setApiKeys, QdrantDBURL, updateQdrantDBURL } =
+        useApiKeys();
     const [localApiKeys, setLocalApiKeys] = useState([...apiKeys]);
+    const [localQdrantDBURL, setLocalQdrantDBURL] =
+        useState<string>(QdrantDBURL);
 
     /* function to update the local api state with the last userinput */
     const handleChange = (value: string, index: number) => {
@@ -55,50 +59,67 @@ export default function SetupApiKeyModal(props: ButtonProps) {
     };
 
     /* function to tell if there is a difference between the local apikeys state and the storage */
-    const needToSave = localApiKeys.some((key) => {
-        const savedKey = apiKeys.find((k) => k.name === key.name);
-        if (savedKey) {
-            return savedKey.apiKey !== key.apiKey;
-        }
-        if (!savedKey && key.apiKey !== "") {
-            return true;
-        }
-        return false;
-    });
+    const needToSave =
+        QdrantDBURL !== localQdrantDBURL ||
+        localApiKeys.some((key) => {
+            const savedKey = apiKeys.find((k) => k.name === key.name);
+            if (savedKey) {
+                return savedKey.apiKey !== key.apiKey;
+            }
+            if (!savedKey && key.apiKey !== "") {
+                return true;
+            }
+            return false;
+        });
 
     /* function to save the api keys on storage */
     function saveApiKeys(onClose: () => void) {
         setApiKeys(localApiKeys);
+        updateQdrantDBURL(localQdrantDBURL);
         onClose();
     }
 
     return (
         <>
             <Button onPress={onOpen} {...props}>
-                Setup API Keys
+                Settings
+                <IonIcon name="settings-outline" />{" "}
             </Button>
             <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="xl">
                 <ModalContent>
                     {(onClose) => (
                         <>
                             <ModalHeader className="flex flex-col gap-1">
-                                Setup API Keys
+                                Settings
                             </ModalHeader>
                             <ModalBody>
-                                {localApiKeys.map((key, index) => (
-                                    <div key={index} className="flex gap-3">
-                                        <KeyInput
-                                            name={key.name}
-                                            apiKey={key.apiKey}
-                                            onChange={(e) =>
-                                                handleChange(
-                                                    e.target.value,
-                                                    index
-                                                )
-                                            }
-                                        />
-                                    </div>
-                                ))}
+                                <>
+                                    <h1 className="font-light">
+                                        Setup API Keys
+                                    </h1>
+                                    {localApiKeys.map((key, index) => (
+                                        <div key={index} className="flex gap-3">
+                                            <KeyInput
+                                                name={key.name}
+                                                apiKey={key.apiKey}
+                                                onChange={(e) =>
+                                                    handleChange(
+                                                        e.target.value,
+                                                        index
+                                                    )
+                                                }
+                                            />
+                                        </div>
+                                    ))}
+                                    <h1 className="font-light">QdranDB URL</h1>
+                                    <Input
+                                        label="QdranDB URL"
+                                        value={localQdrantDBURL}
+                                        onValueChange={(value) => {
+                                            setLocalQdrantDBURL(value);
+                                        }}
+                                    />
+                                </>
                             </ModalBody>
                             <ModalFooter>
                                 <Button

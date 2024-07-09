@@ -35,9 +35,20 @@ export const useApiKeys = () => {
         return key ? key.apiKey : undefined;
     };
 
+    const [QdrantDBURL, setQdrantDBURL] = useLocalStorage<string>(
+        "QDRANT_DB_URL",
+        "http://localhost:6333"
+    );
+
+    const updateQdrantDBURL = (url: string) => {
+        setQdrantDBURL(url);
+    };
+
     return {
         apiKeys,
         setApiKeys,
         getApiKey,
+        QdrantDBURL,
+        updateQdrantDBURL,
     };
 };
