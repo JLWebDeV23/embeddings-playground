@@ -264,13 +264,16 @@ function SourcesModal({
 function RagInputFooter({
     selectedCollection,
     handleSelectCollection,
+    resetMessages,
 }: {
     selectedCollection: string;
     handleSelectCollection: (collection: string) => void;
+    resetMessages: () => void;
 }) {
     const { models, handleModelsAction } = useModelData();
 
     const handleModelSelection = (model: Model) => {
+        resetMessages();
         handleModelsAction({ action: "set_initial", model: model });
     };
     return (
@@ -315,6 +318,10 @@ export default function Page() {
         });
     };
 
+    const handleResetMessages = () => {
+        setMessages([]);
+    };
+
     const { apiKeys } = useApiKeys();
     const { systemMessage } = useSystemMessage();
 
@@ -349,6 +356,7 @@ export default function Page() {
                 ) : (
                     <div className="h-fit">
                         <ModelAnswer
+                            onClose={() => handleResetMessages()}
                             answer={{
                                 model: models[0].model,
                                 subModel: models[0].subModel,
@@ -377,6 +385,7 @@ export default function Page() {
                             setSelectedCollection(collection)
                         }
                         selectedCollection={selectedCollection}
+                        resetMessages={handleResetMessages}
                     />
                 </UserInput>
             </div>

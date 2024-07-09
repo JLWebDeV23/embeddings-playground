@@ -14,11 +14,13 @@ function ModelAnswerHeader({
     modelNumber,
     isLocked,
     isLast = false,
+    onClose,
 }: {
     name: string;
     isLocked: boolean;
     modelNumber: number;
     isLast?: boolean;
+    onClose?: () => void;
 }) {
     const { handleModelsAction, isLoading, isLastLoading } = useModelData();
 
@@ -31,6 +33,7 @@ function ModelAnswerHeader({
     };
 
     const onRemoveClick = () => {
+        if (onClose) onClose();
         handleModelsAction({ action: "pop", index: modelNumber });
     };
 
@@ -84,10 +87,12 @@ export default function ModelAnswer({
     answer,
     modelNumber = 0,
     isLast,
+    onClose,
 }: {
     answer: ModelData;
     modelNumber?: number;
     isLast?: boolean;
+    onClose?: () => void;
 }) {
     const { isLoading, isLastLoading } = useModelData();
 
@@ -99,6 +104,7 @@ export default function ModelAnswer({
             >
                 <CardHeader className="w-full">
                     <ModelAnswerHeader
+                        onClose={onClose}
                         name={answer.subModel}
                         isLocked={answer.locked}
                         modelNumber={modelNumber}
