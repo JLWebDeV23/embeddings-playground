@@ -12,6 +12,7 @@ import {
 } from "@nextui-org/react";
 import IonIcon from "@reacticons/ionicons";
 import { ChangeEventHandler, useState } from "react";
+import { setupQdrant } from "../utils/collection";
 
 const KeyInput = ({
     name,
@@ -76,6 +77,7 @@ export default function ConfigurationModal(props: ButtonProps) {
     function saveApiKeys(onClose: () => void) {
         setApiKeys(localApiKeys);
         updateQdrantDBURL(localQdrantDBURL);
+        setupQdrant(localQdrantDBURL, localApiKeys.find((k) => k.name === "QdrantDB")?.apiKey || "");
         onClose();
     }
 

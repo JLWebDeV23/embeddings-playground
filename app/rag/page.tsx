@@ -27,6 +27,7 @@ import {
     rag,
     scrollPoints,
     searchSimilarities,
+    setupQdrant,
     upsertPoints,
 } from "../utils/collection";
 import useModalInfo from "../hooks/useModalInfo";
@@ -322,7 +323,7 @@ export default function Page() {
         setMessages([]);
     };
 
-    const { apiKeys } = useApiKeys();
+    const { apiKeys, QdrantDBURL } = useApiKeys();
     const { systemMessage } = useSystemMessage();
 
     const handleSendMessage = async (inputValue: string) => {
@@ -344,7 +345,7 @@ export default function Page() {
             updateMessages
         );
     };
-
+    setupQdrant(QdrantDBURL, apiKeys.find((k) => k.name === "QdrantDB")?.apiKey || "");
     return (
         <div className="gap-3 flex flex-col flex-1 justify-between">
             <div ref={resultDivRef} className="flex flex-col px-5 flex-1 gap-5">
