@@ -5,7 +5,7 @@ import Logo from "../Logo/Logo";
 import BuyMeACoffee from "./BuyMeACoffee/BuyMeACoffee";
 import { ThemeSwitcher } from "../ThemeSwitcher";
 import { Button, Divider } from "@nextui-org/react";
-import SetupApiKeyModal from "../SetupApiKeyModal";
+import ConfigurationModal from "../ConfigurationModal";
 
 const Header = () => {
     return (
@@ -39,11 +39,11 @@ const Header = () => {
                     Model Compare
                 </Button>
                 <Divider orientation="vertical" className="h-6" />
-                <SetupApiKeyModal
+                <ConfigurationModal
                     variant="light"
                     className="px-2 w-fit min-w-0"
                 />
-                <ThemeSwitcher />
+                <ThemeSwitcher variant="light" />
                 <BuyMeACoffee />
             </div>
         </header>
