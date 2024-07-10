@@ -132,6 +132,20 @@ export const treeSlice = createSlice({
                 });
             }
         },
+        setInitialTree: (state, action: PayloadAction<string>) => {
+            state.children = [
+                {
+                    token: {
+                        token: action.payload,
+                        logprob: 0,
+                        bytes: [],
+                        top_logprobs: [],
+                    },
+                    id: "0.0",
+                    children: [],
+                },
+            ];
+        },
     },
     extraReducers: (builder) => {
         builder.addCase(addAISibling.fulfilled, (state, action) => {
@@ -207,5 +221,5 @@ export const addAISibling = createAsyncThunk(
     }
 );
 
-export const { addSibling } = treeSlice.actions;
+export const { addSibling, setInitialTree } = treeSlice.actions;
 export default treeSlice.reducer;

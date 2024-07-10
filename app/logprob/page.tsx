@@ -4,32 +4,16 @@ import { createChatCompletionLogProb } from "../utils/functions";
 import { Textarea } from "@nextui-org/input";
 import { Button } from "@nextui-org/react";
 import { ScrollShadow } from "@nextui-org/scroll-shadow";
-
-import Node, { NodeAttributes } from "./components/Node";
+import LogprobTree from "./components/LogprobTree";
 
 const Page = () => {
     const [value, setValue] = useState("");
-    const [base, setBase] = useState<NodeAttributes[]>([]);
-
-    const nodes = (
-        <Node
-            history={[]}
-            token={{ token: "", logprob: 0, bytes: [], top_logprobs: [] }}
-            pendingChildrenAttributes={base}
-        ></Node>
-    );
 
     const handleSubmit = async () => {
         const messages = (await createChatCompletionLogProb(value)).logprobs
             ?.content;
         console.log(messages);
-        if (messages)
-            setBase(
-                messages.map((message) => ({
-                    token: message,
-                    history: [],
-                }))
-            );
+
         setValue("");
     };
 
@@ -57,7 +41,9 @@ const Page = () => {
                     Submit
                 </Button>
             </div>
-            <ScrollShadow orientation="horizontal">{nodes}</ScrollShadow>
+            <ScrollShadow orientation="horizontal">
+                <LogprobTree />
+            </ScrollShadow>
         </div>
     );
 };

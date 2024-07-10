@@ -32,7 +32,7 @@ const Node = (node: NodeAttributes) => {
     );
 };
 
-export default function Page() {
+export default function LogprobTree() {
     const tree = useSelector((state: RootState) => state.treeReducer);
     return <Node {...tree} />;
 }
