@@ -6,8 +6,6 @@ import { Button } from "@nextui-org/react";
 import { ScrollShadow } from "@nextui-org/scroll-shadow";
 
 import Node, { NodeAttributes } from "./components/Node";
-import { Provider as ReduxProvider } from "react-redux";
-import { store } from "./state/store";
 
 const Page = () => {
     const [value, setValue] = useState("");
@@ -36,33 +34,31 @@ const Page = () => {
     };
 
     return (
-        <ReduxProvider store={store}>
-            <div className="p-5 flex flex-col gap-3">
-                <div className="w-full flex flex-col gap-2">
-                    <Textarea
-                        className="w-full flex-1"
-                        label="Enter a prompt"
-                        placeholder="Who are you?"
-                        value={value}
-                        onValueChange={setValue}
-                        //Todo: Enter not workig yet
-                        onKeyDown={(key) => {
-                            if (key.key === "Enter" && !key.shiftKey) {
-                                handleSubmit();
-                            }
-                        }}
-                    />
-                    <Button
-                        onPress={handleSubmit}
-                        isDisabled={!value}
-                        variant="flat"
-                    >
-                        Submit
-                    </Button>
-                </div>
-                <ScrollShadow orientation="horizontal">{nodes}</ScrollShadow>
+        <div className="p-5 flex flex-col gap-3">
+            <div className="w-full flex flex-col gap-2">
+                <Textarea
+                    className="w-full flex-1"
+                    label="Enter a prompt"
+                    placeholder="Who are you?"
+                    value={value}
+                    onValueChange={setValue}
+                    //Todo: Enter not workig yet
+                    onKeyDown={(key) => {
+                        if (key.key === "Enter" && !key.shiftKey) {
+                            handleSubmit();
+                        }
+                    }}
+                />
+                <Button
+                    onPress={handleSubmit}
+                    isDisabled={!value}
+                    variant="flat"
+                >
+                    Submit
+                </Button>
             </div>
-        </ReduxProvider>
+            <ScrollShadow orientation="horizontal">{nodes}</ScrollShadow>
+        </div>
     );
 };
 
