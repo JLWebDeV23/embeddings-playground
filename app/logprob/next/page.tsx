@@ -1,14 +1,22 @@
 "use client";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../state/store";
-import { Node as NodeAttributes } from "../state/tree/treeSlice";
-import { addSibling } from "../state/tree/treeSlice";
+import { AppDispatch, RootState } from "../state/store";
+import {
+    addAISibling,
+    getTokenHistory,
+    Node as NodeAttributes,
+} from "../state/tree/treeSlice";
 
 const Node = (node: NodeAttributes) => {
-    const dispatch = useDispatch();
+    const dispatch = useDispatch<AppDispatch>();
     const handleClick = () => {
-        console.log(node.token.token, node.id);
-        dispatch(addSibling({ id: node.id }));
+        dispatch(
+            addAISibling({
+                id: node.id,
+                token: node.token,
+                tokenHistory: getTokenHistory(node),
+            })
+        );
     };
     return (
         <div className="flex">
