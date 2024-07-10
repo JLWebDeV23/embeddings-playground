@@ -8,15 +8,15 @@ import { handleError } from "./modelProcessing";
 
 let client: QdrantClient;
 export const setupQdrant = (qdrantUrl: string, apiKey: string): void => {
-  client = new QdrantClient({
-    url: qdrantUrl,
-    apiKey,
-  });
-  if (client === null) {
-    throw new Error(
-      "Error setting up Qdrant client, please check your whether the URL and API key are correct"
-    );
-  }
+    client = new QdrantClient({
+        url: qdrantUrl,
+        apiKey,
+    });
+    if (client === null) {
+        throw new Error(
+            "Error setting up Qdrant client, please check your whether the URL and API key are correct"
+        );
+    }
 };
 
 /**
@@ -26,24 +26,24 @@ export const setupQdrant = (qdrantUrl: string, apiKey: string): void => {
  * @returns A promise that resolves to the embedding as an array of numbers.
  */
 export const createEmbedding = async (
-  input: string | []
+    input: string | []
 ): Promise<number[]> => {
-  let embedding: number[] = [];
-  try {
-    embedding = (
-      await new OpenAI({
-        apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
-        dangerouslyAllowBrowser: true,
-      }).embeddings.create({
-        model: "text-embedding-3-small",
-        input: input,
-      })
-    ).data[0].embedding as number[]; // Specify the type of embedding as number[]
-    return embedding;
-  } catch (error) {
-    console.error("Error in Create OpenAI Embeddings:", error);
-    return [];
-  }
+    let embedding: number[] = [];
+    try {
+        embedding = (
+            await new OpenAI({
+                apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
+                dangerouslyAllowBrowser: true,
+            }).embeddings.create({
+                model: "text-embedding-3-small",
+                input: input,
+            })
+        ).data[0].embedding as number[]; // Specify the type of embedding as number[]
+        return embedding;
+    } catch (error) {
+        console.error("Error in Create OpenAI Embeddings:", error);
+        return [];
+    }
 };
 
 /**
@@ -55,18 +55,18 @@ export const createEmbedding = async (
  * @returns A promise that resolves to an array of points.
  */
 export const scrollPoints = async (collectionName: string) => {
-  try {
-    const points = await client.scroll(collectionName);
-    const results = points.points.map((point) => {
-      return {
-        payload: point.payload!.input,
-      };
-    });
-    return results;
-  } catch (error) {
-    console.error("Error retriving points:", error);
-    return error;
-  }
+    try {
+        const points = await client.scroll(collectionName);
+        const results = points.points.map((point) => {
+            return {
+                payload: point.payload!.input,
+            };
+        });
+        return results;
+    } catch (error) {
+        console.error("Error retriving points:", error);
+        throw error;
+    }
 };
 
 /**
@@ -78,14 +78,14 @@ export const scrollPoints = async (collectionName: string) => {
  * @param collectionName - The name of the collection to be created.
  */
 export const createCollection = async (collectionName: string) => {
-  try {
-    const result = await client.createCollection(collectionName, {
-      vectors: { size: 1536, distance: "Cosine" },
-    });
-  } catch (error) {
-    console.error("Error creating collection:", error);
-    return error;
-  }
+    try {
+        const result = await client.createCollection(collectionName, {
+            vectors: { size: 1536, distance: "Cosine" },
+        });
+    } catch (error) {
+        console.error("Error creating collection:", error);
+        return error;
+    }
 };
 
 /**
@@ -97,12 +97,12 @@ export const createCollection = async (collectionName: string) => {
  * @param points - An array of points to be upserted into the collection.
  */
 const addPoints = async (collectionName: string, points: Point[]) => {
-  try {
-    await client.upsert(collectionName, { points });
-  } catch (error) {
-    console.error("Error creating points:", error);
-    return error;
-  }
+    try {
+        await client.upsert(collectionName, { points });
+    } catch (error) {
+        console.error("Error creating points:", error);
+        return error;
+    }
 };
 
 /**
@@ -115,33 +115,33 @@ const addPoints = async (collectionName: string, points: Point[]) => {
  * @param userInput - The user input string to be processed into embeddings.
  */
 export const upsertPoints = async (
-  collectionName: string,
-  userInput: string
+    collectionName: string,
+    userInput: string
 ) => {
-  let embeddings = await Promise.all(
-    chunkPrompt(userInput).map(async (chunk) => {
-      return {
-        vector: await createEmbedding(chunk),
-        input: chunk,
-      };
-    })
-  );
-  // create point for each embedding and add to points in Qdrant
-  const points: Point[] = [];
-  try {
-    embeddings.forEach((embedding) => {
-      const point: Point = {
-        id: uuidv4(),
-        vector: JSON.parse(JSON.stringify(embedding.vector)),
-        payload: { input: embedding.input },
-      };
-      points.push(point);
-    });
-    await addPoints(collectionName!, points);
-  } catch (err) {
-    console.error("Error upserting points:", err);
-    return err;
-  }
+    let embeddings = await Promise.all(
+        chunkPrompt(userInput).map(async (chunk) => {
+            return {
+                vector: await createEmbedding(chunk),
+                input: chunk,
+            };
+        })
+    );
+    // create point for each embedding and add to points in Qdrant
+    const points: Point[] = [];
+    try {
+        embeddings.forEach((embedding) => {
+            const point: Point = {
+                id: uuidv4(),
+                vector: JSON.parse(JSON.stringify(embedding.vector)),
+                payload: { input: embedding.input },
+            };
+            points.push(point);
+        });
+        await addPoints(collectionName!, points);
+    } catch (err) {
+        console.error("Error upserting points:", err);
+        return err;
+    }
 };
 
 /**
@@ -150,28 +150,28 @@ export const upsertPoints = async (
  * @returns An array of strings representing the chunks of the input.
  */
 const chunkPrompt = (input: string): string[] => {
-  const chunks: string[] = [];
-  let currentChunk = "";
-  let word = 0;
-  try {
-    for (let i = 0; i < input.length; i++) {
-      const char = input[i];
-      currentChunk += char;
-      if (char === " ") word++;
-      if (word >= 500) {
-        chunks.push(currentChunk.trim());
-        currentChunk = "";
-        word = 0;
-      }
+    const chunks: string[] = [];
+    let currentChunk = "";
+    let word = 0;
+    try {
+        for (let i = 0; i < input.length; i++) {
+            const char = input[i];
+            currentChunk += char;
+            if (char === " ") word++;
+            if (word >= 500) {
+                chunks.push(currentChunk.trim());
+                currentChunk = "";
+                word = 0;
+            }
+        }
+        if (currentChunk.trim().length > 0) {
+            chunks.push(currentChunk.trim());
+        }
+        return chunks;
+    } catch (error) {
+        console.error("Error chunking input:", error);
+        return [input];
     }
-    if (currentChunk.trim().length > 0) {
-      chunks.push(currentChunk.trim());
-    }
-    return chunks;
-  } catch (error) {
-    console.error("Error chunking input:", error);
-    return [input];
-  }
 };
 
 /**
@@ -180,8 +180,8 @@ const chunkPrompt = (input: string): string[] => {
  * @returns A promise that resolves to an array of collection objects.
  */
 export const getCollectionsList = async () => {
-  const collections = await client.getCollections();
-  return collections.collections;
+    const collections = await client.getCollections();
+    return collections.collections;
 };
 
 /**
@@ -191,14 +191,14 @@ export const getCollectionsList = async () => {
  * @returns A promise Boolean that resolves to a boolean value indicating whether the collection exists.
  */
 export const collectionExists = async (
-  collectionName: string
+    collectionName: string
 ): Promise<boolean> => {
-  try {
-    return (await client.collectionExists(collectionName)).exists;
-  } catch (err) {
-    console.error("Error checking collection existence:", err);
-    return false;
-  }
+    try {
+        return (await client.collectionExists(collectionName)).exists;
+    } catch (err) {
+        console.error("Error checking collection existence:", err);
+        return false;
+    }
 };
 
 /**
@@ -208,14 +208,14 @@ export const collectionExists = async (
  * @returns A promise that resolves to a boolean value indicating whether the collection was successfully deleted.
  */
 export const deleteCollection = async (
-  collectionName: string
+    collectionName: string
 ): Promise<boolean> => {
-  try {
-    return await client.deleteCollection(collectionName);
-  } catch (err) {
-    console.log(err);
-    return false;
-  }
+    try {
+        return await client.deleteCollection(collectionName);
+    } catch (err) {
+        console.log(err);
+        return false;
+    }
 };
 
 /**
@@ -227,82 +227,82 @@ export const deleteCollection = async (
  * @param userPrompt - The user prompt for which to search for similarities in the collection.
  */
 export const searchSimilarities_legacy = async (userPrompt: string) => {
-  const collectionName = prompt(`Enter your collection to search
+    const collectionName = prompt(`Enter your collection to search
 - - -
 ${(await getCollectionsList()).map((collection) => collection.name).join("\n")}
 - - -`);
 
-  if (collectionName === null) {
-    return;
-  }
+    if (collectionName === null) {
+        return;
+    }
 
-  let results;
-  // Search for similar chunk that match the input
-  try {
-    results = await client.search(collectionName, {
-      vector: await createEmbedding(userPrompt),
-      limit: 5,
-      score_threshold: 0.3,
-    });
-  } catch (error) {
-    console.error("Error searching for similarities in Qdrant:", error);
-  }
+    let results;
+    // Search for similar chunk that match the input
+    try {
+        results = await client.search(collectionName, {
+            vector: await createEmbedding(userPrompt),
+            limit: 5,
+            score_threshold: 0.3,
+        });
+    } catch (error) {
+        console.error("Error searching for similarities in Qdrant:", error);
+    }
 
-  const retrievedChunk = results!
-    .map(
-      (result) =>
-        `** ${JSON.stringify(
-          (result.payload?.input as string)
-            .replace(/"/g, "")
-            .replace(/\n/g, " ")
-        )}`
-    )
-    .join("\n");
-  return retrievedChunk;
+    const retrievedChunk = results!
+        .map(
+            (result) =>
+                `** ${JSON.stringify(
+                    (result.payload?.input as string)
+                        .replace(/"/g, "")
+                        .replace(/\n/g, " ")
+                )}`
+        )
+        .join("\n");
+    return retrievedChunk;
 };
 
 /* 
   Function to search for similarities in a collection based on a user prompt and a list of collections
 */
 export const searchSimilarities = async (
-  userPrompt: string,
-  collectionName: string
+    userPrompt: string,
+    collectionName: string
 ) => {
-  let results;
-  // Search for similar chunk that match the input
-  try {
-    results = await client.search(collectionName, {
-      vector: await createEmbedding(userPrompt),
-      limit: 5,
-      score_threshold: 0.3,
-    });
-  } catch (error) {
-    console.error("Error searching for similarities in Qdrant:", error);
-  }
+    let results;
+    // Search for similar chunk that match the input
+    try {
+        results = await client.search(collectionName, {
+            vector: await createEmbedding(userPrompt),
+            limit: 5,
+            score_threshold: 0.3,
+        });
+    } catch (error) {
+        console.error("Error searching for similarities in Qdrant:", error);
+    }
 
-  const retrievedChunk = results!
-    .map(
-      (result) =>
-        `** ${JSON.stringify(
-          (result.payload?.input as string)
-            .replace(/"/g, "")
-            .replace(/\n/g, " ")
-        )}`
-    )
-    .join("\n");
-  return retrievedChunk;
+    const retrievedChunk = results!
+        .map(
+            (result) =>
+                `** ${JSON.stringify(
+                    (result.payload?.input as string)
+                        .replace(/"/g, "")
+                        .replace(/\n/g, " ")
+                )}`
+        )
+        .join("\n");
+    return retrievedChunk;
 };
 
 export const rag = async (
-  model: data,
-  userPrompt: string,
-  systemMessage: string,
-  history: Message[],
-  retrievedChunk: string,
-  setChatResponse: (text: string) => void
+    model: data,
+    userPrompt: string,
+    systemMessage: string,
+    history: Message[],
+    retrievedChunk: string,
+    setChatResponse: (text: string) => void
 ) => {
-  // Query to be sent to the model
-  const chatSystemMessage = `Context information is below.
+    // Query to be sent to the model
+    const chatSystemMessage = `Context information is below.
 -----------------------
 ${retrievedChunk}
 -----------------------
@@ -310,109 +310,109 @@ Given the context information and not prior knowledge, answer the query of user 
 Additional requirement of system message: ${systemMessage}
 
   `;
-  // create a newMessage
-  const newMessage: OpenAI.ChatCompletionMessageParam[] = [
-    {
-      role: "system",
-      content: chatSystemMessage,
-    },
-    ...history.map((message) => {
-      return {
-        role: message.role,
-        content: message.content,
-      } as OpenAI.ChatCompletionMessageParam;
-    }),
-    {
-      role: "user",
-      content: userPrompt,
-    },
-  ];
+    // create a newMessage
+    const newMessage: OpenAI.ChatCompletionMessageParam[] = [
+        {
+            role: "system",
+            content: chatSystemMessage,
+        },
+        ...history.map((message) => {
+            return {
+                role: message.role,
+                content: message.content,
+            } as OpenAI.ChatCompletionMessageParam;
+        }),
+        {
+            role: "user",
+            content: userPrompt,
+        },
+    ];
 
-  // try {
-  //   const openai = new OpenAI({
-  //     apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
-  //     dangerouslyAllowBrowser: true,
-  //   });
-  //   const stream = await openai.chat.completions.create({
-  //     messages: newMessage,
-  //     model: "gpt-4o",
-  //     stream: true,
-  //   });
+    // try {
+    //   const openai = new OpenAI({
+    //     apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
+    //     dangerouslyAllowBrowser: true,
+    //   });
+    //   const stream = await openai.chat.completions.create({
+    //     messages: newMessage,
+    //     model: "gpt-4o",
+    //     stream: true,
+    //   });
 
-  //   let text = "";
-  //   for await (const chunck of stream) {
-  //     console.log(chunck.choices[0]?.delta.content);
-  //     text += chunck.choices[0]?.delta.content || "";
-  //     setChatResponse(text);
-  //   }
-  // } catch (err) {
-  //   console.error("Error in OpenAI Chat Completions:", err);
-  // }
+    //   let text = "";
+    //   for await (const chunck of stream) {
+    //     console.log(chunck.choices[0]?.delta.content);
+    //     text += chunck.choices[0]?.delta.content || "";
+    //     setChatResponse(text);
+    //   }
+    // } catch (err) {
+    //   console.error("Error in OpenAI Chat Completions:", err);
+    // }
 
-  selectModel(model, newMessage, setChatResponse);
+    selectModel(model, newMessage, setChatResponse);
 };
 
 type data = {
-  model: string;
-  subModel: string;
-  apiKey: ApiKey[];
+    model: string;
+    subModel: string;
+    apiKey: ApiKey[];
 };
 
 const selectModel = async (
-  model: data,
-  messages: any[],
-  setChatResponse: any
+    model: data,
+    messages: any[],
+    setChatResponse: any
 ) => {
-  let stream: any;
+    let stream: any;
 
-  if (model.model === "OpenAI") {
-    const apiKey = model.apiKey.find((key) => key.name === "OpenAI");
-    if (!apiKey) {
-      throw new Error("API Key not found");
+    if (model.model === "OpenAI") {
+        const apiKey = model.apiKey.find((key) => key.name === "OpenAI");
+        if (!apiKey) {
+            throw new Error("API Key not found");
+        }
+        const openai = new OpenAI({
+            apiKey: apiKey.apiKey,
+            dangerouslyAllowBrowser: true,
+        });
+        try {
+            stream = await openai.chat.completions.create({
+                messages: messages,
+                model: model.subModel,
+                stream: true,
+            });
+        } catch (error) {
+            if (error instanceof Error) {
+                throw handleError(model.model, model.subModel, error);
+            }
+        }
+    } else {
+        const apiKey = model.apiKey.find(
+            (key) => key.name === "Groq (Llama | Mistral | Gemma)"
+        );
+        if (!apiKey) {
+            throw new Error("API Key not found");
+        }
+        const groq = new Groq({
+            apiKey: apiKey.apiKey,
+            dangerouslyAllowBrowser: true,
+        });
+        try {
+            stream = await groq.chat.completions.create({
+                messages: messages,
+                model: model.subModel,
+                stream: true,
+            });
+        } catch (error) {
+            if (error instanceof Error) {
+                throw handleError(model.model, model.subModel, error);
+            }
+        }
     }
-    const openai = new OpenAI({
-      apiKey: apiKey.apiKey,
-      dangerouslyAllowBrowser: true,
-    });
-    try {
-      stream = await openai.chat.completions.create({
-        messages: messages,
-        model: model.subModel,
-        stream: true,
-      });
-    } catch (error) {
-      if (error instanceof Error) {
-        throw handleError(model.model, model.subModel, error);
-      }
-    }
-  } else {
-    const apiKey = model.apiKey.find(
-      (key) => key.name === "Groq (Llama | Mistral | Gemma)"
-    );
-    if (!apiKey) {
-      throw new Error("API Key not found");
-    }
-    const groq = new Groq({
-      apiKey: apiKey.apiKey,
-      dangerouslyAllowBrowser: true,
-    });
-    try {
-      stream = await groq.chat.completions.create({
-        messages: messages,
-        model: model.subModel,
-        stream: true,
-      });
-    } catch (error) {
-      if (error instanceof Error) {
-        throw handleError(model.model, model.subModel, error);
-      }
-    }
-  }
 
-  let text = "";
-  for await (const chunck of stream) {
-    console.log(chunck.choices[0]?.delta.content);
-    text += chunck.choices[0]?.delta.content || "";
-    setChatResponse(text);
-  }
+    let text = "";
+    for await (const chunck of stream) {
+        console.log(chunck.choices[0]?.delta.content);
+        text += chunck.choices[0]?.delta.content || "";
+        setChatResponse(text);
+    }
 };
