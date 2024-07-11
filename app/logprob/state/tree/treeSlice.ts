@@ -175,9 +175,10 @@ export const treeSlice = createSlice({
 
 const generateNewToken = (token: Token): Token => {
     for (const t of token.top_logprobs) {
+        console.log(t.token, token.token);
         if (t.token.toLowerCase() !== token.token.toLowerCase()) {
             return {
-                ...token,
+                ...t,
                 top_logprobs: token.top_logprobs,
             };
         }
@@ -209,17 +210,19 @@ export const addAISibling = createAsyncThunk(
             token: newToken.token,
             top_logprobs: newToken.top_logprobs,
         };
-        const logProbInput = tokenHistory.join("");
+        console.log(newToken);
+        const logProbInput = tokenHistory.join("") + newToken.token;
         console.log(logProbInput);
         const res = await createChatCompletionLogProb(logProbInput);
         const response = res.logprobs?.content;
         if (!response) {
             throw new Error("No response");
         }
-        // const newResponse: typeof response = [generateToken, ...response];
+        const newResponse: typeof response = [newToken, ...response];
+        console.log(newResponse);
         return {
             id,
-            newResponse: response,
+            newResponse,
         };
     }
 );
