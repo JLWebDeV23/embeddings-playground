@@ -14,11 +14,14 @@ const Page = () => {
     const [value, setValue] = useState("");
     const dispatch = useDispatch<AppDispatch>();
     const { openModalInfo } = useModalInfo();
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleSubmit = async () => {
+        setIsLoading(true);
         const messages = (await createChatCompletionLogProb(value)).logprobs
             ?.content;
         console.log(messages);
+        setIsLoading(false);
 
         if (!messages) {
             console.error("No response");
@@ -41,8 +44,9 @@ const Page = () => {
                     value={value}
                     onValueChange={setValue}
                     //Todo: Enter not workig yet
-                    onKeyDown={(key) => {
-                        if (key.key === "Enter" && !key.shiftKey) {
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter" && !e.shiftKey) {
+                            e.preventDefault();
                             handleSubmit();
                         }
                     }}
@@ -51,6 +55,7 @@ const Page = () => {
                     onPress={handleSubmit}
                     isDisabled={!value}
                     variant="flat"
+                    isLoading={isLoading}
                 >
                     Submit
                 </Button>
