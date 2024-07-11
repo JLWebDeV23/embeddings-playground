@@ -6,6 +6,7 @@ import OpenAI from "openai";
 import { ModelsData } from "../pages/ModelCompare/ModelCompare";
 import { upsertStringInterpolations } from "./functions";
 import { Message, ModelData, StringInterpolations } from "./interfaces";
+import { createEmbedding } from "./collection";
 dotenv.config();
 
 type Model = {
@@ -210,23 +211,23 @@ export const chatCompletion = async (model: ModelData) => {
 //   return modelsData;
 // };
 
-export const createEmbedding = async (input: string | []) => {
-  let embedding: number[] = [];
-  try {
-    embedding = (
-      await new OpenAI({
-        apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
-        dangerouslyAllowBrowser: true,
-      }).embeddings.create({
-        model: "text-embedding-3-small",
-        input: input,
-      })
-    ).data[0].embedding;
-  } catch (error) {
-    console.error("Error in Create OpenAI Embeddings:", error);
-  }
-  return embedding;
-};
+// export const createEmbedding = async (input: string | []) => {
+//   let embedding: number[] = [];
+//   try {
+//     embedding = (
+//       await new OpenAI({
+//         apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
+//         dangerouslyAllowBrowser: true,
+//       }).embeddings.create({
+//         model: "text-embedding-3-small",
+//         input: input,
+//       })
+//     ).data[0].embedding;
+//   } catch (error) {
+//     console.error("Error in Create OpenAI Embeddings:", error);
+//   }
+//   return embedding;
+// };
 
 // compare cosine similarity between two model response
 // TODO: function takes input for now, will need to look into taking as []
