@@ -2,7 +2,7 @@ import { createChatCompletionLogProb } from "@/app/utils/functions";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { OpenAI } from "openai";
 
-type Token = OpenAI.ChatCompletionTokenLogprob;
+export type Token = OpenAI.ChatCompletionTokenLogprob;
 
 export interface Node {
     token: Token;
@@ -14,7 +14,7 @@ const initialState: Node = {
     token: { token: "", logprob: 0, bytes: [], top_logprobs: [] },
     id: "0",
     children: [
-        {
+        /* {
             token: { token: "Hello", logprob: 0, bytes: [], top_logprobs: [] },
             id: "0.0",
             children: [
@@ -51,7 +51,7 @@ const initialState: Node = {
                     ],
                 },
             ],
-        },
+        }, */
     ],
 };
 
@@ -85,11 +85,12 @@ const findNode = (node: Node, id: string): Node | undefined => {
     return undefined;
 };
 
-export const getTokenHistory = (node: Node): string[] => {
-    if (node.token.token) {
-        return [node.token.token];
+export const getTokenHistory = (tree: Node, id: string): string[] => {
+    const parentNode = findParentNode(tree, id);
+    if (!parentNode || parentNode.id === "0") {
+        return [];
     }
-    return node.children.flatMap(getTokenHistory);
+    return [...getTokenHistory(tree, parentNode.id), parentNode.token.token];
 };
 
 export const treeSlice = createSlice({
@@ -132,19 +133,22 @@ export const treeSlice = createSlice({
                 });
             }
         },
-        setInitialTree: (state, action: PayloadAction<string>) => {
-            state.children = [
-                {
-                    token: {
-                        token: action.payload,
-                        logprob: 0,
-                        bytes: [],
-                        top_logprobs: [],
-                    },
-                    id: "0.0",
-                    children: [],
-                },
-            ];
+        setInitialTree: (state, action: PayloadAction<Token[]>) => {
+            state.children = [];
+            let lastGeneratedId = "0";
+            action.payload.forEach((response) => {
+                const parent = findNode(state, lastGeneratedId);
+                if (parent) {
+                    lastGeneratedId = makeId(parent);
+                    parent.children.push({
+                        token: response,
+                        id: lastGeneratedId,
+                        children: [],
+                    });
+                } else {
+                    console.error("Parent not found");
+                }
+            });
         },
     },
     extraReducers: (builder) => {
@@ -170,11 +174,14 @@ export const treeSlice = createSlice({
 });
 
 const generateNewToken = (token: Token): Token => {
-    token.top_logprobs.forEach((topLogProb) => {
-        if (topLogProb.token.toLowerCase() !== token.token.toLowerCase()) {
-            return topLogProb;
+    for (const t of token.top_logprobs) {
+        if (t.token.toLowerCase() !== token.token.toLowerCase()) {
+            return {
+                ...token,
+                top_logprobs: token.top_logprobs,
+            };
         }
-    });
+    }
     return token;
 };
 
@@ -200,23 +207,19 @@ export const addAISibling = createAsyncThunk(
         const generateToken: OpenAI.ChatCompletionTokenLogprob = {
             ...token,
             token: newToken.token,
-            top_logprobs: token.top_logprobs,
+            top_logprobs: newToken.top_logprobs,
         };
-        const logProbInput =
-            tokenHistory
-                .map((parentToken) => {
-                    return parentToken;
-                })
-                .join("") + generateToken.token;
+        const logProbInput = tokenHistory.join("");
+        console.log(logProbInput);
         const res = await createChatCompletionLogProb(logProbInput);
         const response = res.logprobs?.content;
         if (!response) {
             throw new Error("No response");
         }
-        const newResponse: typeof response = [generateToken, ...response];
+        // const newResponse: typeof response = [generateToken, ...response];
         return {
             id,
-            newResponse,
+            newResponse: response,
         };
     }
 );

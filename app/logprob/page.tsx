@@ -5,16 +5,30 @@ import { Textarea } from "@nextui-org/input";
 import { Button } from "@nextui-org/react";
 import { ScrollShadow } from "@nextui-org/scroll-shadow";
 import LogprobTree from "./components/LogprobTree";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "./state/store";
+import { setInitialTree } from "./state/tree/treeSlice";
+import useModalInfo from "../hooks/useModalInfo";
 
 const Page = () => {
     const [value, setValue] = useState("");
+    const dispatch = useDispatch<AppDispatch>();
+    const { openModalInfo } = useModalInfo();
 
     const handleSubmit = async () => {
         const messages = (await createChatCompletionLogProb(value)).logprobs
             ?.content;
         console.log(messages);
 
-        setValue("");
+        if (!messages) {
+            console.error("No response");
+            openModalInfo({
+                title: "No response",
+                message: "Please try again",
+            });
+            return;
+        }
+        dispatch(setInitialTree(messages));
     };
 
     return (
@@ -41,7 +55,10 @@ const Page = () => {
                     Submit
                 </Button>
             </div>
-            <ScrollShadow orientation="horizontal">
+            <ScrollShadow
+                orientation="horizontal"
+                className="items-center flex py-10"
+            >
                 <LogprobTree />
             </ScrollShadow>
         </div>
