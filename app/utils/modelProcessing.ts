@@ -36,7 +36,7 @@ export const chatCompletion = async (model: ModelData) => {
   let response: Response = null;
   let newMessage: Message;
   let groq: Groq;
-
+  console.log(model);
   model = {
     ...model,
     messages: model.messages.map((message: any) => {
@@ -437,6 +437,7 @@ export const insertUserPrompt = async (
                 newMessage = JSON.parse(
                   JSON.stringify(await chatCompletion(data))
                 );
+                console.log(newMessage);
               } catch (error) {
                 console.log(newMessage);
               }
