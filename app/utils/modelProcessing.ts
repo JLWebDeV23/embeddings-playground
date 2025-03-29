@@ -1,12 +1,12 @@
-import Anthropic from "@anthropic-ai/sdk";
-import similarity from "compute-cosine-similarity";
-import dotenv from "dotenv";
-import { Groq } from "groq-sdk";
-import OpenAI from "openai";
-import { ModelsData } from "../pages/ModelCompare/ModelCompare";
-import { upsertStringInterpolations } from "./functions";
-import { Message, ModelData, StringInterpolations } from "./interfaces";
-import { createEmbedding } from "./collection";
+import Anthropic from '@anthropic-ai/sdk';
+import similarity from 'compute-cosine-similarity';
+import dotenv from 'dotenv';
+import { Groq } from 'groq-sdk';
+import OpenAI from 'openai';
+import { ModelsData } from '../pages/ModelCompare/ModelCompare';
+import { upsertStringInterpolations } from './functions';
+import { Message, ModelData, StringInterpolations } from './interfaces';
+import { createEmbedding } from './collection';
 dotenv.config();
 
 type Model = {
@@ -17,12 +17,12 @@ type Model = {
 };
 
 type ClaudeMessage = {
-  role: "user" | "assistant";
+  role: 'user' | 'assistant';
   content: string;
 };
 
 type ClaudeSystemMessage = {
-  role: "system";
+  role: 'system';
   content: string;
 };
 
@@ -48,10 +48,10 @@ export const chatCompletion = async (model: ModelData) => {
   };
 
   switch (model.model) {
-    case "OpenAI": {
-      const apiKey = model.apiKey.find((key) => key.name === "OpenAI");
+    case 'OpenAI': {
+      const apiKey = model.apiKey.find((key) => key.name === 'OpenAI');
       if (!apiKey) {
-        throw new Error("API Key not found");
+        throw new Error('API Key not found');
       }
       const client = new OpenAI({
         apiKey: apiKey.apiKey,
@@ -70,12 +70,12 @@ export const chatCompletion = async (model: ModelData) => {
       break;
     }
 
-    case "LlaMA 3": {
+    case 'LlaMA 3': {
       const apiKey = model.apiKey.find(
-        (key) => key.name === "Groq (Llama | Mistral | Gemma)"
+        (key) => key.name === 'Groq (Llama | Mistral | Gemma)'
       );
       if (!apiKey) {
-        throw new Error("API Key not found");
+        throw new Error('API Key not found');
       }
       groq = new Groq({
         apiKey: apiKey.apiKey,
@@ -93,12 +93,12 @@ export const chatCompletion = async (model: ModelData) => {
       }
       break;
     }
-    case "Gemma":
+    case 'Gemma':
       const apiKey = model.apiKey.find(
-        (key) => key.name === "Groq (Llama | Mistral | Gemma)"
+        (key) => key.name === 'Groq (Llama | Mistral | Gemma)'
       );
       if (!apiKey) {
-        throw new Error("API Key not found");
+        throw new Error('API Key not found');
       }
       groq = new Groq({
         apiKey: apiKey.apiKey,
@@ -116,12 +116,12 @@ export const chatCompletion = async (model: ModelData) => {
       }
       break;
 
-    case "Mistral": {
+    case 'Mistral': {
       const apiKey = model.apiKey.find(
-        (key) => key.name === "Groq (Llama | Mistral | Gemma)"
+        (key) => key.name === 'Groq (Llama | Mistral | Gemma)'
       );
       if (!apiKey) {
-        throw new Error("API Key not found");
+        throw new Error('API Key not found');
       }
       groq = new Groq({
         apiKey: apiKey.apiKey,
@@ -140,22 +140,22 @@ export const chatCompletion = async (model: ModelData) => {
       }
     }
 
-    case "Claude": {
-      const apiKey = model.apiKey.find((key) => key.name === "Claude");
+    case 'Claude': {
+      const apiKey = model.apiKey.find((key) => key.name === 'Claude');
       if (!apiKey) {
-        throw new Error("API Key not found");
+        throw new Error('API Key not found');
       }
-      const domain = window?.location?.origin || "";
+      const domain = window?.location?.origin || '';
       const anthropic = new Anthropic({
         apiKey: apiKey.apiKey,
-        baseURL: domain + "/anthropic/",
+        baseURL: domain + '/anthropic/',
       });
       const [systemMessage, ...messages] = model.messages as (
         | ClaudeMessage
         | ClaudeSystemMessage
       )[];
-      if (systemMessage.role !== "system") {
-        throw new Error("First message must be a system message");
+      if (systemMessage.role !== 'system') {
+        throw new Error('First message must be a system message');
       }
       try {
         response = await anthropic.messages.create({
@@ -171,10 +171,10 @@ export const chatCompletion = async (model: ModelData) => {
       }
     }
   }
-  if (model.model === "Claude" && response) {
+  if (model.model === 'Claude' && response) {
     newMessage = {
-      role: (response as Anthropic.Messages.Message).role || "",
-      content: (response as Anthropic.Messages.Message).content[0].text || "",
+      role: (response as Anthropic.Messages.Message).role || '',
+      content: (response as Anthropic.Messages.Message).content[0].text || '',
     };
   } else {
     newMessage = {
@@ -188,7 +188,7 @@ export const chatCompletion = async (model: ModelData) => {
           response as
             | Groq.Chat.Completions.ChatCompletion
             | OpenAI.Chat.Completions.ChatCompletion
-        )?.choices[0].message.content || "",
+        )?.choices[0].message.content || '',
     };
   }
   return newMessage;
@@ -242,7 +242,7 @@ export const createCosineSimilarity: (
   const embedding1: number[] = await createEmbedding(response1!);
   const embedding2: number[] = await createEmbedding(response2!);
 
-  const cosineSimilarity: NodeRequire = require("compute-cosine-similarity");
+  const cosineSimilarity: NodeRequire = require('compute-cosine-similarity');
 
   const similarityScore = similarity(embedding1, embedding2);
   // const roundedSimilarity = Number(similarityScore?.toFixed(7));
@@ -258,7 +258,7 @@ export const getNewModelData = async (
   let tempModelDataCopy: ModelData = JSON.parse(JSON.stringify(newModelData)); // only to use for chatcompletion
 
   const systemMessage = originalModelData.messages.find(
-    (message) => message.role === "system"
+    (message) => message.role === 'system'
   );
   if (systemMessage) {
     newModelDataCopy.messages.push(systemMessage);
@@ -266,11 +266,11 @@ export const getNewModelData = async (
   }
   for (let index = 0; index < originalModelData.messages.length; index++) {
     const message = originalModelData.messages[index];
-    if (message.role.toLowerCase() === "user") {
+    if (message.role.toLowerCase() === 'user') {
       newModelDataCopy.messages.push(message);
-      console.log(newModelDataCopy, "here");
+      console.log(newModelDataCopy, 'here');
       tempModelDataCopy.messages.push(message);
-    } else if (message.role.toLowerCase() === "assistant") {
+    } else if (message.role.toLowerCase() === 'assistant') {
       const newMessage = JSON.parse(
         JSON.stringify(await chatCompletion(tempModelDataCopy))
       );
@@ -358,7 +358,7 @@ export const go = async (props: goProps) => {
     );
     return newModelData;
   } catch (error) {
-    console.error("Error in go:", error);
+    console.error('Error in go:', error);
     throw error;
   }
 };
@@ -385,7 +385,7 @@ export const insertUserPrompt = async (
 
   try {
     if (!modelData) {
-      throw new Error("modelData is undefined");
+      throw new Error('modelData is undefined');
     }
 
     const newModelData = await Promise.all(
@@ -394,14 +394,14 @@ export const insertUserPrompt = async (
 
         return Promise.all(
           colData.map(async (data, index) => {
-            let baseModelDataMessage: string = "";
+            let baseModelDataMessage: string = '';
 
             if (index === 0) {
               const newData = {
                 ...data,
                 messages: [
                   ...data.messages,
-                  { role: "user", content: userPrompt },
+                  { role: 'user', content: userPrompt },
                 ],
               };
               data = newData;
@@ -427,7 +427,7 @@ export const insertUserPrompt = async (
                 ...data,
                 messages: [
                   ...data.messages,
-                  { role: "user", content: userPrompt },
+                  { role: 'user', content: userPrompt },
                 ],
               };
               data = newData;
@@ -466,7 +466,7 @@ export const insertUserPrompt = async (
 
     return newModelData;
   } catch (error) {
-    console.error("Error in insertUserPrompt:", error);
+    console.error('Error in insertUserPrompt:', error);
     throw error;
   }
 };
@@ -474,7 +474,7 @@ export const insertUserPrompt = async (
 class ModelError extends Error {
   constructor(model: string, subModel: string, message: string) {
     super(message);
-    this.name = "ModelError";
+    this.name = 'ModelError';
     this.model = model;
     this.subModel = subModel;
   }

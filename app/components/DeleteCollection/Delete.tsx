@@ -1,6 +1,6 @@
-import { getCollectionsList, deleteCollection } from "@/app/utils/collection";
-import { QdrantClient } from "@qdrant/js-client-rest";
-import React from "react";
+import { getCollectionsList, deleteCollection } from '@/app/utils/collection';
+import { QdrantClient } from '@qdrant/js-client-rest';
+import React from 'react';
 
 type DeleteProps = {};
 
@@ -9,7 +9,7 @@ const Delete: React.FC<DeleteProps> = () => {
     // const name = prompt("Enter the name of the collection to delete");
     const name = prompt(`Enter the name of the collection to delete:
 - - -
-${(await getCollectionsList()).map((collection) => collection.name).join("\n")}
+${(await getCollectionsList()).map((collection) => collection.name).join('\n')}
 - - -
 `);
     const response = await getCollectionsList();
@@ -23,7 +23,7 @@ ${(await getCollectionsList()).map((collection) => collection.name).join("\n")}
         location.reload();
       }
     } catch (error) {
-      console.error("Error deleting collection:", error);
+      console.error('Error deleting collection:', error);
     }
   };
 

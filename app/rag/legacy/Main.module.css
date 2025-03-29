@@ -1,56 +1,53 @@
 .main {
-    position: relative;
-    height: 100%;
-    width: 100%;
+  position: relative;
+  height: 100%;
+  width: 100%;
 }
 
 #h1 {
-    font-size: 1.5em;
-    color: rgba(255, 255, 255, 0.722);
-    margin: 10px 20px;
-    padding: 0;
-    font-family: 'Courier New', Courier, monospace;
-    font-weight: bold;
-
+  font-size: 1.5em;
+  color: rgba(255, 255, 255, 0.722);
+  margin: 10px 20px;
+  padding: 0;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
 }
 .row {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    flex-grow: 1;
-    justify-content: center;
-    width: auto;
-    padding: 0 20px;
-    height: 50vh;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  flex-grow: 1;
+  justify-content: center;
+  width: auto;
+  padding: 0 20px;
+  height: 50vh;
 }
 
 .col {
-    display: flex;
-    flex-direction: column;
-    /* justify-content: space-between; */
-    align-items: end;
-    flex-grow: 1;
-    width: 50%;
-    height: 100%;
-
+  display: flex;
+  flex-direction: column;
+  /* justify-content: space-between; */
+  align-items: end;
+  flex-grow: 1;
+  width: 50%;
+  height: 100%;
 }
 
 .verticalLine {
-    border: 1px dashed white;
-    height: auto;
-    margin: 10px 20px;
+  border: 1px dashed white;
+  height: auto;
+  margin: 10px 20px;
 }
 
 .result {
-    display: flex;
-    flex-direction: row;
-    margin: 10px 20px;
-    /* align-items: space-around; */
-    width: 100%;
+  display: flex;
+  flex-direction: row;
+  margin: 10px 20px;
+  /* align-items: space-around; */
+  width: 100%;
 }
 
 .modelCompareLogo {
-    display: flex;
-    justify-content: space-between;
+  display: flex;
+  justify-content: space-between;
 }
-

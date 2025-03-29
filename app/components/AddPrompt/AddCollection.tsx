@@ -1,18 +1,17 @@
-"use client";
-import React, { cloneElement, useState } from "react";
-import TextBox from "../TextBox/TextBox";
+'use client';
+import React, { cloneElement, useState } from 'react';
+import TextBox from '../TextBox/TextBox';
 import {
   createCollection,
   getCollectionsList,
   upsertPoints,
   collectionExists,
-} from "../../utils/collection";
+} from '../../utils/collection';
 
-type AddCollectionProps = {
-};
+type AddCollectionProps = {};
 
 const AddCollection: React.FC<AddCollectionProps> = () => {
-  const [inputValue, setInputValue] = useState("");
+  const [inputValue, setInputValue] = useState('');
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInputValue(e.target.value);
@@ -22,7 +21,7 @@ const AddCollection: React.FC<AddCollectionProps> = () => {
     e.preventDefault();
     let collectionName = prompt(`Enter a collection name:
 - - -
-${(await getCollectionsList()).map((collection) => collection.name).join("\n")}
+${(await getCollectionsList()).map((collection) => collection.name).join('\n')}
 - - -
     `);
     const collection = await collectionExists(collectionName!);
@@ -51,7 +50,7 @@ ${(await getCollectionsList()).map((collection) => collection.name).join("\n")}
       upsertPoints(collectionName!, inputValue);
       alert(`Points added to the collection: ${collectionName}`);
     }
-    setInputValue("");
+    setInputValue('');
   };
 
   return (

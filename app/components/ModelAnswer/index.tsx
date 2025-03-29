@@ -1,41 +1,41 @@
-import { Model, ModelData } from "@/app/utils/interfaces";
-import IonIcon from "@reacticons/ionicons";
-import ModelSelector from "@/app/components/ModelSelector";
-import useModelData from "@/app/hooks/useModelData";
+import { Model, ModelData } from '@/app/utils/interfaces';
+import IonIcon from '@reacticons/ionicons';
+import ModelSelector from '@/app/components/ModelSelector';
+import useModelData from '@/app/hooks/useModelData';
 import {
   ChatBubble,
   ScoreBubble,
-} from "@/app/components/ModelAnswer/ChatBubble";
-import { Divider } from "@nextui-org/react";
-import { Card, CardHeader, CardBody } from "@/app/components/Card";
+} from '@/app/components/ModelAnswer/ChatBubble';
+import { Divider } from '@nextui-org/react';
+import { Card, CardHeader, CardBody } from '@/app/components/Card';
 
 function ModelAnswerHeader({
-    name,
-    modelNumber,
-    isLocked,
-    isLast = false,
-    onClose,
+  name,
+  modelNumber,
+  isLocked,
+  isLast = false,
+  onClose,
 }: {
-    name: string;
-    isLocked: boolean;
-    modelNumber: number;
-    isLast?: boolean;
-    onClose?: () => void;
+  name: string;
+  isLocked: boolean;
+  modelNumber: number;
+  isLast?: boolean;
+  onClose?: () => void;
 }) {
   const { handleModelsAction, isLoading, isLastLoading } = useModelData();
 
   const onSelectItem = (model: Model) => {
-    handleModelsAction({ action: "add", model });
+    handleModelsAction({ action: 'add', model });
   };
 
   const onLockClick = () => {
-    handleModelsAction({ action: "lock", index: modelNumber });
+    handleModelsAction({ action: 'lock', index: modelNumber });
   };
 
-    const onRemoveClick = () => {
-        if (onClose) onClose();
-        handleModelsAction({ action: "pop", index: modelNumber });
-    };
+  const onRemoveClick = () => {
+    if (onClose) onClose();
+    handleModelsAction({ action: 'pop', index: modelNumber });
+  };
 
   return (
     <div className="flex flex-row justify-between items-center w-full gap-x-3 gap-y-1 flex-wrap">
@@ -56,7 +56,7 @@ function ModelAnswerHeader({
         )}
         <button
           className={`text-sm text-gray-500 p-1 rounded-md aspect-square ${
-            isLocked ? "bg-red-900" : ""
+            isLocked ? 'bg-red-900' : ''
           }`}
           onClick={() => onLockClick()}
         >
@@ -79,68 +79,61 @@ function ModelAnswerHeader({
 }
 
 export default function ModelAnswer({
-    answer,
-    modelNumber = 0,
-    isLast,
-    onClose,
+  answer,
+  modelNumber = 0,
+  isLast,
+  onClose,
 }: {
-    answer: ModelData;
-    modelNumber?: number;
-    isLast?: boolean;
-    onClose?: () => void;
+  answer: ModelData;
+  modelNumber?: number;
+  isLast?: boolean;
+  onClose?: () => void;
 }) {
   const { isLoading, isLastLoading } = useModelData();
 
-    return (
-        <>
-            <Card
-                isBlurred
-                className="flex flex-col min-w-[28rem] flex-1 items-center"
-            >
-                <CardHeader className="w-full">
-                    <ModelAnswerHeader
-                        onClose={onClose}
-                        name={answer.subModel}
-                        isLocked={answer.locked}
-                        modelNumber={modelNumber}
-                        isLast={isLast}
-                    />
-                </CardHeader>
-                <Divider />
-                <CardBody>
-                    <div className="flex flex-col p-2 w-full gap-1">
-                        {answer.messages.length < 1 && !isLoading ? (
-                            <div className="min-h-10 flex h-full items-center">
-                                <p className="opacity-50 w-full text-center">
-                                    Type a message to start a conversation
-                                </p>
-                            </div>
-                        ) : (
-                            answer.messages.map((message, index) => (
-                                <div className="flex flex-col p-2" key={index}>
-                                    {message.content.length > 0 && (
-                                        <>
-                                            <ChatBubble
-                                                isLoading={
-                                                    isLoading ||
-                                                    (isLast && isLastLoading)
-                                                }
-                                                role={message.role}
-                                                text={message.content}
-                                            />
-                                            {message.score && (
-                                                <ScoreBubble
-                                                    score={message.score}
-                                                />
-                                            )}
-                                        </>
-                                    )}
-                                </div>
-                            ))
-                        )}
-                    </div>
-                </CardBody>
-            </Card>
-        </>
-    );
+  return (
+    <>
+      <Card
+        isBlurred
+        className="flex flex-col min-w-[28rem] flex-1 items-center"
+      >
+        <CardHeader className="w-full">
+          <ModelAnswerHeader
+            onClose={onClose}
+            name={answer.subModel}
+            isLocked={answer.locked}
+            modelNumber={modelNumber}
+            isLast={isLast}
+          />
+        </CardHeader>
+        <Divider />
+        <CardBody>
+          <div className="flex flex-col p-2 w-full gap-1">
+            {answer.messages.length < 1 && !isLoading ? (
+              <div className="min-h-10 flex h-full items-center">
+                <p className="opacity-50 w-full text-center">
+                  Type a message to start a conversation
+                </p>
+              </div>
+            ) : (
+              answer.messages.map((message, index) => (
+                <div className="flex flex-col p-2" key={index}>
+                  {message.content.length > 0 && (
+                    <>
+                      <ChatBubble
+                        isLoading={isLoading || (isLast && isLastLoading)}
+                        role={message.role}
+                        text={message.content}
+                      />
+                      {message.score && <ScoreBubble score={message.score} />}
+                    </>
+                  )}
+                </div>
+              ))
+            )}
+          </div>
+        </CardBody>
+      </Card>
+    </>
+  );
 }

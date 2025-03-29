@@ -1,5 +1,5 @@
-import React from "react";
-import styles from "./TextArea.module.css";
+import React from 'react';
+import styles from './TextArea.module.css';
 
 type TextAreaProps = {
   // nameBtn: string;
@@ -11,13 +11,8 @@ const TextArea: React.FC<TextAreaProps> = ({}) => {
       <div className={styles.entryArea}>
         <textarea id="textArea" required></textarea>
         <div className={styles.labelLine}>Message</div>
-        <button
-          className={`btn ${styles.buttonCustom}`}
-        >
-          Add
-        </button>
+        <button className={`btn ${styles.buttonCustom}`}>Add</button>
       </div>
-      
     </div>
   );
 };

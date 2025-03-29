@@ -18,7 +18,7 @@
 } */
 
 .messageModelTextarea {
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   padding-top: 3%;
   font-weight: 500;
   font-size: 1em;
@@ -46,7 +46,6 @@
   border-radius: 5px;
 }
 
-
 .invisibleLine {
   border: 1px transparent;
   height: 80%;
@@ -54,5 +53,4 @@
 }
 
 .responseBox {
-  
 }

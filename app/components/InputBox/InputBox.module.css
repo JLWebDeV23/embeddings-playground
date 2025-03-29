@@ -1,50 +1,50 @@
 .container {
-    width: 100%;
+  width: 100%;
 }
 
 .entryArea {
-    position: relative;
-    height: 48px;
-    line-height: 48px;
+  position: relative;
+  height: 48px;
+  line-height: 48px;
 }
 
 .input {
-    position: absolute;
-    width: 100%;
-    outline: none;
-    font-size: 1.5em;
-    line-height: 48px;
-    border-radius: 8px;
-    padding-left: 10px;
-    border: 1px solid #a09b9c49;
-    background: transparent;
-    transition: 0.1s ease;
-    z-index: 10;
+  position: absolute;
+  width: 100%;
+  outline: none;
+  font-size: 1.5em;
+  line-height: 48px;
+  border-radius: 8px;
+  padding-left: 10px;
+  border: 1px solid #a09b9c49;
+  background: transparent;
+  transition: 0.1s ease;
+  z-index: 10;
 }
 
 .labelLine {
-    position: absolute;
-    left: 5px;
-    font-size: 1em;
-    padding: 0 5px;
-    /* margin: 0 px; */
-    transition: 0.2 ease;
-    background-color: inherit;
+  position: absolute;
+  left: 5px;
+  font-size: 1em;
+  padding: 0 5px;
+  /* margin: 0 px; */
+  transition: 0.2 ease;
+  background-color: inherit;
 }
 
 .input:focus,
 .input:valid {
-    /* border: 1px solid #6ee7b7; */
-    border: 1px solid var(--green);
+  /* border: 1px solid #6ee7b7; */
+  border: 1px solid var(--green);
 }
 
 .input:focus + .labelLine,
 .input:valid + .labelLine {
-    /* color: #6ee7b7; */
-    color: var(--green);
-    height: 27px;
-    line-height: 50px;
-    font-size: 1.1em;
-    transform: translate(0, -23px) scale(0.8);
-    z-index: 11;
+  /* color: #6ee7b7; */
+  color: var(--green);
+  height: 27px;
+  line-height: 50px;
+  font-size: 1.1em;
+  transform: translate(0, -23px) scale(0.8);
+  z-index: 11;
 }

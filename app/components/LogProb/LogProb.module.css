@@ -1,14 +1,14 @@
 .logprob {
-    margin: 10px 20px;
-    display: flex;
-    flex-direction: column;
+  margin: 10px 20px;
+  display: flex;
+  flex-direction: column;
 }
 
 .tokenizer {
-    margin-top: 50px;
+  margin-top: 50px;
 }
 
 .generatedResponse {
-    /* display: flex; */
-    /* flex-wrap: wrap; */
+  /* display: flex; */
+  /* flex-wrap: wrap; */
 }

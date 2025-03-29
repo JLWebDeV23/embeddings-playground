@@ -1,5 +1,5 @@
-import { TreeNodeInterface } from "./interfaces";
-import OpenAI from "openai";
+import { TreeNodeInterface } from './interfaces';
+import OpenAI from 'openai';
 
 export class TreeNode implements TreeNodeInterface {
   id: number;
@@ -9,7 +9,7 @@ export class TreeNode implements TreeNodeInterface {
 
   constructor(parent: OpenAI.ChatCompletion.Choice | null) {
     this.id = Math.random();
-    this.name = ""; // name is the value
+    this.name = ''; // name is the value
     this.parent = parent; // parent node is the value
     this.children = [];
   }

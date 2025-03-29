@@ -1,4 +1,4 @@
-import OpenAI from "openai";
+import OpenAI from 'openai';
 
 type TokenNode = {
   id: string; // unique identifier, e.g., "0.3"

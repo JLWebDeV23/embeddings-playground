@@ -1,5 +1,5 @@
-import OpenAI from "openai";
-import { LogProbTreeNode } from "./interfaces";
+import OpenAI from 'openai';
+import { LogProbTreeNode } from './interfaces';
 
 export class LogTree implements LogProbTreeNode {
   token: string;

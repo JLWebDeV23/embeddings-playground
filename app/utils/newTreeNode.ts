@@ -1,5 +1,5 @@
-import { TreeNodeInterface } from "./interfaces";
-import OpenAI from "openai";
+import { TreeNodeInterface } from './interfaces';
+import OpenAI from 'openai';
 
 export class TreeNode implements TreeNodeInterface {
   id: number;

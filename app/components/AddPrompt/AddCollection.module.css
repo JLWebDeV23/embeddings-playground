@@ -5,7 +5,7 @@
 }
 
 .addCollectionTextarea {
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   padding-top: 3%;
   font-weight: 500;
   font-size: 1em;
@@ -32,4 +32,3 @@
   background-color: rgba(196, 192, 192, 0.888);
   border-radius: 5px;
 }
-

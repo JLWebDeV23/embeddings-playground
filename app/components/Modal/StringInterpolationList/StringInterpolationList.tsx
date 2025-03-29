@@ -1,6 +1,6 @@
 // StringInterpolationList.js
-import { StringInterpolations } from "@/app/utils/interfaces";
-import React from "react";
+import { StringInterpolations } from '@/app/utils/interfaces';
+import React from 'react';
 
 type StringInterpolationListProps = {
   list: StringInterpolations[];
@@ -21,15 +21,16 @@ const StringInterpolationList: React.FC<StringInterpolationListProps> = ({
         list.map((item, index) => (
           <div
             className={`flex  border border-slate-600 min-w-8 w-auto cursor-pointer rounded-t-lg ${
-              index === selectedIndex ? "bg-green z-50" : ""
+              index === selectedIndex ? 'bg-green z-50' : ''
             }`}
             key={index}
             onClick={() => onSelect(index)}
           >
-            <h3 className="font-bold text-lg flex items-center justify-center w-full h-full m-0">{index + 1}</h3>
+            <h3 className="font-bold text-lg flex items-center justify-center w-full h-full m-0">
+              {index + 1}
+            </h3>
           </div>
         ))}
-     
     </div>
   );
 };

@@ -1,73 +1,73 @@
 .container {
-    width: 100%
+  width: 100%;
 }
 
 .entryArea {
-    position: relative;
-    height: 80px;
-    line-height: 80px;
+  position: relative;
+  height: 80px;
+  line-height: 80px;
 }
 
 .entryArea textArea {
-    position: absolute;
-    width: 100%;
-    outline: none;
-    font-size: 1.1em;
-    padding: 10px 30px;
-    line-height: 40px;
-    border-radius: 10px;
-    resize: none;
+  position: absolute;
+  width: 100%;
+  outline: none;
+  font-size: 1.1em;
+  padding: 10px 30px;
+  line-height: 40px;
+  border-radius: 10px;
+  resize: none;
 
-    background: #282b37;
-    transition: 0.1s ease;
-    z-index: 1111;
+  background: #282b37;
+  transition: 0.1s ease;
+  z-index: 1111;
 }
 
 .labelLine {
-    position: absolute;
-    font-size: 1.1em;
-    color: #f0ffff;
-    padding: 0 25px;
-    margin: 0 20px;
-    background-color: #282b37;
-    transition: 0.2s ease;
+  position: absolute;
+  font-size: 1.1em;
+  color: #f0ffff;
+  padding: 0 25px;
+  margin: 0 20px;
+  background-color: #282b37;
+  transition: 0.2s ease;
 }
 
 .entryArea textArea:focus,
 .entryArea textArea:valid {
-    color:#f0ffff;
-    border: 1px solid #66ff00;
+  color: #f0ffff;
+  border: 1px solid #66ff00;
 }
 
 .entryArea textArea + .labelLine,
 .entryArea textArea + .labelLine {
-    color:#f0ffff;
-    height: 30px;
-    line-height: 30px;
-    transform: translateY(-15px, -30px) scale(0.88);
-    z-index: 1111;
+  color: #f0ffff;
+  height: 30px;
+  line-height: 30px;
+  transform: translateY(-15px, -30px) scale(0.88);
+  z-index: 1111;
 }
 
 /* fix animation later  */
 
 .buttonCustom {
-    position: absolute;
-    height: 100px;
-    width: auto;
-    right: 0;
-    background: #e5eafd2d;
-    color: #d4d6e1;
-    border: none;
-    border-radius: 0 10px 10px 0;
-    font-size: 1.1em;
-    cursor: pointer;
-    transition: background 0.2s ease;
-    z-index: 1111;
+  position: absolute;
+  height: 100px;
+  width: auto;
+  right: 0;
+  background: #e5eafd2d;
+  color: #d4d6e1;
+  border: none;
+  border-radius: 0 10px 10px 0;
+  font-size: 1.1em;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  z-index: 1111;
 }
 
 .buttonCustom:hover {
-    background: #f3f3f3ac;
-    opacity: 0.3;
+  background: #f3f3f3ac;
+  opacity: 0.3;
 }
 
 /* #addIcon {

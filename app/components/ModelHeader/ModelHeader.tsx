@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
-import ModelData from "../../../public/assets/data/ModelData.json";
+import React, { useEffect, useState } from 'react';
+import ModelData from '../../../public/assets/data/ModelData.json';
 
 type ModelHeaderProps = {
   btnName?: any;
   btnStyle?: string;
-  dropdownContentDirection: "left" | "right";
+  dropdownContentDirection: 'left' | 'right';
   onSubModelChange: (model: string, subModel: string) => void;
 };
 
@@ -15,8 +15,8 @@ const ModelHeader: React.FC<ModelHeaderProps> = ({
   onSubModelChange,
 }) => {
   const [activeModel, setActiveModel] = useState<null | number>(null);
-  const [activeSubModel, setActiveSubModel] = useState<null | string>("");
-  const [model, setModel] = useState<string>("");
+  const [activeSubModel, setActiveSubModel] = useState<null | string>('');
+  const [model, setModel] = useState<string>('');
 
   useEffect(() => {
     if (activeSubModel) {
@@ -29,7 +29,7 @@ const ModelHeader: React.FC<ModelHeaderProps> = ({
       {/* <h2 className="font-normal text-lg">{activeSubModel}</h2> */}
       <div className="dropdown dropdown-hover drop-shadow-2xl ">
         <div tabIndex={0} className={`btn ${btnStyle}`}>
-          {btnName ? btnName : "Models"}
+          {btnName ? btnName : 'Models'}
         </div>
         <ul
           tabIndex={0}
@@ -54,9 +54,9 @@ const ModelHeader: React.FC<ModelHeaderProps> = ({
                   <ul
                     tabIndex={0}
                     className={`dropdown-content z-50 drop-shadow-2xl menu bg-base-100 rounded-box w-52 ${
-                      dropdownContentDirection === "left"
-                        ? "translate-x-[13px]"
-                        : "translate-x-[-15px]"
+                      dropdownContentDirection === 'left'
+                        ? 'translate-x-[13px]'
+                        : 'translate-x-[-15px]'
                     }`}
                     onMouseEnter={() => setActiveModel(index)}
                     onMouseLeave={() => setActiveModel(null)}

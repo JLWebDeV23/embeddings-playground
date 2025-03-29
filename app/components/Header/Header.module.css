@@ -13,14 +13,14 @@
 }
 
 .logoContainer:hover {
-    border-color: var(--primary);
+  border-color: var(--primary);
 }
 .logoContainer:hover .logo {
-    color: var(--primary);
+  color: var(--primary);
 }
 
 .logo {
-  font-family: "Racing Sans One", cursive;
+  font-family: 'Racing Sans One', cursive;
   font-size: 35px;
   text-align: center;
   color: #ffffff;
@@ -36,5 +36,3 @@
   height: auto;
   margin-right: 10px;
 }
-
-

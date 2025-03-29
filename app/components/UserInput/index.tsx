@@ -1,104 +1,100 @@
-import ModelSelector from "@/app/components/ModelSelector";
-import useModelData from "@/app/hooks/useModelData";
-import { Model } from "@/app/utils/interfaces";
+import ModelSelector from '@/app/components/ModelSelector';
+import useModelData from '@/app/hooks/useModelData';
+import { Model } from '@/app/utils/interfaces';
 import {
-    Button,
-    CardFooter,
-    CardProps,
-    Spacer,
-    Textarea,
-} from "@nextui-org/react";
-import React, { useState } from "react";
-import { Card, CardBody } from "../Card";
-import IonIcon from "@reacticons/ionicons";
+  Button,
+  CardFooter,
+  CardProps,
+  Spacer,
+  Textarea,
+} from '@nextui-org/react';
+import React, { useState } from 'react';
+import { Card, CardBody } from '../Card';
+import IonIcon from '@reacticons/ionicons';
 
 export default function UserInput({
-    handleSendMessage,
-    className,
-    placeholder = "User Message",
-    isUserInputDisabled = false,
-    modelSelectorPlaceholder = "Select the initial model",
-    systemMessage = "",
-    multipleModels = true,
-    children,
-    ...rest
+  handleSendMessage,
+  className,
+  placeholder = 'User Message',
+  isUserInputDisabled = false,
+  modelSelectorPlaceholder = 'Select the initial model',
+  systemMessage = '',
+  multipleModels = true,
+  children,
+  ...rest
 }: {
-    handleSendMessage: (message: string) => void;
-    placeholder?: string;
-    modelSelectorPlaceholder?: string;
-    isUserInputDisabled?: boolean;
-    systemMessage?: string;
-    multipleModels?: boolean;
+  handleSendMessage: (message: string) => void;
+  placeholder?: string;
+  modelSelectorPlaceholder?: string;
+  isUserInputDisabled?: boolean;
+  systemMessage?: string;
+  multipleModels?: boolean;
 } & CardProps) {
-    const [inputValue, setInputValue] = useState<string>("");
+  const [inputValue, setInputValue] = useState<string>('');
 
-    const { models, handleModelsAction, isLastLoading, isLoading } =
-        useModelData();
+  const { models, handleModelsAction, isLastLoading, isLoading } =
+    useModelData();
 
-    const handleModelSelection = (model: Model) => {
-        handleModelsAction({ action: "set_initial", model: model });
-    };
+  const handleModelSelection = (model: Model) => {
+    handleModelsAction({ action: 'set_initial', model: model });
+  };
 
-    return (
-        <Card isBlurred className={`flex ${className} `} {...rest}>
-            <CardBody className="flex flex-row gap-3 items-end pb-1">
-                {models.length > 0 ? (
-                    <>
-                        <Textarea
-                            value={inputValue}
-                            isDisabled={isUserInputDisabled}
-                            onKeyDown={(e) => {
-                                if (e.key === "Enter" && !e.shiftKey) {
-                                    e.preventDefault();
-                                    handleSendMessage(inputValue);
-                                    setInputValue("");
-                                }
-                            }}
-                            onChange={(e) => {
-                                setInputValue(e.target.value);
-                            }}
-                            maxRows={5}
-                            minRows={1}
-                            size="lg"
-                            variant="underlined"
-                            placeholder={placeholder}
-                        ></Textarea>
-                        <Button
-                            onClick={() => {
-                                handleSendMessage(inputValue);
-                                setInputValue("");
-                            }}
-                            variant="flat"
-                            size="md"
-                            isLoading={isLoading || isLastLoading}
-                            isDisabled={inputValue.length === 0}
-                        >
-                            <IonIcon
-                                name="send"
-                                className="text-lg"
-                                aria-label="send"
-                            />
-                        </Button>
-                    </>
-                ) : (
-                    <ModelSelector
-                        placeholder={modelSelectorPlaceholder}
-                        aria-label="initial model"
-                        selectedModels={models}
-                        onChange={handleModelSelection}
-                        className="w-full"
-                        radius="sm"
-                        size="lg"
-                        variant="flat"
-                        multipleModels={multipleModels}
-                    />
-                )}
-            </CardBody>
-            {models.length > 0 ? (
-                <CardFooter className="gap-3">{children}</CardFooter>
-            ) : (
-                <Spacer />
-            )}
-        </Card>
-    );
+  return (
+    <Card isBlurred className={`flex ${className} `} {...rest}>
+      <CardBody className="flex flex-row gap-3 items-end pb-1">
+        {models.length > 0 ? (
+          <>
+            <Textarea
+              value={inputValue}
+              isDisabled={isUserInputDisabled}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSendMessage(inputValue);
+                  setInputValue('');
+                }
+              }}
+              onChange={(e) => {
+                setInputValue(e.target.value);
+              }}
+              maxRows={5}
+              minRows={1}
+              size="lg"
+              variant="underlined"
+              placeholder={placeholder}
+            ></Textarea>
+            <Button
+              onClick={() => {
+                handleSendMessage(inputValue);
+                setInputValue('');
+              }}
+              variant="flat"
+              size="md"
+              isLoading={isLoading || isLastLoading}
+              isDisabled={inputValue.length === 0}
+            >
+              <IonIcon name="send" className="text-lg" aria-label="send" />
+            </Button>
+          </>
+        ) : (
+          <ModelSelector
+            placeholder={modelSelectorPlaceholder}
+            aria-label="initial model"
+            selectedModels={models}
+            onChange={handleModelSelection}
+            className="w-full"
+            radius="sm"
+            size="lg"
+            variant="flat"
+            multipleModels={multipleModels}
+          />
+        )}
+      </CardBody>
+      {models.length > 0 ? (
+        <CardFooter className="gap-3">{children}</CardFooter>
+      ) : (
+        <Spacer />
+      )}
+    </Card>
+  );
 }

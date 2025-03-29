@@ -1,13 +1,13 @@
-import dotenv from "dotenv";
+import dotenv from 'dotenv';
 dotenv.config();
-import { Groq } from "groq-sdk";
-import { QdrantClient } from "@qdrant/js-client-rest";
-import OpenAI from "openai";
-import { ModelData, StringInterpolations } from "./interfaces";
+import { Groq } from 'groq-sdk';
+import { QdrantClient } from '@qdrant/js-client-rest';
+import OpenAI from 'openai';
+import { ModelData, StringInterpolations } from './interfaces';
 
 // utils/functions.ts
 export const client = new QdrantClient({
-  url: "http://localhost:6333",
+  url: 'http://localhost:6333',
 });
 
 export const openai = new OpenAI({
@@ -22,15 +22,15 @@ export const createChatCompletion = async (
   let completion;
   try {
     completion = await openai.chat.completions.create({
-      messages: [{ role: "user", content: newInput }],
-      model: "gpt-3.5-turbo",
+      messages: [{ role: 'user', content: newInput }],
+      model: 'gpt-3.5-turbo',
       logprobs: true,
       top_logprobs: 2,
       temperature: 0.0,
       // stream: true,
     });
   } catch (error) {
-    console.error("Error Message:", error);
+    console.error('Error Message:', error);
   }
   return completion!.choices[0];
 };
@@ -48,8 +48,8 @@ export const createChatCompletionLogProb = async (
     User Input: ${input}
     `;
   const completion = await openai.chat.completions.create({
-    messages: [{ role: "user", content: input }],
-    model: "gpt-3.5-turbo",
+    messages: [{ role: 'user', content: input }],
+    model: 'gpt-3.5-turbo',
     logprobs: true,
     top_logprobs: 3,
     max_tokens: 50,
@@ -63,14 +63,14 @@ export const createStringInterpolation = (str: string, data: any[]): string => {
     // Replace placeholders in the form of {{variable}}
     const placeholderRegex = new RegExp(
       `\\{{${interpolation.variable}\\}}`,
-      "g"
+      'g'
     );
     newString = newString.replace(placeholderRegex, interpolation.field);
 
     // Replace direct string matches of the variable, including cases where they are adjacent to punctuation
     const variableRegex = new RegExp(
       `\\b${interpolation.variable}\\b|(?<=\\W)${interpolation.variable}(?=\\W)`,
-      "g"
+      'g'
     );
     newString = newString.replace(variableRegex, interpolation.field);
   });
@@ -97,7 +97,7 @@ export const upsertStringInterpolations = (
           subModel: baseModelData.subModel,
           messages: [
             {
-              role: "system",
+              role: 'system',
               content: newSystemMessage,
             },
           ],
@@ -118,18 +118,18 @@ export const upsertStringInterpolations = (
 
         if (
           !updatedColData[0].messages.find(
-            (message) => message.role === "system"
+            (message) => message.role === 'system'
           )
         ) {
           updatedColData[0].messages.unshift({
-            role: "system",
+            role: 'system',
             content: newSystemMessage,
           });
         } else {
           updatedColData[0].messages = updatedColData[0].messages.map(
             (message) =>
-              message.role === "system"
-                ? { role: "system", content: newSystemMessage }
+              message.role === 'system'
+                ? { role: 'system', content: newSystemMessage }
                 : message
           );
         }

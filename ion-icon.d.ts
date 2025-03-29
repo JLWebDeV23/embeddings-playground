@@ -1,7 +1,7 @@
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      "ion-icon": any;
+      'ion-icon': any;
     }
   }
 }

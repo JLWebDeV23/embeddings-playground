@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   Modal,
   ModalContent,
@@ -6,8 +6,8 @@ import {
   ModalBody,
   ModalFooter,
   useDisclosure,
-} from "@nextui-org/modal";
-import { Button } from "@nextui-org/button";
+} from '@nextui-org/modal';
+import { Button } from '@nextui-org/button';
 type AlertModalProps = {
   showAlert: boolean;
   onClose: () => void;

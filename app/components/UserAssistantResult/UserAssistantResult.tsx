@@ -1,6 +1,6 @@
-import React from "react";
-import { ModelsData } from "@/app/pages/ModelCompare/ModelCompare";
-import { ScrollShadow } from "@nextui-org/scroll-shadow";
+import React from 'react';
+import { ModelsData } from '@/app/pages/ModelCompare/ModelCompare';
+import { ScrollShadow } from '@nextui-org/scroll-shadow';
 
 type UserAssistantResultProps = { modelsData: ModelsData };
 
@@ -19,7 +19,7 @@ const UserAssistantResult: React.FC<UserAssistantResultProps> = ({
           Lock
         </button>
       </div>
-      <div style={{ maxHeight: "500px", overflow: "auto" }}>
+      <div style={{ maxHeight: '500px', overflow: 'auto' }}>
         <>
           {modelsData?.firstModel?.messages?.map((message, index) => {
             const secondModelMessage =
@@ -27,14 +27,14 @@ const UserAssistantResult: React.FC<UserAssistantResultProps> = ({
 
             return (
               <div key={index} className="flex justify-between mb-4">
-                {message.role === "user" ? (
+                {message.role === 'user' ? (
                   <>
                     <span
                       className="mr-1"
                       style={{
-                        flex: "0 0 45%",
-                        maxHeight: "200px",
-                        overflow: "auto",
+                        flex: '0 0 45%',
+                        maxHeight: '200px',
+                        overflow: 'auto',
                       }}
                     >
                       <div className="font-bold">
@@ -44,9 +44,9 @@ const UserAssistantResult: React.FC<UserAssistantResultProps> = ({
                     </span>
                     <span
                       style={{
-                        flex: "0 0 45%",
-                        maxHeight: "200px",
-                        overflow: "auto",
+                        flex: '0 0 45%',
+                        maxHeight: '200px',
+                        overflow: 'auto',
                       }}
                     >
                       <div className="font-bold">
@@ -60,9 +60,9 @@ const UserAssistantResult: React.FC<UserAssistantResultProps> = ({
                     <span
                       className="mr-1"
                       style={{
-                        flex: "0 0 45%",
-                        maxHeight: "200px",
-                        overflow: "auto",
+                        flex: '0 0 45%',
+                        maxHeight: '200px',
+                        overflow: 'auto',
                       }}
                     >
                       <div className="font-bold">
@@ -83,9 +83,9 @@ const UserAssistantResult: React.FC<UserAssistantResultProps> = ({
                     <span
                       className=""
                       style={{
-                        flex: "0 0 45%",
-                        maxHeight: "200px",
-                        overflow: "auto",
+                        flex: '0 0 45%',
+                        maxHeight: '200px',
+                        overflow: 'auto',
                       }}
                     >
                       <div className="font-bold">

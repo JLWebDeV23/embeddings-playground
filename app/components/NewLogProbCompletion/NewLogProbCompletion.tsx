@@ -1,13 +1,13 @@
-import React, { useState } from "react";
-import { returnDownForwardOutline } from "ionicons/icons";
-import { IonIcon } from "@ionic/react";
-import styles from "./NewLogProbCompletion.module.css";
+import React, { useState } from 'react';
+import { returnDownForwardOutline } from 'ionicons/icons';
+import { IonIcon } from '@ionic/react';
+import styles from './NewLogProbCompletion.module.css';
 import {
   createChatCompletion,
   createChatCompletionLogProb,
-} from "../../utils/functions";
-import OpenAI from "openai";
-import { WordItem } from "@/app/utils/treeNode";
+} from '../../utils/functions';
+import OpenAI from 'openai';
+import { WordItem } from '@/app/utils/treeNode';
 
 type NewLogProbCompletionProps = {
   uniqueKey: number;
@@ -27,8 +27,8 @@ const NewLogProbCompletion: React.FC<NewLogProbCompletionProps> = ({
   logProbs,
   searchWord,
 }) => {
-  const [selectedWord, setSelectedWord] = useState<string>("");
-  const [splitString, setSplitString] = useState<string>("");
+  const [selectedWord, setSelectedWord] = useState<string>('');
+  const [splitString, setSplitString] = useState<string>('');
 
   /**
    * Color the tokens based on their log probabilities.
@@ -39,9 +39,9 @@ const NewLogProbCompletion: React.FC<NewLogProbCompletionProps> = ({
   const colorScaler = (logProb: number) => {
     const newLogProb = Math.exp(logProb);
     if (newLogProb < 1 && newLogProb > 0.998) {
-      return "#D0E37F";
+      return '#D0E37F';
     } else {
-      return "#d1603d";
+      return '#d1603d';
     }
   };
 
@@ -56,7 +56,7 @@ const NewLogProbCompletion: React.FC<NewLogProbCompletionProps> = ({
       }
     }
     // Split string
-    const splitWord: string = newStrings.join("");
+    const splitWord: string = newStrings.join('');
     setSplitString(splitWord);
     const completionContent: OpenAI.ChatCompletion.Choice =
       await createChatCompletion(splitString);
@@ -86,7 +86,7 @@ const NewLogProbCompletion: React.FC<NewLogProbCompletionProps> = ({
       key={uniqueKey}
       style={{
         color: colorScaler(logProb.logprob),
-        cursor: "pointer",
+        cursor: 'pointer',
       }}
       onClick={() => handleWordClick(logProb.token, logProbs)}
     >

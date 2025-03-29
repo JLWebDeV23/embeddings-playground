@@ -4,8 +4,8 @@ const nextConfig = {
   // distDir: "dist",
   rewrites: async () => [
     {
-      source: "/anthropic/:path*",
-      destination: "https://api.anthropic.com/:path*",
+      source: '/anthropic/:path*',
+      destination: 'https://api.anthropic.com/:path*',
     },
   ],
 };

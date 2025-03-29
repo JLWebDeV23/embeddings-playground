@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import styles from "./InsertItem.module.css";
+import React, { useState } from 'react';
+import styles from './InsertItem.module.css';
 
 const InsertItem = () => {
-  const [selectedItem, setSelectedItem] = useState("");
-  const [value, setValue] = useState<string>("Source Type");
+  const [selectedItem, setSelectedItem] = useState('');
+  const [value, setValue] = useState<string>('Source Type');
 
   const handleSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedItem(event.target.value);
@@ -32,7 +32,7 @@ const InsertItem = () => {
         </select>
       </label>
       <div className="">
-        {value === "URL" ? (
+        {value === 'URL' ? (
           <input
             type="text"
             placeholder="Enter URL"

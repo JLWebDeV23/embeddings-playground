@@ -1,15 +1,15 @@
-import React, { use, useState } from "react";
-import styles from "./LogProb.module.css";
-import TextBox from "../TextBox/TextBox";
-import { WordItem } from "@/app/utils/treeNode";
-import { createChatCompletionLogProb } from "../../utils/functions";
-import OpenAI from "openai";
-import NewLogProbCompletion from "../NewLogProbCompletion/NewLogProbCompletion";
-import Tree from "../Tree/Tree";
-import { Sentence } from "@/app/utils/newTreeNode";
-import { LogProbTreeNode } from "@/app/utils/interfaces";
-import NewLogProb from "../NewLogProb/NewLogProb";
-import { Lobster } from "next/font/google";
+import React, { use, useState } from 'react';
+import styles from './LogProb.module.css';
+import TextBox from '../TextBox/TextBox';
+import { WordItem } from '@/app/utils/treeNode';
+import { createChatCompletionLogProb } from '../../utils/functions';
+import OpenAI from 'openai';
+import NewLogProbCompletion from '../NewLogProbCompletion/NewLogProbCompletion';
+import Tree from '../Tree/Tree';
+import { Sentence } from '@/app/utils/newTreeNode';
+import { LogProbTreeNode } from '@/app/utils/interfaces';
+import NewLogProb from '../NewLogProb/NewLogProb';
+import { Lobster } from 'next/font/google';
 
 export interface TreeNode {
   id: number;
@@ -146,7 +146,7 @@ const LogProb2 = () => {
   const handleOnClick = async () => {
     const sentence =
       "Many words map to one token, but some don't: indivisible.";
-    console.log(await (createChatCompletionLogProb(sentence)))
+    console.log(await createChatCompletionLogProb(sentence));
     const logprobs: TokenTree =
       (await createChatCompletionLogProb(sentence)).logprobs?.content?.map(
         (logprob, index) => {
@@ -165,7 +165,7 @@ const LogProb2 = () => {
 
   const handleWordClick = (node: TokenNode) => {
     console.log(node);
-    console.log("word clicked");
+    console.log('word clicked');
   };
 
   return (
@@ -204,18 +204,15 @@ type TreeNodeProps = {
   handleWordClick: (node: TokenNode) => void;
 };
 function TreeNode({ parentHistory, node, handleWordClick }: TreeNodeProps) {
-
   const [history, setHistory] = useState<SimpleTreeNode[]>([
     ...parentHistory,
     { id: node.id, token: node.token.token },
   ]);
 
-
-
   return (
     <span
       key={node.id}
-      style={{ cursor: "pointer" }}
+      style={{ cursor: 'pointer' }}
       onClick={() => handleWordClick(node)}
     >
       {node.token.token}
@@ -224,7 +221,7 @@ function TreeNode({ parentHistory, node, handleWordClick }: TreeNodeProps) {
 }
 
 const LogProb = () => {
-  const [inputValue, setInputValue] = useState<string>("");
+  const [inputValue, setInputValue] = useState<string>('');
   const [nodes, setNodes] = useState<TreeNode[]>([]);
   const [logProbNode, setLogProbNode] = useState<LogProbTreeNode[]>([]);
 
@@ -262,7 +259,7 @@ const LogProb = () => {
     // });
     // console.log(nodes);
 
-    setInputValue("");
+    setInputValue('');
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {

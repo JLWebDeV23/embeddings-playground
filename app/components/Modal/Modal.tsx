@@ -2,13 +2,13 @@
 import React from 'react';
 
 interface ModalProps {
-    id: string;
-    title: string;
-    children: React.ReactNode;
-    onClose: () => void;
+  id: string;
+  title: string;
+  children: React.ReactNode;
+  onClose: () => void;
 }
 
-const Modal:React.FC<ModalProps> = ({ id, title, children, onClose }) => {
+const Modal: React.FC<ModalProps> = ({ id, title, children, onClose }) => {
   return (
     <dialog id={id} className="modal">
       <div className="modal-box">
