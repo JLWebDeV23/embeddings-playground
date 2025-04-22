@@ -18,7 +18,7 @@ const BuyMeACoffee = () => {
   return (
     <Button
       variant="bordered"
-      className="bg-background hover:bg-[#83cfb7] hover:border-foreground"
+      className="text-white/90 hover:bg-[#83cfb7]"
       size="lg"
       as={Link}
       href="https://buymeacoffee.com/jliou"
